@@ -83,6 +83,11 @@
 		</repository>
 	</repositories>
 
+	<modules>
+		<module>partition-core</module>
+		<module>provider/partition-azure</module>
+	</modules>
+
 	<distributionManagement>
 		<repository>
 			<id>${gitlab-server}</id>
