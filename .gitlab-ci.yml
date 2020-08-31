@@ -1,0 +1,9 @@
+include:
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "standard-setup.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "build/maven.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "scanners/gitlab-ultimate.yml"
