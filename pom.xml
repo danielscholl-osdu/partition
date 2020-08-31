@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2017-2020, Schlumberger
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.opengroup.osdu</groupId>
+	<artifactId>partition</artifactId>
+	<version>1.0.0</version>
+	<description>Partition Service</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<os-core-common.version>0.3.6</os-core-common.version>
+	</properties>
+
+	<packaging>pom</packaging>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.3.1.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.opengroup.osdu</groupId>
+				<artifactId>os-core-common</artifactId>
+				<version>${os-core-common.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.elasticsearch.client</groupId>
+						<artifactId>elasticsearch-rest-client</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>2.3.1.RELEASE</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>${gitlab-server}</id>
+			<url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>${gitlab-server}</id>
+			<url>https://community.opengroup.org/api/v4/projects/44/packages/maven</url>
+		</repository>
+		<snapshotRepository>
+			<id>${gitlab-server}</id>
+			<url>https://community.opengroup.org/api/v4/projects/44/packages/maven</url>
+		</snapshotRepository>
+
+	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>partition-core</id>
+			<activation>
+				<!-- this profile is active by default -->
+				<activeByDefault>true</activeByDefault>
+				<!-- activate if system properties 'env=partition-core' -->
+				<property>
+					<name>env</name>
+					<value>partition-core</value>
+				</property>
+			</activation>
+			<modules>
+				<module>partition-core</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>partition-aks</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>partition-aks</value>
+				</property>
+			</activation>
+			<modules>
+				<module>provider/partition-azure</module>
+			</modules>
+		</profile>
+	</profiles>
+</project>
