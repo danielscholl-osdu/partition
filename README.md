@@ -2,6 +2,11 @@
 
 The Partition Service dynamically pulls the correct connection information at runtime to connect to the correct partition. It is a Maven multi-module project with each cloud implemention placed in its submodule.
 
+
+## Running Locally - AWS
+## Running Locally - GCP
+## Running Locally - IBM
+
 ## Running Locally - Azure
 
 ### Requirements
@@ -9,8 +14,7 @@ The Partition Service dynamically pulls the correct connection information at ru
 In order to run this service locally, you will need the following:
 
 - [Maven 3.6.0+](https://maven.apache.org/download.cgi)
-- [AdoptOpenJDK8](https://adoptopenjdk.net/)
-- Infrastructure dependencies, deployable through the relevant [os-k8s](https://dev.azure.com/slb-swt/osdu-delfi/_git/os-k8s)
+- Infrastructure dependencies, deployable through the relevant [os-k8s](https:/update/_git/os-k8s)
 - While not a strict dependency, example commands in this document use [bash](https://www.gnu.org/software/bash/)
 
 ### General Tips
@@ -39,7 +43,7 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `client-id` | `********` | AAD client application ID | yes | output of infrastructure deployment |
-| `KEYVAULT_URI` | (non-secret) | KeyVault URI | no | variable `AZURE_KEYVAULT_URI` from ADO variable group `Azure Target Env - {{env}}`
+| `KEYVAULT_URI` | (non-secret) | KeyVault URI | no | variable `AZURE_KEYVAULT_URI` from GitLab variable group `Azure Target Env - {{env}}`
 | `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id` |
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
