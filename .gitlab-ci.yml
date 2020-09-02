@@ -7,3 +7,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/gitlab-ultimate.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+      file: "scanners/fossa.yml"
