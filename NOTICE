@@ -519,6 +519,7 @@ The following software have components provided under the terms of this license:
 - Azure Java Client Authentication Library for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Metrics Spring Boot Starter (from https://github.com/Microsoft/azure-spring-boot)
+- Azure Spring Boot AutoConfigure (from https://github.com/Microsoft/azure-spring-boot)
 - Checker Qual (from https://checkerframework.org)
 - Checker Qual (from https://checkerframework.org)
 - Extensions on Apache Proton-J library (from https://github.com/Azure/qpid-proton-j-extensions)
