@@ -9,4 +9,4 @@ include:
     file: "scanners/gitlab-ultimate.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-      file: "scanners/fossa.yml"
+    file: "scanners/fossa.yml"
