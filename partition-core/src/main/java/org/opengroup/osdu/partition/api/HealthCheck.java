@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/_ah")
+@RequestMapping(path= "/_ah", produces = "application/json")
 public class HealthCheck {
 
     @GetMapping("/liveness_check")

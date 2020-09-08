@@ -1,0 +1,177 @@
+swagger: '2.0'
+info:
+  description: API documentation for Partition service
+  version: '1.0.0'
+  title: Partition
+  contact:
+    name: OSDU Support
+    email: devportal-help@osdu.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+basePath: /api/partition/v1
+tags:
+  - name: partition-api
+    description: Partition Api
+  - name: health-check
+    description: Health Check
+paths:
+  /_ah/liveness_check:
+    get:
+      tags:
+        - health-check
+      summary: livenessCheck
+      operationId: livenessCheckUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT:
+            - global
+  /_ah/readiness_check:
+    get:
+      tags:
+        - health-check
+      summary: readinessCheck
+      operationId: readinessCheckUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT:
+            - global
+  '/partitions/{partitionId}':
+    get:
+      tags:
+        - partition-api
+      summary: get
+      operationId: getUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PartitionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT:
+            - global
+    post:
+      tags:
+        - partition-api
+      summary: create
+      operationId: createUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+        - in: body
+          name: partitionInfo
+          description: partitionInfo
+          required: true
+          schema:
+            $ref: '#/definitions/PartitionInfo'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PartitionInfo'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT:
+            - global
+    delete:
+      tags:
+        - partition-api
+      summary: delete
+      operationId: deleteUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: partitionId
+          in: path
+          description: partitionId
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - JWT:
+            - global
+securityDefinitions:
+  JWT:
+    type: oauth2
+    name: Authorization
+    in: header
+definitions:
+  PartitionInfo:
+    type: object
+    properties:
+      labels:
+        type: object
+        description: 'Free form key value pair object for any data partition specific values'
+    example:
+      id: 'common'
+      compliance-ruleset: 'shared'
+      elastic-username: 'elastic'
+      cosmos-endpoint: 'https://ado-dev-n-abc123-cosmosdb.documents.azure.com:443/'
+      elastic-endpoint: 'https://partition-dev.evd.ece-osdu.cloud.osdu-ds.com:9243'
+      storage-account-name: 'myStorageAccount'
