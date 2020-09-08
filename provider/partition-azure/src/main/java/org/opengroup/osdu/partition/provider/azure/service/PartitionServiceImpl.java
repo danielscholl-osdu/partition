@@ -36,6 +36,9 @@ public class PartitionServiceImpl implements IPartitionService {
     @Autowired
     private ThreadPoolService threadPoolService;
 
+    private static final String APP_DEV_SP_USERNAME = "app-dev-sp-username";
+    private static final String SERVICE_PRINCIPAL_ID = "sp-appid";
+
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
         if (this.partitionExists(partitionId)) {
@@ -91,6 +94,7 @@ public class PartitionServiceImpl implements IPartitionService {
             String outKey = key.replaceFirst(String.format("%s-", partitionId), "");
             out.put(outKey, KeyVaultFacade.getKeyVaultSecret(this.secretClient, key));
         }
+        out.put(SERVICE_PRINCIPAL_ID, KeyVaultFacade.getKeyVaultSecret(this.secretClient, APP_DEV_SP_USERNAME));
         return out;
     }
 
