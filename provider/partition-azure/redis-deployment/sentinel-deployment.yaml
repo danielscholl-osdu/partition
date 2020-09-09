@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-partition-sentinel
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis-partition-sentinel
+  template:
+    metadata:
+      name: redis-partition-sentinel
+      labels:
+        app: redis-partition-sentinel
+    spec:
+      restartPolicy: Always
+
+      containers:
+        - name: redis-partition-sentinel
+          image: delfi.azurecr.io/redis-partition-cluster:latest
+
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: .2
+            limits:
+              memory: "200Mi"
+              cpu: .5
+
+          imagePullPolicy: Always
+
+          ports:
+          - containerPort: 26379
+
+          env:
+          - name: SENTINEL
+            value: "true"
+      imagePullSecrets:
+       - name: acr

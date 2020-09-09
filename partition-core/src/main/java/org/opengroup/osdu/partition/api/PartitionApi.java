@@ -17,6 +17,7 @@ package org.opengroup.osdu.partition.api;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +28,11 @@ import java.util.Map;
 
 @RestController
 @RequestScope
-@RequestMapping("/partitions")
+@RequestMapping(path = "/partitions", produces = "application/json")
 public class PartitionApi {
 
     @Autowired
+    @Qualifier("cachedPartitionServiceImpl")
     private IPartitionService partitionService;
 
     @PostMapping("/{partitionId}")

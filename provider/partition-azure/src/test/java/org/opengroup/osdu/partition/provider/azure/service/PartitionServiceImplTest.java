@@ -107,12 +107,14 @@ public class PartitionServiceImplTest {
         when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-id")).thenReturn("my-tenant");
         when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-groups")).thenReturn("[\"service.storage.admin\"]");
         when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-complianceRuleSet")).thenReturn("shared");
+        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "sp-appid")).thenReturn("servicePrincipal");
 
         PartitionInfo partitionInfo = this.sut.getPartition(this.partitionInfo.getProperties().get("id").toString());
         assertTrue(partitionInfo.getProperties().containsValue("my-tenant"));
         assertTrue(partitionInfo.getProperties().containsKey("groups"));
         assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
         assertTrue(partitionInfo.getProperties().containsKey("id"));
+        assertTrue(partitionInfo.getProperties().containsKey("sp-appid"));
     }
 
     @Test
