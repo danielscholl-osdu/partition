@@ -20,16 +20,16 @@ Partition integration tests are refactored so that the business logic for integr
 * JDK8
 * Maven
 * Azure Devops access to slb-des-ext-collaboration organization. You need to generate a PAT that can access dependencies held in the Azure artifacts
-* Values for the following environment variables in Config.java
+* Values for the following environment variables in Config.java (in `partition-test-core` module)
   
   ```
    ENVIRONMENT ('local' for local testing or 'dev' for dev testing) 
-   PARTITION_BASE_URL(service base URL )
-   
+   PARTITION_BASE_URL (service base URL, required only if running integration tests against a cloud endpoint)
+   CLIENT_TENANT (name of the client partition, required only if running integration tests against a cloud endpoint) (e.g. 'common')
+   MY_TENANT(name of the OSDU partition, required only if running integration tests against a cloud endpoint) (e.g. 'opendes')
    ```
 
   Above variables should be configured in the release pipeline to run integration tests. You should also replace them with proper values if you wish to run tests locally.
-
 ### Commands to run tests
 * Integration tests are refactored into two pieces: Core and Provider. Core contains business logic for tests and is a dependency for executing the tests from provider module. To build the core module, simply navigate to `partition-test-core` directory and run `mvn clean install`. This will build the core module
 * Next, to execute the integration tests, navigate to the provider module and execute `mvn test`
