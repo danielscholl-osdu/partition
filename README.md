@@ -1,6 +1,6 @@
 # Introduction 
 
-The Partition service is a utility service to create, get and delete partitions in the cloud. It is a Maven multi-module project with each cloud implementation placed in its submodule.
+The Partition service is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not. It is a Maven multi-module project with each cloud implementation placed in its submodule.
  
 ## Running Locally - AWS
 ## Running Locally - Azure
