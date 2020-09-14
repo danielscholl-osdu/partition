@@ -1,6 +1,6 @@
 # Introduction 
 
-The Partition Service dynamically pulls the correct connection information at runtime to connect to the correct partition. It is a Maven multi-module project with each cloud implementation placed in its submodule.
+The Partition service is a utility service to create, get and delete partitions in the cloud. It is a Maven multi-module project with each cloud implementation placed in its submodule.
  
 ## Running Locally - AWS
 ## Running Locally - Azure
