@@ -4,7 +4,6 @@
 In order to run this service locally, you will need the following:
 
 - [Maven 3.6.0+](https://maven.apache.org/download.cgi)
-- [Docker](https://www.docker.com/), to start a redis server locally
 
 ## General Tips
 
@@ -37,8 +36,6 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id` |
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
-| `REDIS_PARTITION_HOST` | (non-secret) | Redis instance host | no | Redis instance host IP |
-| `REDIS_PARTITION_PORT` | (non-secret) | Redis instance port | no | Redis isntance host port, default value 6379 |
 
 ### Configure Maven
 
@@ -66,10 +63,6 @@ You will need to configure access to the remote maven repository that holds the 
     </servers>
 </settings>
 ```
-
-### Start a Redis instance
-
-Start a redis server locally with `docker run --name some-redis -p 6379:6379 -d redis` command
 
 ### Build and run the application
 
