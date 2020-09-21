@@ -89,16 +89,6 @@ stages:
           zip -r testing.zip testing
           cp testing.zip $(build.artifactstagingdirectory)
         displayName: 'Zip integration tests and upload it as artifact'
-      - bash: |
-          #!/bin/bash
-          set -e
-          # Upload redis deployment scripts as artifact
-          pushd provider/partition-azure/redis-deployment
-          cp master-deployment.yaml $(build.artifactstagingdirectory)
-          cp redis-service.yaml $(build.artifactstagingdirectory)
-          cp sentinel-deployment.yaml $(build.artifactstagingdirectory)
-          cp slave-deployment.yaml $(build.artifactstagingdirectory)
-          popd
       - upload: $(Build.ArtifactStagingDirectory)
         artifact: drop_${{environment.name}}
 
@@ -152,19 +142,6 @@ stages:
                 set -e
                 kubectl --kubeconfig $(kubeConfig.secureFilePath) rollout restart deployment/partition-aks
               displayName: 'kubectl rollout restart deployment/partition-aks'
-            - bash: |
-                #!/bin/bash
-                set -e
-                pushd $(Pipeline.Workspace)/drop_${{environment.name}}
-                kubectl --kubeconfig $(kubeConfig.secureFilePath) apply -f redis-service.yaml
-                sleep 5
-                kubectl --kubeconfig $(kubeConfig.secureFilePath) apply -f master-deployment.yaml
-                sleep 5
-                kubectl --kubeconfig $(kubeConfig.secureFilePath) apply -f sentinel-deployment.yaml
-                sleep 5
-                kubectl --kubeconfig $(kubeConfig.secureFilePath) apply -f slave-deployment.yaml
-                popd
-              displayName: 'deploy redis cluster'
             - ${{ if or(eq(environment.name, 'devint'), eq(environment.name, 'qa')) }}:
               - bash: |
                   #!/bin/bash
