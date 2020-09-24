@@ -29,12 +29,12 @@ public class TestGetPartitionById extends GetPartitionByIdApitTest {
     @After
     @Override
     public void tearDown() {
-        try {
-            this.deleteResource();
-        }
-        catch (Exception e) {
+        // try {
+        //     this.deleteResource();
+        // }
+        // catch (Exception e) {
             
-        }
+        // }
         this.testUtils = null;
     }
 }

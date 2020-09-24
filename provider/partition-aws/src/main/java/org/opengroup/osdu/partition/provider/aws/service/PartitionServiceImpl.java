@@ -14,6 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.amazonaws.partitions.model.Partition;
@@ -63,30 +64,35 @@ public class PartitionServiceImpl implements IPartitionService {
             boolean partitionReady = false;
             while (!partitionReady && retryCount > 0) {
                 retryCount--;
-                Map<String, Object> partitionCheck = ssmHelper.getPartitionSecrets(partitionId);
+                List<String> partitionCheck = ssmHelper.getSsmParamsPathsForPartition(partitionId);
                 if (partitionCheck.size() == partitionInfo.getProperties().size())
                     partitionReady = true;
                 else
-                    Thread.sleep(250);
+                    Thread.sleep(500);
             }
 
+            String rollbackSuccess = "Failed";
             if (!partitionReady) {
                 try {
-                    this.deletePartition(partitionId);
+                    ssmHelper.deletePartitionSecrets(partitionId);
+                    rollbackSuccess = "Succeeded";
                 }
                 catch (Exception e){ 
 
                 }
 
-                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition Creation Failed", "One or more secrets couldn't be stored within the timeout limit");
+                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition Creation Failed", "One or more secrets couldn't be stored. Rollback " + rollbackSuccess);
                 
             }
+        }
+        catch (AppException appE) {
+            throw appE;
         }
         catch (Exception e) {
 
             try {
                 Thread.sleep(2000); //wait for any existing ssm parameters that got added to normalize
-                this.deletePartition(partitionId);
+                ssmHelper.deletePartitionSecrets(partitionId);
             }
             catch (Exception deleteE) {                
                 //if the partition didnt get created at all deletePartition will throw an exception. Eat it so we return the creation exception.
