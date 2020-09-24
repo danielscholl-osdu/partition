@@ -44,3 +44,7 @@ load-tests/*.pyc
 
 # VSCode
 .vscode/
+
+.DS_STORE
+
+dist/
