@@ -63,9 +63,7 @@ public class AwsTestUtils extends TestUtils {
         try {
             KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
             keyGenerator.initialize(2048);
-
-
-    
+                
             KeyPair kp = keyGenerator.genKeyPair();
             PublicKey publicKey = (PublicKey) kp.getPublic();
             PrivateKey privateKey = (PrivateKey) kp.getPrivate();

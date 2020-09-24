@@ -15,9 +15,11 @@
 package org.opengroup.osdu.partition.provider.aws.security;
 
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsAndCacheService;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -36,7 +38,16 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public boolean isDomainAdminServiceAccount() {
-        return hasRole(PARTITION_ADMIN_ROLE);
+        try {
+            return hasRole(PARTITION_ADMIN_ROLE);
+        }
+        catch (AppException appE) {
+            throw appE;
+        }
+        catch (Exception e) {
+            throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Authentication Failure", e.getMessage(), e);
+        }
+        
     }
 
     private boolean hasRole(String requiredRole) {        

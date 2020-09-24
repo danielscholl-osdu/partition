@@ -15,6 +15,7 @@
 package org.opengroup.osdu.partition.provider.aws.util;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
-
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.DeleteParametersRequest;
@@ -74,44 +74,58 @@ public final class SSMHelper {
 
         String ssmPath = getSsmPathForPartitition(partitionName);
 
-        GetParametersByPathRequest request = new GetParametersByPathRequest()
+        List<Parameter> params = new ArrayList<Parameter>();
+        String nextToken = null;
+
+        do {
+            
+            GetParametersByPathRequest request = new GetParametersByPathRequest()
                 .withPath(ssmPath)
-                .withRecursive(true)
+                .withRecursive(true)                
+                .withNextToken(nextToken)
                 .withWithDecryption(true);
 
-        GetParametersByPathResult result = ssmManager.getParametersByPath(request);
+            GetParametersByPathResult result = ssmManager.getParametersByPath(request);
+            nextToken = result.getNextToken();
+            
+            if (result.getParameters().size() > 0)
+                params.addAll(result.getParameters());
+        }
+        while (nextToken != null);
 
-        return result.getParameters();
+        return params;
     }
 
     public List<String> getSsmParamsPathsForPartition(String partitionName) {
 
-        String ssmPath = getSsmPathForPartitition(partitionName);
+        List<Parameter> paramsToDelete = getSsmParamsForPartition(partitionName);
 
-        GetParametersByPathRequest request = new GetParametersByPathRequest()
-            .withPath(ssmPath)
-            .withRecursive(true)
-            .withWithDecryption(true);
-
-        GetParametersByPathResult result = ssmManager.getParametersByPath(request);
-
-        List<String> ssmParamNames = result.getParameters().stream().map(Parameter::getName).collect(Collectors.toList());
+        List<String> ssmParamNames = paramsToDelete.stream().map(Parameter::getName).collect(Collectors.toList());
 
         return ssmParamNames;
     }
 
     public boolean partitionExists(String partitionName) {
 
-        String ssmPath = getSsmPathForPartitition(partitionName);
+        String ssmPath = getSsmPathForPartitition(partitionName);        
+        String nextToken = null;
 
-        GetParametersByPathRequest request = new GetParametersByPathRequest()
-            .withPath(ssmPath)
-            .withRecursive(true)
-            .withMaxResults(1);
+        do {
+            
+            GetParametersByPathRequest request = new GetParametersByPathRequest()
+                .withPath(ssmPath)
+                .withRecursive(true)                
+                .withNextToken(nextToken);                
 
-        GetParametersByPathResult result = ssmManager.getParametersByPath(request);
+            GetParametersByPathResult result = ssmManager.getParametersByPath(request);
+            nextToken = result.getNextToken();
+            
+            if (result.getParameters().size() > 0)
+                return true;
+        }
+        while (nextToken != null);
 
-        return result.getParameters().size() > 0;
+        return false;
     }
 
     public Map<String, Object> getPartitionSecrets(String partitionName) {
@@ -151,14 +165,30 @@ public final class SSMHelper {
 
     public boolean deletePartitionSecrets(String partitionName) {
 
-        List<String> ssmParamPaths =  getSsmParamsPathsForPartition(partitionName);        
+        List<String> ssmParamPaths =  getSsmParamsPathsForPartition(partitionName);   
+        
+        int expectedNumOfDeletedParams = ssmParamPaths.size();
+        int totalDeletedParams = 0;
 
-        DeleteParametersRequest request = new DeleteParametersRequest()
-            .withNames(ssmParamPaths);
+        while (ssmParamPaths.size() > 0) {
+            int subListCount = ssmParamPaths.size();
+            if (subListCount > 10)
+                subListCount = 10;
 
-        DeleteParametersResult result =  ssmManager.deleteParameters(request);
+            List<String> paramsToDelete = ssmParamPaths.subList(0, subListCount);
+            ssmParamPaths = ssmParamPaths.subList(subListCount, ssmParamPaths.size());
 
-        return result.getDeletedParameters().size() > 0;
+            DeleteParametersRequest request = new DeleteParametersRequest()            
+                .withNames(paramsToDelete);
+
+            DeleteParametersResult result =  ssmManager.deleteParameters(request);
+
+            totalDeletedParams += result.getDeletedParameters().size();
+        }
+
+        
+
+        return totalDeletedParams == expectedNumOfDeletedParams;
         
     }
 
