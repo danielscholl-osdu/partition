@@ -15,7 +15,6 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +28,7 @@ import org.opengroup.osdu.partition.provider.aws.util.SSMHelper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +86,7 @@ public class PartitionServiceImplTest {
 
         when(ssmHelper.partitionExists(any())).thenReturn(false);
         when(ssmHelper.createOrUpdateSecret(any(), any(), any())).thenReturn(true);
-        when(ssmHelper.getPartitionSecrets(any())).thenReturn(this.partitionInfo.getProperties());
+        when(ssmHelper.getSsmParamsPathsForPartition(any())).thenReturn(new ArrayList<String>(this.partitionInfo.getProperties().keySet()));
 
         PartitionInfo partInfo = partService.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
         assertTrue(partInfo.getProperties().size() == 3);
