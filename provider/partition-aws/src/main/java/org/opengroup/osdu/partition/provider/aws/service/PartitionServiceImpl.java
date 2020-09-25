@@ -60,7 +60,7 @@ public class PartitionServiceImpl implements IPartitionService {
             *   The performance hit is acceptable because partitions are only created as an early operation and shouldn't affect
             *   the performance of runtime workflows             
             */
-            int retryCount = 5;
+            int retryCount = 10;
             boolean partitionReady = false;
             while (!partitionReady && retryCount > 0) {
                 retryCount--;
