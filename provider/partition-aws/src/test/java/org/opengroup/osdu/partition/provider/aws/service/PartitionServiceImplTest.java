@@ -24,6 +24,7 @@ import org.mockito.Spy;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.aws.util.SSMHelper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -48,20 +49,20 @@ public class PartitionServiceImplTest {
 
     @Mock
     private SSMHelper ssmHelper;
-   
+
     @InjectMocks
     private PartitionServiceImpl partService;
 
     private PartitionInfo partitionInfo = new PartitionInfo();
 
-    private Map<String,Object> partitionSecretMap = new HashMap<>();
+    private Map<String, Property> partitionSecretMap = new HashMap<>();
 
     @Before
     public void setup() {
-       
-        partitionSecretMap.put("id", "my-tenant");
-        partitionSecretMap.put("storageAccount", "storage-account");
-        partitionSecretMap.put("complianceRuleSet", "compliance-rule-set");
+
+        partitionSecretMap.put("id", Property.builder().value("my-tenant").build());
+        partitionSecretMap.put("storageAccount", Property.builder().value("storage-account").build());
+        partitionSecretMap.put("complianceRuleSet", Property.builder().value("compliance-rule-set").build());
         partitionInfo.setProperties(partitionSecretMap);
 
     }
@@ -73,7 +74,7 @@ public class PartitionServiceImplTest {
         try {
             partService.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
             //we should never hit this code because create partition should end in an error
-            assertTrue("Expected partService.createPartition to throw an exception, but passed",false);
+            assertTrue("Expected partService.createPartition to throw an exception, but passed", false);
         } catch (AppException e) {
             assertTrue(e.getError().getCode() == 409);
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition exist"));
@@ -102,8 +103,8 @@ public class PartitionServiceImplTest {
         String Key2 = "my-tenant-groups";
         String Key3 = "my-tenant-complianceRuleSet";
 
-        HashMap<String,Object> propertiesMap = new HashMap<>();
-        propertiesMap.put("id", this.partitionInfo.getProperties().get("id").toString());
+        HashMap<String, Property> propertiesMap = new HashMap<>();
+        propertiesMap.put("id", Property.builder().value("my-tenant").build());
         propertiesMap.put(Key1, null);
         propertiesMap.put(Key2, null);
         propertiesMap.put(Key3, null);
@@ -120,11 +121,12 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_throwNotFoundException_when_partitionDoesntExist() {
+        when(this.ssmHelper.getPartitionSecrets("my-tenant")).thenReturn(new HashMap<>());
 
         try {
-            partService.getPartition(this.partitionInfo.getProperties().get("id").toString());
+            partService.getPartition("my-tenant");
             //we should never hit this code because get partition should end in an error
-            assertTrue("Expected partService.getPartition to throw an exception, but passed",false);
+            assertTrue("Expected partService.getPartition to throw an exception, but passed", false);
         } catch (AppException e) {
             assertTrue(e.getError().getCode() == 404);
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition not found"));
@@ -144,12 +146,12 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_throwException_when_deletingNonExistentPartition() {
-        
+
 
         try {
             this.partService.deletePartition("some-invalid-partition");
             //we should never hit this code because delete partition should end in an error
-            assertTrue("Expected partService.deletePartition to throw an exception, but passed",false);
+            assertTrue("Expected partService.deletePartition to throw an exception, but passed", false);
         } catch (AppException ae) {
             assertTrue(ae.getError().getCode() == 404);
             assertEquals("some-invalid-partition partition not found", ae.getError().getMessage());

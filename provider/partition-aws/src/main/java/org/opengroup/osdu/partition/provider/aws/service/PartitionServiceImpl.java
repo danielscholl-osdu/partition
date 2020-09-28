@@ -23,6 +23,7 @@ import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.aws.util.SSMHelper;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class PartitionServiceImpl implements IPartitionService {
         }
 
         try {
-            for (Map.Entry<String, Object> entry : partitionInfo.getProperties().entrySet()) {
+            for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
                 ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue());
             }
 
@@ -108,7 +109,7 @@ public class PartitionServiceImpl implements IPartitionService {
     @Override
     public PartitionInfo getPartition(String partitionId) {
 
-        Map<String,Object> secrets = ssmHelper.getPartitionSecrets(partitionId);
+        Map<String,Property> secrets = ssmHelper.getPartitionSecrets(partitionId);
 
 
         //throw error if partition doesn't exist
