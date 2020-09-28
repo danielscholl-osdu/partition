@@ -1,3 +1,9 @@
+variables:
+  AWS_BUILD_SUBDIR: provider/partition-aws/build-aws
+  AWS_TEST_SUBDIR: testing/partition-test-aws
+  AWS_SERVICE: partition
+  AWS_ENVIRONMENT: dev
+
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -10,3 +16,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/fossa.yml"
+
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'cloud-providers/aws.yml'
