@@ -14,72 +14,51 @@
 
 package org.opengroup.osdu.partition.provider.azure.service;
 
-import com.azure.core.exception.ResourceNotFoundException;
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.microsoft.applicationinsights.TelemetryClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
-import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
-import org.opengroup.osdu.partition.provider.azure.utils.KeyVaultFacade;
-import org.opengroup.osdu.partition.provider.azure.utils.ThreadPoolService;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(KeyVaultFacade.class)
 public class PartitionServiceImplTest {
 
     @Mock
-    private SecretClient keyVaultClient;
-    @Mock
-    private ThreadPoolService threadPoolService;
-    @Mock
-    private TelemetryClient telemetryClient;
+    private PartitionTableStore tableStore;
     @InjectMocks
     private PartitionServiceImpl sut;
 
     private PartitionInfo partitionInfo = new PartitionInfo();
 
-    private KeyVaultSecret keyVaultSecret = new KeyVaultSecret("myKey", "myValue");
+    private final static String PARTITION_ID = "my-tenant";
+    private Map<String, Property> properties = new HashMap<>();
 
     @Before
     public void setup() {
-        mockStatic(KeyVaultFacade.class);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("id", "my-tenant");
-        properties.put("storageAccount", "storage-account");
-        properties.put("complianceRuleSet", "compliance-rule-set");
+        properties.put("id", Property.builder().value(PARTITION_ID).build());
+        properties.put("storageAccount", Property.builder().value("storage-account").sensitive(true).build());
+        properties.put("complianceRuleSet", Property.builder().value("compliance-rule-set").build());
         partitionInfo.setProperties(properties);
-        doNothing().when(telemetryClient).trackException(any(Exception.class));
     }
 
     @Test
     public void should_ThrowConflictError_when_createPartition_whenPartitionExists() {
-        when(keyVaultClient.getSecret(any())).thenReturn(keyVaultSecret);
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(true);
 
         try {
-            sut.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
+            sut.createPartition(PARTITION_ID, this.partitionInfo);
         } catch (AppException e) {
             assertTrue(e.getError().getCode() == 409);
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition exist"));
@@ -89,10 +68,9 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_returnPartitionInfo_when_createPartition_whenPartitionDoesntExist() {
-        when(keyVaultClient.getSecret(any())).thenThrow(ResourceNotFoundException.class);
-        when(keyVaultClient.setSecret(any(), any())).thenReturn(keyVaultSecret);
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
 
-        PartitionInfo partInfo = sut.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
+        PartitionInfo partInfo = sut.createPartition(PARTITION_ID, this.partitionInfo);
         assertTrue(partInfo.getProperties().size() == 3);
         assertTrue(partInfo.getProperties().containsKey("id"));
         assertTrue(partInfo.getProperties().containsKey("complianceRuleSet"));
@@ -101,28 +79,20 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_returnPartition_when_partitionExists() {
-        when(keyVaultClient.getSecret(any())).thenReturn(keyVaultSecret);
-        when(KeyVaultFacade.secretExists(any(), anyString())).thenReturn(true);
-        when(KeyVaultFacade.getKeyVaultSecrets(any(), anyString())).thenReturn(Arrays.asList("my-tenant-id", "my-tenant-complianceRuleSet", "my-tenant-groups"));
-        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-id")).thenReturn("my-tenant");
-        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-groups")).thenReturn("[\"service.storage.admin\"]");
-        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "my-tenant-complianceRuleSet")).thenReturn("shared");
-        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "sp-appid")).thenReturn("servicePrincipal");
+        when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(properties);
 
-        PartitionInfo partitionInfo = this.sut.getPartition(this.partitionInfo.getProperties().get("id").toString());
-        assertTrue(partitionInfo.getProperties().containsValue("my-tenant"));
-        assertTrue(partitionInfo.getProperties().containsKey("groups"));
+        PartitionInfo partitionInfo = this.sut.getPartition(PARTITION_ID);
+        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
         assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
         assertTrue(partitionInfo.getProperties().containsKey("id"));
-        assertTrue(partitionInfo.getProperties().containsKey("sp-appid"));
     }
 
     @Test
     public void should_throwNotFoundException_when_partitionDoesntExist() {
-        when(keyVaultClient.getSecret(any())).thenThrow(ResourceNotFoundException.class);
+        when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(new HashMap<>());
 
         try {
-            sut.getPartition(this.partitionInfo.getProperties().get("id").toString());
+            sut.getPartition(PARTITION_ID);
         } catch (AppException e) {
             assertTrue(e.getError().getCode() == 404);
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition not found"));
@@ -132,17 +102,14 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_returnTrue_when_successfullyDeletingSecretes() {
-        when(KeyVaultFacade.secretExists(any(), anyString())).thenReturn(true);
-        when(KeyVaultFacade.getKeyVaultSecrets(any(), anyString())).thenReturn(Arrays.asList("dummy-id"));
-        when(KeyVaultFacade.deleteKeyVaultSecret(any(), anyString())).thenReturn(true);
-        when(this.threadPoolService.getExecutorService()).thenReturn(Executors.newFixedThreadPool(2));
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(true);
 
-        assertTrue(this.sut.deletePartition("test-partition"));
+        assertTrue(this.sut.deletePartition(PARTITION_ID));
     }
 
     @Test
     public void should_throwException_when_deletingNonExistentPartition() {
-        when(KeyVaultFacade.getKeyVaultSecret(this.keyVaultClient, "test-partition-id")).thenReturn("");
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
 
         try {
             this.sut.deletePartition("test-partition");

@@ -31,5 +31,4 @@ public class TestCreatePartition extends CreatePartitionTest {
     public void tearDown() {
         this.testUtils = null;
     }
-
 }
