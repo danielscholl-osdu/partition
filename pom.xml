@@ -86,6 +86,7 @@
 	<modules>
 		<module>partition-core</module>
 		<module>provider/partition-azure</module>
+		<module>provider/partition-aws</module>
 	</modules>
 
 	<distributionManagement>
@@ -126,6 +127,18 @@
 			</activation>
 			<modules>
 				<module>provider/partition-azure</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>partition-aws</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>partition-aws</value>
+				</property>
+			</activation>
+			<modules>
+				<module>provider/partition-aws</module>
 			</modules>
 		</profile>
 	</profiles>
