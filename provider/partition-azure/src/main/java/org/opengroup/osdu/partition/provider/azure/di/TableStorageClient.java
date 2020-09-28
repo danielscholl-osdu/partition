@@ -1,0 +1,56 @@
+package org.opengroup.osdu.partition.provider.azure.di;
+
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.table.CloudTable;
+import com.microsoft.azure.storage.table.CloudTableClient;
+import org.apache.http.HttpStatus;
+import org.opengroup.osdu.common.Validators;
+import org.opengroup.osdu.core.common.model.http.AppException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Named;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+
+@Component
+public class TableStorageClient {
+
+    private final String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
+
+    @Bean
+    @Lazy
+    public CloudTableClient getCloudTableClient(
+            final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName,
+            final @Named("TABLE_STORAGE_ACCOUNT_KEY") String storageAccountKey) {
+        try {
+            Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
+            Validators.checkNotNullAndNotEmpty(storageAccountKey, "storageAccountKey");
+
+            final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
+            CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
+            return storageAccount.createCloudTableClient();
+        } catch (URISyntaxException | InvalidKeyException e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
+        }
+    }
+
+    @Bean
+    @Lazy
+    public CloudTable getCloudTable(
+            final CloudTableClient cloudTableClient,
+            final CloudTableConfiguration tblConfiguration) {
+        try {
+            Validators.checkNotNull(cloudTableClient, "cloudTableClient");
+            Validators.checkNotNull(tblConfiguration, "tblConfiguration");
+
+            CloudTable cloudTable = cloudTableClient.getTableReference(tblConfiguration.getCloudTableName());
+            cloudTable.createIfNotExists();
+            return cloudTable;
+        } catch (URISyntaxException | StorageException e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error querying cloud table: %s", tblConfiguration), e.getMessage(), e);
+        }
+    }
+}

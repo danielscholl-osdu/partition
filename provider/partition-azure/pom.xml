@@ -17,7 +17,6 @@
 
     <properties>
         <azure.version>2.3.1</azure.version>
-        <os_core_common_version>0.0.18</os_core_common_version>
     </properties>
     <dependencies>
         <dependency>
@@ -65,7 +64,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>core-lib-azure</artifactId>
-            <version>0.0.19</version>
+            <version>0.0.29</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.opengroup.osdu</groupId>
@@ -123,6 +122,12 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
             <version>3.3.8.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-storage</artifactId>
+            <version>8.6.5</version>
         </dependency>
 
         <dependency>

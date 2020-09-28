@@ -21,11 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -63,12 +66,12 @@ public class PartitionApiTest {
     @Test
     public void should_return200AndPartitionProperties_when_gettingPartitionIdSuccessfully() {
         String partitionId = "partition1";
-        Map<String, Object> properties = new HashMap<>();
+        Map<String, Property> properties = new HashMap<>();
 
         when(partitionService.getPartition(anyString())).thenReturn(partitionInfo);
         when(partitionInfo.getProperties()).thenReturn(properties);
 
-        ResponseEntity<Map<String, Object>> result = this.sut.get(partitionId);
+        ResponseEntity<Map<String, Property>> result = this.sut.get(partitionId);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(properties, result.getBody());
     }
