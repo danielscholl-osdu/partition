@@ -1,3 +1,17 @@
+// Copyright 2017-2020, Schlumberger
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.opengroup.osdu.partition.provider.azure.persistence;
 
 import com.microsoft.azure.storage.table.EntityProperty;
@@ -19,8 +33,8 @@ public class PartitionTableStore {
     private final static String VALUE = "value";
     private final static String SENSITIVE = "sensitive";
 
-    private final String PARTITION_KEY = "PartitionKey";
-    private final String ROW_KEY = "RowKey";
+    private final static String PARTITION_KEY = "PartitionKey";
+    private final static String ROW_KEY = "RowKey";
 
     @Autowired
     private CloudTableStore cloudTableStore;
@@ -76,17 +90,21 @@ public class PartitionTableStore {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     public void deletePartition(String partitionId) {
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>) this.cloudTableStore.queryByKey(PartitionEntity.class,
+        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
+                this.cloudTableStore.queryByKey(PartitionEntity.class,
                 PARTITION_KEY, partitionId);
         for (PartitionEntity tableEntity : results) {
             this.cloudTableStore.deleteCloudTableEntity(PartitionEntity.class, tableEntity.getPartitionKey(), tableEntity.getRowKey());
         }
     }
 
+    @SuppressWarnings("unchecked")
     private List<PartitionEntity> queryById(String partitionId) {
         List<PartitionEntity> out = new ArrayList<>();
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>) this.cloudTableStore.queryByCompoundKey(PartitionEntity.class,
+        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
+                this.cloudTableStore.queryByCompoundKey(PartitionEntity.class,
                 ROW_KEY, ID,
                 VALUE, partitionId);
         for (PartitionEntity tableEntity : results) {
@@ -95,9 +113,11 @@ public class PartitionTableStore {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     private List<PartitionEntity> getAllByPartitionId(String partitionId) {
         List<PartitionEntity> out = new ArrayList<>();
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>) this.cloudTableStore.queryByKey(PartitionEntity.class,
+        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
+                this.cloudTableStore.queryByKey(PartitionEntity.class,
                 PARTITION_KEY, partitionId);
         for (PartitionEntity tableEntity : results) {
             tableEntity.setPartitionId(tableEntity.getPartitionKey());

@@ -40,10 +40,10 @@ public class PartitionServiceImplTest {
     @InjectMocks
     private PartitionServiceImpl sut;
 
-    private PartitionInfo partitionInfo = new PartitionInfo();
+    private final PartitionInfo partitionInfo = new PartitionInfo();
 
     private final static String PARTITION_ID = "my-tenant";
-    private Map<String, Property> properties = new HashMap<>();
+    private final Map<String, Property> properties = new HashMap<>();
 
     @Before
     public void setup() {
@@ -60,7 +60,7 @@ public class PartitionServiceImplTest {
         try {
             sut.createPartition(PARTITION_ID, this.partitionInfo);
         } catch (AppException e) {
-            assertTrue(e.getError().getCode() == 409);
+            assertEquals(409, e.getError().getCode());
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition exist"));
             assertTrue(e.getError().getMessage().equalsIgnoreCase("Partition with same id exist"));
         }
@@ -71,7 +71,7 @@ public class PartitionServiceImplTest {
         when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
 
         PartitionInfo partInfo = sut.createPartition(PARTITION_ID, this.partitionInfo);
-        assertTrue(partInfo.getProperties().size() == 3);
+        assertEquals(3, partInfo.getProperties().size());
         assertTrue(partInfo.getProperties().containsKey("id"));
         assertTrue(partInfo.getProperties().containsKey("complianceRuleSet"));
         assertTrue(partInfo.getProperties().containsKey("storageAccount"));
@@ -94,7 +94,7 @@ public class PartitionServiceImplTest {
         try {
             sut.getPartition(PARTITION_ID);
         } catch (AppException e) {
-            assertTrue(e.getError().getCode() == 404);
+            assertEquals(404, e.getError().getCode());
             assertTrue(e.getError().getReason().equalsIgnoreCase("partition not found"));
             assertTrue(e.getError().getMessage().equalsIgnoreCase("my-tenant partition not found"));
         }
@@ -114,7 +114,7 @@ public class PartitionServiceImplTest {
         try {
             this.sut.deletePartition("test-partition");
         } catch (AppException ae) {
-            assertTrue(ae.getError().getCode() == 404);
+            assertEquals(404, ae.getError().getCode());
             assertEquals("test-partition partition not found", ae.getError().getMessage());
         }
     }
