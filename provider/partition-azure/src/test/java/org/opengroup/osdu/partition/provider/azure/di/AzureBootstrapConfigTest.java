@@ -24,9 +24,9 @@ import static org.mockito.Mockito.mock;
 
 public class AzureBootstrapConfigTest {
 
-    private AzureBootstrapConfig bootstrapConfig = new AzureBootstrapConfig();
+    private final AzureBootstrapConfig bootstrapConfig = new AzureBootstrapConfig();
 
-    private SecretClient kv = mock(SecretClient.class);
+    private final SecretClient kv = mock(SecretClient.class);
 
     @Test
     public void config_returnsCorrectSecret_tblStorage() {

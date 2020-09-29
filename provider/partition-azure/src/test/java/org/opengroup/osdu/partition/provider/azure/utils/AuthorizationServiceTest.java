@@ -25,7 +25,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.impl.DefaultJws;
 import lombok.Getter;
-import net.minidev.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +62,6 @@ public class AuthorizationServiceTest {
     }
 
     private UserPrincipal createAADUserPrincipal(String claimName, String claimValue, String issuer) {
-        final JSONArray claims = new JSONArray();
         final JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 //.subject("subject")
                 .claim(claimName, claimValue)
