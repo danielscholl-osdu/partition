@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CloudTableStore {
 
-    private final String PARTITION_KEY = "PartitionKey";
-
     @Autowired
     private CloudTable cloudTableClient;
 
@@ -28,15 +26,38 @@ public class CloudTableStore {
         }
     }
 
-    public Iterable<? extends TableEntity> queryByPartitionId(final Class<? extends TableEntity> clazzType, String value) {
+    public Iterable<? extends TableEntity> queryByKey(final Class<? extends TableEntity> clazzType, final String key, final String value) {
 
         String partitionFilter = TableQuery.generateFilterCondition(
-                PARTITION_KEY,
+                key,
                 TableQuery.QueryComparisons.EQUAL,
                 value);
 
         TableQuery<? extends TableEntity> partitionQuery = TableQuery.from(clazzType)
                 .where(partitionFilter);
+
+        return this.cloudTableClient.execute(partitionQuery);
+    }
+
+    public Iterable<? extends TableEntity> queryByCompoundKey(final Class<? extends TableEntity> clazzType,
+                                                              final String rowKey, final String rowValue,
+                                                              final String valueKey, final String value) {
+
+        String rowFilter = TableQuery.generateFilterCondition(
+                rowKey,
+                TableQuery.QueryComparisons.EQUAL,
+                rowValue);
+
+        String valueFilter = TableQuery.generateFilterCondition(
+                valueKey,
+                TableQuery.QueryComparisons.EQUAL,
+                value);
+
+        String combinedFilter = TableQuery.combineFilters(rowFilter,
+                TableQuery.Operators.AND, valueFilter);
+
+        TableQuery<? extends TableEntity> partitionQuery = TableQuery.from(clazzType)
+                .where(combinedFilter);
 
         return this.cloudTableClient.execute(partitionQuery);
     }

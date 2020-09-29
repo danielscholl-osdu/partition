@@ -36,10 +36,9 @@ public class CreatePartitionDescriptor extends RestDescriptor {
         StringBuffer sb = new StringBuffer();
         sb.append("{\n");
         sb.append("  \"properties\": {")
-                .append("\"id\": \"").append(this.arg()).append("\",")
                 .append("\"elasticPassword\": {\"sensitive\":true,\"value\":\"test-password\"},")
                 .append("\"serviceBusConnection\": {\"sensitive\":true,\"value\":\"test-service-bus-connection\"},")
-                .append("\"cosmosConnection\": \"test-cosmos-connection\"")
+                .append("\"complianceRuleSet\": {\"value\":\"shared\"}")
                 .append("}\n")
                 .append("}");
         return sb.toString();
