@@ -22,15 +22,15 @@ import org.apache.http.HttpStatus;
 import org.opengroup.osdu.common.Validators;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Named;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
-@Component
-public class TableStorageClient {
+@Configuration
+public class TableStorageBootstrapConfig {
 
     private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
 
