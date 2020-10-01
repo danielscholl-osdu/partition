@@ -84,7 +84,9 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/PartitionInfo'
+            type: object
+            additionalProperties:
+              "$ref": "#/definitions/Property"
         '401':
           description: Unauthorized
         '403':
@@ -165,13 +167,26 @@ definitions:
   PartitionInfo:
     type: object
     properties:
-      labels:
+      properties:
         type: object
         description: 'Free form key value pair object for any data partition specific values'
+        additionalProperties:
+          "$ref": "#/definitions/Property"
     example:
-      id: 'common'
-      compliance-ruleset: 'shared'
-      elastic-username: 'elastic'
-      cosmos-endpoint: 'https://ado-dev-n-abc123-cosmosdb.documents.azure.com:443/'
-      elastic-endpoint: 'https://partition-dev.evd.ece-osdu.cloud.osdu-ds.com:9243'
-      storage-account-name: 'myStorageAccount'
+      properties:
+        compliance-ruleset:
+          sensitive: false
+          value: 'shared'
+        elastic-endpoint:
+          sensitive: true
+          value: 'elastic-endpoint'
+        cosmos-connection:
+          sensitive: true
+          value: 'cosmos-connection'
+  Property:
+    type: object
+    properties:
+      sensitive:
+        type: boolean
+      value:
+        type: object
