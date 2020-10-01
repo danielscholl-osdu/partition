@@ -49,7 +49,7 @@ public abstract class CreatePartitionTest extends BaseTestTemplate {
 
     @Override
     protected int expectedOkResponseCode() {
-        return HttpStatus.OK.value();
+        return HttpStatus.CREATED.value();
     }
 
     @Test

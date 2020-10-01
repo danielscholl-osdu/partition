@@ -64,7 +64,7 @@ public abstract class DeletePartitionTest extends BaseTestTemplate {
 
         ClientResponse createResponse = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
         Assert.assertEquals(this.error((String) createResponse.getEntity(String.class))
-                , HttpStatus.OK.value(), (long) createResponse.getStatus());
+                , HttpStatus.CREATED.value(), (long) createResponse.getStatus());
 
         this.descriptor = oldDescriptor;
     }
