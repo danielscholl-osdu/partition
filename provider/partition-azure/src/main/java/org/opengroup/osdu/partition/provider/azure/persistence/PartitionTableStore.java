@@ -42,8 +42,9 @@ public class PartitionTableStore {
     public void addPartition(String partitionId, PartitionInfo partitionInfo) {
 
         Map<String, Property> requestProperties = partitionInfo.getProperties();
+        requestProperties.put(ID, Property.builder().value(partitionId).build());
+
         TableBatchOperation batchOperation = new TableBatchOperation();
-        batchOperation.insertOrReplace(this.getIdPartitionEntity(partitionId));
         for (Map.Entry<String, Property> entry : requestProperties.entrySet()) {
             String key = entry.getKey();
             Property property = entry.getValue();
@@ -94,7 +95,7 @@ public class PartitionTableStore {
     public void deletePartition(String partitionId) {
         Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
                 this.cloudTableStore.queryByKey(PartitionEntity.class,
-                PARTITION_KEY, partitionId);
+                        PARTITION_KEY, partitionId);
         for (PartitionEntity tableEntity : results) {
             this.cloudTableStore.deleteCloudTableEntity(PartitionEntity.class, tableEntity.getPartitionKey(), tableEntity.getRowKey());
         }
@@ -105,8 +106,8 @@ public class PartitionTableStore {
         List<PartitionEntity> out = new ArrayList<>();
         Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
                 this.cloudTableStore.queryByCompoundKey(PartitionEntity.class,
-                ROW_KEY, ID,
-                VALUE, partitionId);
+                        ROW_KEY, ID,
+                        VALUE, partitionId);
         for (PartitionEntity tableEntity : results) {
             out.add(tableEntity);
         }
@@ -118,22 +119,13 @@ public class PartitionTableStore {
         List<PartitionEntity> out = new ArrayList<>();
         Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
                 this.cloudTableStore.queryByKey(PartitionEntity.class,
-                PARTITION_KEY, partitionId);
+                        PARTITION_KEY, partitionId);
         for (PartitionEntity tableEntity : results) {
             tableEntity.setPartitionId(tableEntity.getPartitionKey());
             tableEntity.setName(tableEntity.getRowKey());
             out.add(tableEntity);
         }
         return out;
-    }
-
-    private PartitionEntity getIdPartitionEntity(String partitionId) {
-        PartitionEntity partitionEntity = new PartitionEntity(partitionId, ID);
-        HashMap<String, EntityProperty> properties = new HashMap<>();
-        properties.put(VALUE, new EntityProperty(partitionId));
-        properties.put(SENSITIVE, new EntityProperty(false));
-        partitionEntity.setProperties(properties);
-        return partitionEntity;
     }
 
     private String getTenantSafeSecreteId(String partitionId, String secreteName) {
