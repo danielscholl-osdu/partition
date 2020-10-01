@@ -47,7 +47,7 @@ public abstract class GetPartitionByIdApitTest extends BaseTestTemplate {
 
         ClientResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
         assertEquals(this.error((String) createResponse.getEntity(String.class))
-                , HttpStatus.OK.value(), (long) createResponse.getStatus());
+                , HttpStatus.CREATED.value(), (long) createResponse.getStatus());
     }
 
     public GetPartitionByIdApitTest() {

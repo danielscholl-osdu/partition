@@ -116,10 +116,6 @@ paths:
           schema:
             $ref: '#/definitions/PartitionInfo'
       responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/PartitionInfo'
         '201':
           description: Created
         '401':
