@@ -59,8 +59,6 @@ public class PartitionApiTest {
     @Mock
     private PartitionInfo partitionInfo;
 
-
-
     @Test
     public void should_return201AndPartitionId_when_givenValidPartitionId() {
         String partitionId = "partition1";
