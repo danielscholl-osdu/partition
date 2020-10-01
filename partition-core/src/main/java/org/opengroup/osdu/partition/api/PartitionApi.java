@@ -23,8 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -38,8 +40,10 @@ public class PartitionApi {
 
     @PostMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public ResponseEntity<PartitionInfo> create(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
-        return ResponseEntity.ok(this.partitionService.createPartition(partitionId, partitionInfo));
+    public ResponseEntity create(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
+        this.partitionService.createPartition(partitionId, partitionInfo);
+        URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+        return ResponseEntity.created(partitionLocation).build();
     }
 
     @GetMapping("/{partitionId}")

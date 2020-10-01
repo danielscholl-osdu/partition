@@ -23,18 +23,27 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ServletUriComponentsBuilder.class)
 public class PartitionApiTest {
 
     private final AppException NOT_FOUND_EXCEPTION =
@@ -50,15 +59,22 @@ public class PartitionApiTest {
     @Mock
     private PartitionInfo partitionInfo;
 
+
+
     @Test
     public void should_return201AndPartitionId_when_givenValidPartitionId() {
         String partitionId = "partition1";
 
-        when(partitionService.createPartition(anyString(), any(PartitionInfo.class))).thenReturn(partitionInfo);
+        mockStatic(ServletUriComponentsBuilder.class);
 
-        ResponseEntity<PartitionInfo> result = this.sut.create(partitionId, partitionInfo);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(partitionInfo, result.getBody());
+        ServletUriComponentsBuilder builder = spy(ServletUriComponentsBuilder.class);
+
+        when(ServletUriComponentsBuilder.fromCurrentRequest()).thenReturn(builder);
+
+        ResponseEntity result = this.sut.create(partitionId, partitionInfo);
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        assertNull(result.getBody());
+        assertNotNull(result.getHeaders().get(HttpHeaders.LOCATION));
     }
 
     @Test
