@@ -4,6 +4,11 @@ variables:
   AWS_SERVICE: partition
   AWS_ENVIRONMENT: dev
 
+  AZURE_SERVICE: partition
+  AZURE_BUILD_SUBDIR: provider/partition-azure
+  AZURE_TEST_SUBDIR: testing/partition-test-azure
+
+
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -19,3 +24,6 @@ include:
 
   - project: 'osdu/platform/ci-cd-pipelines'
     file: 'cloud-providers/aws.yml'
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/azure.yml"
