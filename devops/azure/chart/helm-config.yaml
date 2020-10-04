@@ -11,4 +11,4 @@ global:
 image:
   repository: #{container-registry}#.azurecr.io
   branch: #{ENVIRONMENT_NAME}#
-  tag: #{Build.BuildId}#-#{Build.SourceVersion}#
+  tag: #{Build.SourceVersion}#
