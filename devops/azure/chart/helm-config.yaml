@@ -9,6 +9,6 @@ global:
 # ie: community.opengroup.org:5555/osdu/platform/system/storage/{{ .Values.global.branch }}/storage:latest
 #
 image:
-  repository: ${CONTAINER_REGISTRY_NAME}.azurecr.io
-  branch: ${ENVIRONMENT_NAME}
-  tag: ${BUILD_BUILDID}
+  repository: #{container-registry}#.azurecr.io
+  branch: #{ENVIRONMENT_NAME}#
+  tag: #{Build.BuildId}#-#{Build.SourceVersion}#
