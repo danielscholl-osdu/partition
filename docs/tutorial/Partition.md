@@ -49,13 +49,34 @@ A sample output is shown below.
 
 ```
 {
-    "elastic-username": "elastic",
-    "elastic-endpoint": "test-elastic-endpoint",
-    "compliance-ruleset": "shared",
-    "storage-account-name": "sampleAcc",
-    "elastic-password": "test-password",
-    "storage-account-key": "sampleKey",
-    "id": "common"
+    "compliance-ruleset": {
+        "sensitive": false,
+        "value": "shared"
+    },
+    "elastic-endpoint": {
+        "sensitive": true,
+        "value": "common-elastic-endpoint"
+    },
+    "elastic-username": {
+        "sensitive": true,
+        "value": "common-elastic-username"
+    },
+    "elastic-password": {
+        "sensitive": true,
+        "value": "common-elastic-password"
+    },
+    "cosmos-connection": {
+        "sensitive": true,
+        "value": "common-cosmos-connection"
+    },
+    "cosmos-endpoint": {
+        "sensitive": true,
+        "value": "common-cosmos-endpoint"
+    },
+    "id": {
+        "sensitive": false,
+        "value": "common"
+    }
 }
 ```
 
@@ -76,14 +97,30 @@ curl --request POST \
   --header 'Authorization: Bearer <JWT>' \
   --header 'Content-Type: application/json' \
   --data-raw '{
-      "properties":
-      {
-          "elasticPassword": "test-password",
-          "elasticUsername": "elastic",
-          "elasticEndpoint": "test-elastic-endpoint",
-          "complianceRuleSet": "shared",
-          "storageAccountKey": "test-storage-key",
-          "id": "mypartition"
+      "properties": {
+          "compliance-ruleset": {
+              "value": "shared"
+          },
+          "elastic-endpoint": {
+              "sensitive": true,
+              "value": "elastic-endpoint"
+          },
+          "elastic-username": {
+              "sensitive": true,
+              "value": "elastic-username"
+          },
+          "elastic-password": {
+              "sensitive": true,
+              "value": "elastic-password"
+          },
+          "cosmos-connection": {
+              "sensitive": true,
+              "value": "cosmos-connection"
+          },
+          "cosmos-endpoint": {
+              "sensitive": true,
+              "value": "cosmos-endpoint"
+          }
       }
   }'
 ```

@@ -15,6 +15,7 @@
 package org.opengroup.osdu.partition.api;
 
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +48,7 @@ public class PartitionApi {
 
     @GetMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public ResponseEntity<Map<String, Object>> get(@PathVariable("partitionId") String partitionId) {
+    public ResponseEntity<Map<String, Property>> get(@PathVariable("partitionId") String partitionId) {
         PartitionInfo partitionInfo = this.partitionService.getPartition(partitionId);
         return ResponseEntity.ok(partitionInfo.getProperties());
     }

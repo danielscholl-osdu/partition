@@ -19,15 +19,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartitionInfo {
-
+public class Property {
     @Builder.Default
-    Map<String, Property> properties = new HashMap<>();
+    private boolean sensitive = false;
+    private Object value;
 }

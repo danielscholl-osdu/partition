@@ -51,7 +51,7 @@ public class AuthorizationService implements IAuthorizationService {
      *
      * @return user principal
      */
-    private final Object getUserPrincipal() {
+    private Object getUserPrincipal() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getPrincipal();
     }
