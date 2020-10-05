@@ -30,12 +30,35 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
-| `client-id` | `********` | AAD client application ID | yes | output of infrastructure deployment |
-| `KEYVAULT_URI` | (non-secret) | KeyVault URI | no | variable `AZURE_KEYVAULT_URI` from GitLab variable group `Azure Target Env - {{env}}`
-| `appinsights_key` | `********` | Application Insights Instrumentation Key, required to hook AppInsights with Partition application | yes | keyvault secret: `$KEYVAULT_URI/secrets/appinsights-key` |
-| `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-tenant-id` |
+| `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
+| `KEYVAULT_URI` | (non-secret) | KeyVault URI | no | variable `AZURE_KEYVAULT_URI` from GitLab variable group `Azure Target Env - {{env}}` |
+| `aad_client_id` | `********` | AAD client application ID | yes | keyvault secret: `$KEYVAULT_URI/secrets/aad-client-id` |
+| `azure.activedirectory.AppIdUri` | `api://${azure.activedirectory.client-id}` | URI for AAD Application | no | -- |
+| `azure.activedirectory.session-stateless` | `true` | Flag run in stateless mode (needed by AAD dependency) | no | -- |
+| `appinsights_key` | `********` | Application Insights Instrumentation Key, required to hook AppInsights with Partition application | yes | keyvault secret: `$KEYVAULT_URI/secrets/appinsights-key` |
+
+
+
+**Required to run integration tests**
+
+| name | value | description | sensitive? | source |
+| ---  | ---   | ---         | ---        | ---    |
+| `PARTITION_BASE_URL` | ex `http://localhost:8080/` | The host where the service is running. NO CONTEXT! | no | -- |
+| `ENVIRONMENT` | ex `LOCAL` | The environment name | no | LOCAL/HOSTED |
+| `MY_TENANT` | ex `opendes` | OSDU tenant used for testing | no | -- |
+| `CLIENT_TENANT` | ex `common` | Client tenant used for testing | no | -- |
+| `DEFAULT_PARTITION` | ex `opendes` | Default Tenant Name used bypasses Data Preperation and Teardown of tests | no | -- |
+| `AZURE_AD_TENANT_ID` | `********` | AD tenant to authenticate users from | yes | -- |
+| `INTEGRATION_TESTER` | `********` | System identity to assume for API calls. Note: this user must have entitlements configured already | no | -- |
+| `AZURE_TESTER_SERVICEPRINCIPAL_SECRET` | `********` | Secret for `$INTEGRATION_TESTER` | yes | -- |
+| `AZURE_AD_APP_RESOURCE_ID` | `********` | AAD client application ID | yes | output of infrastructure deployment |
+| `AZURE_AD_OTHER_APP_RESOURCE_ID` | `********` | AAD client application ID for another application | yes | -- |
+| `NO_DATA_ACCESS_TESTER` | `********` | Service principal ID of a service principal without entitlements | yes | `aad-no-data-access-tester-client-id` secret from keyvault |
+| `NO_DATA_ACCESS_TESTER_SERVICEPRINCIPAL_SECRET` | `********` | Secret for `$NO_DATA_ACCESS_TESTER` | yes | `aad-no-data-access-tester-secret` secret from keyvault |
+
+
 
 ### Configure Maven
 
@@ -48,21 +71,6 @@ Java version: 1.8.0_212, vendor: AdoptOpenJDK, runtime: /usr/lib/jvm/jdk8u212-b0
 ...
 ```
 
-You will need to configure access to the remote maven repository that holds the OSDU dependencies. This file should live within `~/.m2/settings.xml`:
-```bash
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <servers>
-        <server>
-            <id>os-core</id>
-            <username>os-core</username>
-            <password>${VSTS_FEED_TOKEN}</password>
-        </server>
-    </servers>
-</settings>
-```
 
 ### Build and run the application
 
@@ -73,30 +81,30 @@ After configuring your environment as specified above, you can follow these step
 $ mvn clean install
 
 # build + test + package azure service code
-$ mvn clean package -P partition-aks
+$ (cd provider/partition-azure/ && mvn clean package)
 
 # run service
 #
 # Note: this assumes that the environment variables for running the service as outlined
 #       above are already exported in your environment.
-$ cd provider/partition-azure && mvn spring-boot:run -f pom.xml
+$ java -jar $(find provider/partition-azure/target/ -name '*-spring-boot.jar')
 ```
+
 
 ### Test the application
 
-After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/api/partition/v1/swagger-ui.html](http://localhost:8080/api/partition/v1/swagger-ui.html). If the request does not fail, you can then run the integration tests.
+After the service has started it should be accessible via a web browser by visiting [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html). If the request does not fail, you can then run the integration tests.
 
-see [instructions](../../testing/README.md) on how to run integration tests locally. In addition to common testing environment variables, the `partition-test-azure` module also needs additional environment variables, which are described below:
+```bash
+# build + install integration test core
+$ (cd testing/partition-test-core/ && mvn clean install)
 
- ```
-    INTEGRATION_TESTER (app-dev-sp-username) 
-    TESTER_SERVICEPRINCIPAL_SECRET (app-dev-sp-password)
-    NO_DATA_ACCESS_TESTER (aad-no-data-access-tester-client-id)
-    NO_DATA_ACCESS_TESTER_SERVICEPRINCIPAL_SECRET (aad-no-data-access-tester-secret)
-    AZURE_AD_TENANT_ID (azure tenant id)
-    AZURE_AD_APP_RESOURCE_ID (aad-client-id)
-    AZURE_AD_OTHER_APP_RESOURCE_ID (AD Application ID used for negative testing)
- ```
+# build + run Azure integration tests.
+#
+# Note: this assumes that the environment variables for integration tests as outlined
+#       above are already exported in your environment.
+$ (cd testing/partition-test-azure/ && mvn clean test)
+```
 
 A liveness check can also be performed at `http://localhost:8080/api/partition/v1/_ah/liveness_check`. Other apis can be found on the swagger page
 
@@ -109,7 +117,7 @@ Copyright 2017-2020, Schlumberger
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 

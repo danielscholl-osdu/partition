@@ -17,33 +17,34 @@ package org.opengroup.osdu.partition.provider.azure.di;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 public class AzureBootstrapConfigTest {
 
-    private AzureBootstrapConfig bootstrapConfig = new AzureBootstrapConfig();
-    private SecretClient kv = Mockito.mock(SecretClient.class);
+    private final AzureBootstrapConfig bootstrapConfig = new AzureBootstrapConfig();
+
+    private final SecretClient kv = mock(SecretClient.class);
 
     @Test
-    public void config_returnsCorrectSecret_cosmosKey() {
-        KeyVaultSecret secret = Mockito.mock(KeyVaultSecret.class);
-        doReturn("cosmos-key-secret").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("cosmos-primary-key");
+    public void config_returnsCorrectSecret_tblStorage() {
+        KeyVaultSecret secret = mock(KeyVaultSecret.class);
+        doReturn("tbl-storage-secret").when(secret).getValue();
+        doReturn(secret).when(kv).getSecret("tbl-storage");
 
-        String secretValue = bootstrapConfig.cosmosKey(kv);
-        assertEquals("Secret value was incorrect", "cosmos-key-secret", secretValue);
+        String secretValue = bootstrapConfig.storageAccountName(kv);
+        assertEquals("Secret value was incorrect", "tbl-storage-secret", secretValue);
     }
 
     @Test
-    public void config_returnsCorrectSecret_cosmosEndpoint() {
-        KeyVaultSecret secret = Mockito.mock(KeyVaultSecret.class);
-        doReturn("cosmos-endpoint-secret").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("cosmos-endpoint");
+    public void config_returnsCorrectSecret_tblStorageKey() {
+        KeyVaultSecret secret = mock(KeyVaultSecret.class);
+        doReturn("tbl-storage-key-secret").when(secret).getValue();
+        doReturn(secret).when(kv).getSecret("tbl-storage-key");
 
-        String secretValue = bootstrapConfig.cosmosEndpoint(kv);
-        assertEquals("Secret value was incorrect", "cosmos-endpoint-secret", secretValue);
+        String secretValue = bootstrapConfig.storageAccountKey(kv);
+        assertEquals("Secret value was incorrect", "tbl-storage-key-secret", secretValue);
     }
 }

@@ -12,22 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.opengroup.osdu.partition.model;
+package org.opengroup.osdu.partition.provider.azure.di;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
+@Configuration
+@Getter
+public class CloudTableConfiguration {
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class PartitionInfo {
-
-    @Builder.Default
-    Map<String, Property> properties = new HashMap<>();
+    @Value("${partition.cloud.table-name:PartitionInfo}")
+    private String cloudTableName;
 }

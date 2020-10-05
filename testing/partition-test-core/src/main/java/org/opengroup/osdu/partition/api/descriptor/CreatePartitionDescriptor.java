@@ -36,20 +36,9 @@ public class CreatePartitionDescriptor extends RestDescriptor {
         StringBuffer sb = new StringBuffer();
         sb.append("{\n");
         sb.append("  \"properties\": {")
-                .append("\"id\": \"").append(this.arg()).append("\",")
-                .append("\"elasticPassword\": \"test-password\",")
-                .append("\"serviceBusConnection\": \"test-service-bus-connection\",")
-                .append("\"serviceprincipalAppId\": \"test-sp\",")
-                .append("\"serviceBusNamespace\": \"test-service-bus\",")
-                .append("\"elasticUsername\": \"test-password\",")
-                .append("\"cosmosEndpoint\": \"test-comos-endpoint\",")
-                .append("\"elasticEndpoint\": \"test-elastic-endpoint\",")
-                .append("\"cosmosPrimaryKey\": \"test-cosmos-primary-key\",")
-                .append("\"groups\": \"test-groups\",")
-                .append("\"storageAccount\": \"test-storage-account\",")
-                .append("\"complianceRuleSet\": \"test-compliance-ruleSet\",")
-                .append("\"cosmosConnection\": \"test-cosmos-connection\",")
-                .append("\"storageAccountKey\": \"test-storage-accountKey\"")
+                .append("\"elasticPassword\": {\"sensitive\":true,\"value\":\"test-password\"},")
+                .append("\"serviceBusConnection\": {\"sensitive\":true,\"value\":\"test-service-bus-connection\"},")
+                .append("\"complianceRuleSet\": {\"value\":\"shared\"}")
                 .append("}\n")
                 .append("}");
         return sb.toString();

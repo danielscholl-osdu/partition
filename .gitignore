@@ -38,6 +38,7 @@ load-tests/*.pyc
 # Environment configuration
 *.env
 .sts4*
+.envrc
 
 # Intellij module setting file
 *.iml

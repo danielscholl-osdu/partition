@@ -15,7 +15,7 @@
 package org.opengroup.osdu.partition.provider.azure.di;
 
 import com.azure.security.keyvault.secrets.SecretClient;
-import org.opengroup.osdu.partition.provider.azure.utils.KeyVaultFacade;
+import org.opengroup.osdu.azure.KeyVaultFacade;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,14 +35,14 @@ public class AzureBootstrapConfig {
     }
 
     @Bean
-    @Named("COSMOS_ENDPOINT")
-    public String cosmosEndpoint(SecretClient kv) {
-        return KeyVaultFacade.getKeyVaultSecret(kv, "cosmos-endpoint");
+    @Named("TABLE_STORAGE_ACCOUNT_NAME")
+    public String storageAccountName(SecretClient kv) {
+        return KeyVaultFacade.getSecretWithValidation(kv, "tbl-storage");
     }
 
     @Bean
-    @Named("COSMOS_KEY")
-    public String cosmosKey(SecretClient kv) {
-        return KeyVaultFacade.getKeyVaultSecret(kv, "cosmos-primary-key");
+    @Named("TABLE_STORAGE_ACCOUNT_KEY")
+    public String storageAccountKey(SecretClient kv) {
+        return KeyVaultFacade.getSecretWithValidation(kv, "tbl-storage-key");
     }
 }
