@@ -8,6 +8,8 @@
     * [Get partition details](#get-partition)
     * [Create a new partition](#create-partition)
     * [Delete an existing partition](#delete-partition)
+    * [List of partitions](#list-partition)
+    
 
 ## Introduction <a name="introduction"></a>
 Partition service is responsible for creating and retrieving the partition specific properties (secret and non-secret) on behalf of other services.
@@ -140,3 +142,33 @@ curl --request DELETE \
   --header 'Content-Type: application/json'
 ```
 </details>
+
+
+### List partitions <a name="list-partition"></a>
+Consuming services can use this API to list all partitions Id.  
+```
+GET api/partition/v1/partitions
+```
+<details><summary>curl</summary>
+
+```
+curl --request GET \
+  --url 'https://<base_url>/api/partition/v1/partitions' \
+  --header 'Authorization: Bearer <JWT>' \
+  --header 'Content-Type: application/json'
+```
+</details>
+
+A sample output is shown below.
+<details><summary>Sample response</summary>
+
+```
+[
+    "default-dev",
+    "opendes"
+]
+```
+
+</details>
+
+[Back to Table of Contents](#TOC)

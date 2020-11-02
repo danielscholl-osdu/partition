@@ -23,7 +23,9 @@ import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -64,5 +66,10 @@ public class PartitionServiceImpl implements IPartitionService {
         this.tableStore.deletePartition(partitionId);
 
         return true;
+    }
+
+    @Override
+    public List<String> getAllPartitions() {
+        return this.tableStore.getAllPartitions();
     }
 }

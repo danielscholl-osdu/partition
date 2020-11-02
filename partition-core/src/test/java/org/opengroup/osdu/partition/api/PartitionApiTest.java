@@ -33,7 +33,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -111,5 +113,18 @@ public class PartitionApiTest {
             assertEquals(HttpStatus.NOT_FOUND.value(), ae.getError().getCode());
             throw ae;
         }
+    }
+
+    @Test
+    public void should_return200AndListAllPartition() {
+        List<String> partitions = new ArrayList<>();
+        partitions.add("tenant1");
+        partitions.add("tenant2");
+
+        when(partitionService.getAllPartitions()).thenReturn(partitions);
+
+        List<String> result = this.sut.list();
+        assertNotNull(result);
+        assertEquals(partitions.size(), result.size());
     }
 }

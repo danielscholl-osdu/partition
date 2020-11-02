@@ -96,6 +96,33 @@ paths:
       security:
         - JWT:
             - global
+  '/partitions':
+    get:
+      tags:
+        - partition-api
+      summary: list
+      operationId: listUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - JWT:
+            - global
     post:
       tags:
         - partition-api

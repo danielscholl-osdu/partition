@@ -129,5 +129,11 @@ public class PartitionServiceImpl implements IPartitionService {
 
         return ssmHelper.deletePartitionSecrets(partitionId);
     }
-    
+
+    @Override
+    public List<String> getAllPartitions() {
+        //TODO: Pending to be implemented
+        return null;
+    }
+
 }

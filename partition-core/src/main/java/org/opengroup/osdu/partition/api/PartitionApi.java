@@ -27,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,5 +59,12 @@ public class PartitionApi {
     public ResponseEntity delete(@PathVariable("partitionId") String partitionId) {
         this.partitionService.deletePartition(partitionId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    @PreAuthorize("@authorizationFilter.hasPermissions()")
+    public List<String> list() {
+        List<String> partitions = this.partitionService.getAllPartitions();
+        return partitions;
     }
 }
