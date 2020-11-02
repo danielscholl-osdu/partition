@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * We don't want to use cache.  Implement a dummy service to always return a cache miss.
  */
 @Service
-public class PartitionServiceDummyCacheImpl implements IPartitionServiceCache {
+public class PartitionServiceDummyCacheImpl implements IPartitionServiceCache<String, Object> {
     public PartitionServiceDummyCacheImpl() {
         
     }
@@ -43,7 +43,7 @@ public class PartitionServiceDummyCacheImpl implements IPartitionServiceCache {
     }
 
     @Override
-    public void put(String arg0, PartitionInfo arg1) {
+    public void put(String arg0, Object arg1) {
         return;
     }
 }

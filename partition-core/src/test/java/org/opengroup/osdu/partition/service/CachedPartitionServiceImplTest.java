@@ -23,6 +23,9 @@ import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +37,9 @@ public class CachedPartitionServiceImplTest {
 
     @Mock
     private IPartitionServiceCache partitionServiceCache;
+
+    @Mock
+    private IPartitionServiceCache partitionListCache;
 
     @InjectMocks
     private CachedPartitionServiceImpl cachedPartitionServiceImpl;
@@ -95,6 +101,18 @@ public class CachedPartitionServiceImplTest {
         verify(partitionServiceImpl, times(1)).deletePartition(partId);
         verify(partitionServiceCache, times(1)).delete(partId);
         verify(partitionServiceCache, times(1)).get(partId);
+    }
+
+    @Test
+    public void getAllPartitions() {
+        List<String> partitions = new ArrayList<>();
+
+        when(partitionServiceImpl.getAllPartitions()).thenReturn(partitions);
+        cachedPartitionServiceImpl.getAllPartitions();
+        String partKey = "getAllPartitions";
+        verify(partitionListCache, times(1)).get(partKey);
+        verify(partitionServiceImpl, times(1)).getAllPartitions();
+        verify(partitionListCache, times(1)).put(partKey, partitions);
     }
 
 }

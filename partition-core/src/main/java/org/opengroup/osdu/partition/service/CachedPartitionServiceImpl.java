@@ -21,9 +21,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Service
 public class CachedPartitionServiceImpl implements IPartitionService {
+
+    private static final String PARTITION_LIST_KEY = "getAllPartitions";
 
     @Inject
     @Qualifier("partitionServiceImpl")
@@ -31,6 +34,9 @@ public class CachedPartitionServiceImpl implements IPartitionService {
 
     @Inject
     private IPartitionServiceCache partitionServiceCache;
+
+    @Inject
+    private IPartitionServiceCache partitionListCache;
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
@@ -45,7 +51,7 @@ public class CachedPartitionServiceImpl implements IPartitionService {
 
     @Override
     public PartitionInfo getPartition(String partitionId) {
-        PartitionInfo pi = partitionServiceCache.get(partitionId);
+        PartitionInfo pi = (PartitionInfo) partitionServiceCache.get(partitionId);
 
         if (pi == null) {
             pi = partitionService.getPartition(partitionId);
@@ -69,5 +75,19 @@ public class CachedPartitionServiceImpl implements IPartitionService {
         }
 
         return false;
+    }
+
+    @Override
+    public List<String> getAllPartitions() {
+        List<String> partitions = (List<String>)partitionListCache.get(PARTITION_LIST_KEY);
+
+        if (partitions == null) {
+            partitions = partitionService.getAllPartitions();
+
+            if (partitions != null) {
+                partitionListCache.put(PARTITION_LIST_KEY, partitions);
+            }
+        }
+        return partitions;
     }
 }
