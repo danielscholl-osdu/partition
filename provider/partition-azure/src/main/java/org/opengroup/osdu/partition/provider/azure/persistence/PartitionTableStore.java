@@ -21,10 +21,7 @@ import org.opengroup.osdu.partition.model.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class PartitionTableStore {
@@ -130,5 +127,16 @@ public class PartitionTableStore {
 
     private String getTenantSafeSecreteId(String partitionId, String secreteName) {
         return String.format("%s-%s", partitionId, secreteName);
+    }
+
+    public List<String> getAllPartitions() {
+        List<String> partitions = new ArrayList<>();
+        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
+                this.cloudTableStore.queryByKey(PartitionEntity.class,
+                        ROW_KEY, ID);
+        for (PartitionEntity tableEntity : results) {
+            partitions.add(tableEntity.getPartitionKey());
+        }
+        return partitions;
     }
 }

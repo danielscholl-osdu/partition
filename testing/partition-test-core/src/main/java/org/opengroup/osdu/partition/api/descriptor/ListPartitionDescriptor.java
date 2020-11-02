@@ -12,10 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.opengroup.osdu.partition.provider.interfaces;
+package org.opengroup.osdu.partition.api.descriptor;
 
-import org.opengroup.osdu.core.common.cache.ICache;
-import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.util.RestDescriptor;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-public interface IPartitionServiceCache<String, V> extends ICache<String, V> {
+public class ListPartitionDescriptor extends RestDescriptor {
+
+    @Override
+    public String getPath() {
+        return "api/partition/v1/partitions";
+    }
+
+    @Override
+    public String getHttpMethod() {
+        return RequestMethod.GET.toString();
+    }
+
+    @Override
+    public String getValidBody() {
+        return "";
+    }
 }

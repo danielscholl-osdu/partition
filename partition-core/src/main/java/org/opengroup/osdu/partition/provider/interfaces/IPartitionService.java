@@ -16,6 +16,8 @@ package org.opengroup.osdu.partition.provider.interfaces;
 
 import org.opengroup.osdu.partition.model.PartitionInfo;
 
+import java.util.List;
+
 public interface IPartitionService {
 
     PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo);
@@ -23,4 +25,6 @@ public interface IPartitionService {
     PartitionInfo getPartition(String partitionId);
 
     boolean deletePartition(String partitionId);
+
+    List<String> getAllPartitions();
 }
