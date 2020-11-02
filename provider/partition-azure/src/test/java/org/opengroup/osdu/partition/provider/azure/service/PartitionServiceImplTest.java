@@ -25,11 +25,12 @@ import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -123,5 +124,14 @@ public class PartitionServiceImplTest {
     public void should_throwException_when_deletingInvalidPartition() {
 
         this.sut.deletePartition(null);
+    }
+
+    @Test
+    public void should_returnEmptyList_when_no_partitions() {
+        when(this.tableStore.getAllPartitions()).thenReturn(new ArrayList<>());
+        List<String> partitions = sut.getAllPartitions();
+        assertNotNull(partitions);
+        assertTrue(partitions.isEmpty());
+
     }
 }
