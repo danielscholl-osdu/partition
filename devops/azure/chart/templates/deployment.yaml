@@ -41,6 +41,11 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "300m"
         readinessProbe:
           httpGet:
             path: /api/partition/v1/swagger-ui.html
@@ -88,6 +93,11 @@ spec:
             secretKeyRef:
               name: active-directory
               key: application-appid
+        - name: REDIS_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: redis-configmap
+              key: partition
         - name: azure_activedirectory_AppIdUri
           value: "api://$(aad_client_id)"
         - name: azure_activedirectory_session_stateless
