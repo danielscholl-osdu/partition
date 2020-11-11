@@ -245,6 +245,7 @@ The following software have components provided under the terms of this license:
 - lettuce (from http://github.com/mp911de/lettuce/wiki)
 - mapper-extras (from https://github.com/elastic/elasticsearch)
 - micrometer-core (from https://github.com/micrometer-metrics/micrometer)
+- micrometer-registry-azure-monitor (from https://github.com/micrometer-metrics/micrometer)
 - org.apiguardian:apiguardian-api (from https://github.com/apiguardian-team/apiguardian)
 - org.jetbrains.kotlin:kotlin-stdlib-common (from https://kotlinlang.org/)
 - org.opentest4j:opentest4j (from https://github.com/ota4j-team/opentest4j)
