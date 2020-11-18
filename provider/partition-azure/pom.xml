@@ -5,7 +5,7 @@
     <artifactId>partition</artifactId>
     <groupId>org.opengroup.osdu</groupId>
     <version>1.0.0</version>
-    <relativePath>../../</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
