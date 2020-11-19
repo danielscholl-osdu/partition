@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>partition</artifactId>
     <groupId>org.opengroup.osdu</groupId>
@@ -15,14 +16,53 @@
   <packaging>jar</packaging>
 
   <properties>
+    <osdu.partition-core.version>1.0.0</osdu.partition-core.version>
+    <osdu.corelibazure.version>0.0.44</osdu.corelibazure.version>
+    <osdu.oscorecommon.version>0.3.16</osdu.oscorecommon.version>
     <azure.version>2.3.5</azure.version>
+    <junit.version>4.12</junit.version>
+    <mockito.version>2.25.0</mockito.version>
+    <powermock.version>2.0.2</powermock.version>
+    <nimbus-jose-jwt>7.9</nimbus-jose-jwt>
+    <jwks-rsa>0.12.0</jwks-rsa>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Inherit managed dependencies from core-lib-azure -->
+      <dependency>
+        <groupId>org.opengroup.osdu</groupId>
+        <artifactId>core-lib-azure</artifactId>
+        <version>${osdu.corelibazure.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
+    <!-- OSDU dependencies -->
     <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>azure-active-directory-spring-boot-starter</artifactId>
-      <version>${azure.version}</version>
+      <groupId>org.opengroup.osdu</groupId>
+      <artifactId>partition-core</artifactId>
+      <version>${osdu.partition-core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.opengroup.osdu</groupId>
+      <artifactId>core-lib-azure</artifactId>
+      <version>${osdu.corelibazure.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opengroup.osdu</groupId>
+      <artifactId>os-core-common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.elasticsearch.client</groupId>
+          <artifactId>elasticsearch-rest-client</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -42,133 +82,70 @@
       <artifactId>spring-security-oauth2-client</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.azure</groupId>
-      <artifactId>azure-security-keyvault-secrets</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-jose</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.auth0</groupId>
-      <artifactId>jwks-rsa</artifactId>
-      <version>0.12.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.azure</groupId>
-      <artifactId>azure-core-http-netty</artifactId>
-      <version>1.5.4</version>
-    </dependency>
+
+    <!-- Azure dependencies -->
     <dependency>
       <groupId>com.microsoft.azure</groupId>
-      <artifactId>msal4j</artifactId>
-      <version>0.5.0-preview</version>
+      <artifactId>azure-spring-boot-metrics-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>7.9</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.opengroup.osdu</groupId>
-      <artifactId>core-lib-azure</artifactId>
-      <version>0.0.39</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.nimbusds</groupId>
-          <artifactId>nimbus-jose-jwt</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.microsoft.azure</groupId>
-          <artifactId>msal4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.opengroup.osdu</groupId>
-          <artifactId>os-core-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.microsoft.azure</groupId>
-          <artifactId>applicationinsights-spring-boot-starter</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.microsoft.azure</groupId>
-          <artifactId>azure-spring-boot-metrics-starter</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-log4j2</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.microsoft.azure</groupId>
-          <artifactId>applicationinsights-logging-log4j2</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opengroup.osdu</groupId>
-      <artifactId>os-core-common</artifactId>
-      <version>${os-core-common.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.elasticsearch.client</groupId>
-          <artifactId>elasticsearch-rest-client</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.opengroup.osdu</groupId>
-      <artifactId>partition-core</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <!--
-             Override the spring-boot version of these dependencies to the ones
-             required by the azure-core library. This needs to be done for each
-             app that depends on this library
-             -->
-    <dependency>
-      <groupId>io.projectreactor.netty</groupId>
-      <artifactId>reactor-netty</artifactId>
-      <version>0.9.10.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>io.projectreactor</groupId>
-      <artifactId>reactor-core</artifactId>
-      <version>3.3.8.RELEASE</version>
-    </dependency>
-
     <dependency>
       <groupId>com.microsoft.azure</groupId>
       <artifactId>azure-storage</artifactId>
       <version>8.6.5</version>
     </dependency>
-
+    <dependency>
+      <groupId>com.microsoft.azure</groupId>
+      <artifactId>azure-active-directory-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.azure</groupId>
+      <artifactId>msal4j</artifactId>
+    </dependency>
+    <!-- Other dependencies -->
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>jwks-rsa</artifactId>
+      <version>${jwks-rsa}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>${nimbus-jose-jwt}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.25.0</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
-      <version>2.0.2</version>
+      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
-      <version>2.0.2</version>
+      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -191,30 +168,6 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!-- App Insights dependencies -->
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>applicationinsights-spring-boot-starter</artifactId>
-      <version>2.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>azure-spring-boot-metrics-starter</artifactId>
-      <version>2.3.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-      <version>2.3.1.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>applicationinsights-logging-log4j2</artifactId>
-      <version>2.6.1</version>
-    </dependency>
-
-
   </dependencies>
 
   <build>

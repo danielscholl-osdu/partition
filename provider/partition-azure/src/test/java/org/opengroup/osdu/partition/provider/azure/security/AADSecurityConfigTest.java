@@ -55,12 +55,6 @@ public class AADSecurityConfigTest {
     }
 
     @Test
-    @Ignore
-    // temporary disabled because it is failed on build machine, is not reproducible locally
-    // from logs: 'Server returned HTTP response code: 400 for URL: http://169.254.169.254/... '
-    // IP is Azure Instance Metadata Service, why it is reached is not clear from logs (trimmed)
-    // tried locally to set breakpoint, disable network and logout from azure, I can't reproduce
-    // don't have time for more investigations now
     public void testOptions() throws Exception {
         mockMvc.perform(options("/swagger"))
                 .andExpect(status().is2xxSuccessful());
