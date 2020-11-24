@@ -79,6 +79,32 @@ public class PartitionServiceImplTest {
     }
 
     @Test
+    public void should_ThrowNotFoundError_when_updatePartition_whenPartitionDoesnsExist() {
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
+
+        try {
+            sut.updatePartition(PARTITION_ID, this.partitionInfo);
+        } catch (AppException e) {
+            assertEquals(404, e.getError().getCode());
+            assertTrue(e.getError().getReason().equalsIgnoreCase("partition not found"));
+            assertTrue(e.getError().getMessage().equalsIgnoreCase("my-tenant partition not found"));
+        }
+    }
+
+    @Test
+    public void should_ThrowBadRequestError_when_updatePartition_whenUpdatingPartitionId() {
+        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(true);
+
+        try {
+            sut.updatePartition(PARTITION_ID, this.partitionInfo);
+        } catch (AppException e) {
+            assertEquals(400, e.getError().getCode());
+            assertTrue(e.getError().getReason().equalsIgnoreCase("can not update id"));
+            assertTrue(e.getError().getMessage().equalsIgnoreCase("the field id can not be updated"));
+        }
+    }
+
+    @Test
     public void should_returnPartition_when_partitionExists() {
         when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(properties);
 

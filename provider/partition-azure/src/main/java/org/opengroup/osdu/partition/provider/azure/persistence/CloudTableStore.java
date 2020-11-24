@@ -50,7 +50,11 @@ public class CloudTableStore {
         TableQuery<? extends TableEntity> partitionQuery = TableQuery.from(clazzType)
                 .where(partitionFilter);
 
-        return this.cloudTableClient.execute(partitionQuery);
+        try {
+            return this.cloudTableClient.execute(partitionQuery);
+        } catch (Exception e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "error getting partition", e.getMessage(), e);
+        }
     }
 
     public Iterable<? extends TableEntity> queryByCompoundKey(final Class<? extends TableEntity> clazzType,
@@ -72,7 +76,11 @@ public class CloudTableStore {
         TableQuery<? extends TableEntity> partitionQuery = TableQuery.from(clazzType)
                 .where(combinedFilter);
 
-        return this.cloudTableClient.execute(partitionQuery);
+        try {
+            return this.cloudTableClient.execute(partitionQuery);
+        } catch (Exception e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "error getting partition", e.getMessage(), e);
+        }
     }
 
     public void insertBatchEntities(TableBatchOperation batchOperation) {
