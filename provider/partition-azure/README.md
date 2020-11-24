@@ -34,12 +34,13 @@ az keyvault secret show --vault-name $KEY_VAULT_NAME --name $KEY_VAULT_SECRET_NA
 | `AZURE_CLIENT_ID` | `********` | Identity to run the service locally. This enables access to Azure resources. You only need this if running locally | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-username` |
 | `AZURE_CLIENT_SECRET` | `********` | Secret for `$AZURE_CLIENT_ID` | yes | keyvault secret: `$KEYVAULT_URI/secrets/app-dev-sp-password` |
 | `KEYVAULT_URI` | (non-secret) | KeyVault URI | no | variable `AZURE_KEYVAULT_URI` from GitLab variable group `Azure Target Env - {{env}}` |
-| `aad_client_id` | `********` | AAD client application ID | yes | keyvault secret: `$KEYVAULT_URI/secrets/aad-client-id` |
+| `azure.activedirectory.app-resource-id` | `********` | AAD client application ID | yes | output of infrastructure deployment |
+| `azure.activedirectory.client-id` | `********` | AAD client application ID | yes | keyvault secret: `$KEYVAULT_URI/secrets/aad-client-id` |
 | `azure.activedirectory.AppIdUri` | `api://${azure.activedirectory.client-id}` | URI for AAD Application | no | -- |
 | `azure.activedirectory.session-stateless` | `true` | Flag run in stateless mode (needed by AAD dependency) | no | -- |
 | `appinsights_key` | `********` | Application Insights Instrumentation Key, required to hook AppInsights with Partition application | yes | keyvault secret: `$KEYVAULT_URI/secrets/appinsights-key` |
-
-
+| `cache.provider` | (non-secret) | Cache to be used (can use `vm` for local testing) | no | - |
+| `redis.ssl.enabled` | (non-secret) | `true` if connecting to redis cache with SSL enabled, `false` otherwise | no | -
 
 **Required to run integration tests**
 

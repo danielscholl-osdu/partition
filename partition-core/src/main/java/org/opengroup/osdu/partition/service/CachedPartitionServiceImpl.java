@@ -14,6 +14,8 @@
 
 package org.opengroup.osdu.partition.service;
 
+import org.apache.http.HttpStatus;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
@@ -33,17 +35,32 @@ public class CachedPartitionServiceImpl implements IPartitionService {
     private IPartitionService partitionService;
 
     @Inject
-    private IPartitionServiceCache partitionServiceCache;
+    @Qualifier("partitionServiceCache")
+    private IPartitionServiceCache<String, PartitionInfo> partitionServiceCache;
 
     @Inject
-    private IPartitionServiceCache partitionListCache;
+    @Qualifier("partitionListCache")
+    private IPartitionServiceCache<String, List<String>> partitionListCache;
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
+        if (partitionServiceCache.get(partitionId) != null)
+            throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
         PartitionInfo pi = partitionService.createPartition(partitionId, partitionInfo);
 
         if (pi != null) {
             partitionServiceCache.put(partitionId, partitionInfo);
+        }
+
+        return pi;
+    }
+
+    @Override
+    public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+        PartitionInfo pi = partitionService.updatePartition(partitionId, partitionInfo);
+
+        if(pi != null) {
+            partitionServiceCache.put(partitionId, pi);
         }
 
         return pi;

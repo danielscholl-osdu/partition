@@ -15,7 +15,6 @@
 package org.opengroup.osdu.partition.provider.interfaces;
 
 import org.opengroup.osdu.core.common.cache.ICache;
-import org.opengroup.osdu.partition.model.PartitionInfo;
 
 public interface IPartitionServiceCache<String, V> extends ICache<String, V> {
 }
