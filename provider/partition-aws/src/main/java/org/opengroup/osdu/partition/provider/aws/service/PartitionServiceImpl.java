@@ -17,8 +17,6 @@ package org.opengroup.osdu.partition.provider.aws.service;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.partitions.model.Partition;
-
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -104,6 +102,11 @@ public class PartitionServiceImpl implements IPartitionService {
         }
         
         return partitionInfo;
+    }
+
+    @Override
+    public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+        throw new AppException(HttpStatus.SC_NOT_IMPLEMENTED, "Not implemented", "Not implemented");
     }
 
     @Override

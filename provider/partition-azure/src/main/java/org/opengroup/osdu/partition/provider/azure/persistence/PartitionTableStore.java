@@ -55,7 +55,7 @@ public class PartitionTableStore {
             properties.put(VALUE, new EntityProperty(String.valueOf(property.getValue())));
             properties.put(SENSITIVE, new EntityProperty(property.isSensitive()));
             partitionEntity.setProperties(properties);
-            batchOperation.insertOrReplace(partitionEntity);
+            batchOperation.insertOrMerge(partitionEntity);
         }
 
         this.cloudTableStore.insertBatchEntities(batchOperation);

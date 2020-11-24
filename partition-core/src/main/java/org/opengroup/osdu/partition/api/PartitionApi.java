@@ -19,6 +19,7 @@ import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,13 @@ public class PartitionApi {
         this.partitionService.createPartition(partitionId, partitionInfo);
         URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
         return ResponseEntity.created(partitionLocation).build();
+    }
+
+    @PatchMapping("/{partitionId}")
+    @PreAuthorize("@authorizationFilter.hasPermissions()")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void patch(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
+        this.partitionService.updatePartition(partitionId, partitionInfo);
     }
 
     @GetMapping("/{partitionId}")
