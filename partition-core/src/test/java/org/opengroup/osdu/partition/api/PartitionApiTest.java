@@ -78,6 +78,12 @@ public class PartitionApiTest {
     }
 
     @Test
+    public void should_return204_when_givenUpdatingValidPartitionId() {
+        String partitionId = "partition1";
+        this.sut.patch(partitionId, partitionInfo);
+    }
+
+    @Test
     public void should_return200AndPartitionProperties_when_gettingPartitionIdSuccessfully() {
         String partitionId = "partition1";
         Map<String, Property> properties = new HashMap<>();

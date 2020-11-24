@@ -45,4 +45,5 @@ public class AzureBootstrapConfig {
     public String storageAccountKey(SecretClient kv) {
         return KeyVaultFacade.getSecretWithValidation(kv, "tbl-storage-key");
     }
+
 }

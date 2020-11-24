@@ -68,7 +68,7 @@ public class PartitionTableStoreTest {
     }
 
     @Test
-    public void should_addPartiton_whenPartionProvided() {
+    public void should_addPartiton_whenPartitionProvided() {
         sut.addPartition(PARTITION_ID, new PartitionInfo());
     }
 
@@ -83,7 +83,6 @@ public class PartitionTableStoreTest {
             assertEquals("error creating partition", e.getError().getMessage());
         }
     }
-
 
     @Test
     public void should_getAll_partitions() {
