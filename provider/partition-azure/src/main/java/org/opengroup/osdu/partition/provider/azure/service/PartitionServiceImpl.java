@@ -31,6 +31,8 @@ import java.util.Map;
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
+    private final String PARTITION_NOT_FOUND = "partition not found";
+
     @Autowired
     private PartitionTableStore tableStore;
 
@@ -46,12 +48,26 @@ public class PartitionServiceImpl implements IPartitionService {
     }
 
     @Override
+    public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+        if (!this.tableStore.partitionExists(partitionId)) {
+            throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
+        }
+
+        if(partitionInfo.getProperties().containsKey("id")) {
+            throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id", "the field id can not be updated");
+        }
+
+        this.tableStore.addPartition(partitionId, partitionInfo);
+        return PartitionInfo.builder().properties(this.tableStore.getPartition(partitionId)).build();
+    }
+
+    @Override
     public PartitionInfo getPartition(String partitionId) {
         Map<String, Property> out = new HashMap<>();
         out.putAll(this.tableStore.getPartition(partitionId));
 
         if (out.isEmpty()) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition not found", String.format("%s partition not found", partitionId));
+            throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
         }
 
         return PartitionInfo.builder().properties(out).build();
@@ -60,7 +76,7 @@ public class PartitionServiceImpl implements IPartitionService {
     @Override
     public boolean deletePartition(String partitionId) {
         if (!this.tableStore.partitionExists(partitionId)) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition not found", String.format("%s partition not found", partitionId));
+            throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
         }
 
         this.tableStore.deletePartition(partitionId);

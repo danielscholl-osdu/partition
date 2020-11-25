@@ -22,6 +22,8 @@ public interface IPartitionService {
 
     PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo);
 
+    PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo);
+
     PartitionInfo getPartition(String partitionId);
 
     boolean deletePartition(String partitionId);

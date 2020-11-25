@@ -7,6 +7,7 @@
 * [APIs](#apis)
     * [Get partition details](#get-partition)
     * [Create a new partition](#create-partition)
+    * [Update an existing partition](#update-partition)
     * [Delete an existing partition](#delete-partition)
     * [List of partitions](#list-partition)
     
@@ -122,6 +123,34 @@ curl --request POST \
           "cosmos-endpoint": {
               "sensitive": true,
               "value": "cosmos-endpoint"
+          }
+      }
+  }'
+```
+</details>
+
+[Back to Table of Contents](#TOC)
+
+### Update an existing partition<a name="update-partition"></a>
+This api is used to update the properties of an existing partition. With this api, we can modify existing properties or add new ones. Deletion of properties can not be achieved, we'll have to delete the partition and re-create it for the same effect.
+```
+PATCH api/partition/v1/partitions/{partitionId}
+```
+<details><summary>curl</summary>
+
+```
+curl --request PATCH \
+  --url 'https://<base_url>/api/partition/v1/partitions/mypartition' \
+  --header 'Authorization: Bearer <JWT>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+      "properties": {
+          "compliance-ruleset": {
+              "value": "shared-update-value"
+          },
+          "new-key": {
+              "sensitive": true,
+              "value": "new-value"
           }
       }
   }'
