@@ -18,6 +18,9 @@ package org.opengroup.osdu.partition.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -127,6 +130,28 @@ public abstract class TestUtils {
 			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 		} catch (Exception e) {
 		}
+		allowMethods("PATCH");
 		return Client.create();
+	}
+
+	private static void allowMethods(String... methods) {
+		try {
+			Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
+
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
+
+			methodsField.setAccessible(true);
+
+			String[] oldMethods = (String[]) methodsField.get(null);
+			Set<String> methodsSet = new LinkedHashSet<>(Arrays.asList(oldMethods));
+			methodsSet.addAll(Arrays.asList(methods));
+			String[] newMethods = methodsSet.toArray(new String[0]);
+
+			methodsField.set(null/*static field*/, newMethods);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }

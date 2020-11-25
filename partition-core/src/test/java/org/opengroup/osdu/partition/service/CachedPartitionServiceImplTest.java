@@ -36,10 +36,10 @@ public class CachedPartitionServiceImplTest {
     private IPartitionService partitionServiceImpl;
 
     @Mock
-    private IPartitionServiceCache partitionServiceCache;
+    private IPartitionServiceCache<String, PartitionInfo> partitionServiceCache;
 
     @Mock
-    private IPartitionServiceCache partitionListCache;
+    private IPartitionServiceCache<String, List<String>> partitionListCache;
 
     @InjectMocks
     private CachedPartitionServiceImpl cachedPartitionServiceImpl;
@@ -64,11 +64,41 @@ public class CachedPartitionServiceImplTest {
         String partId = "key";
         PartitionInfo newPi = PartitionInfo.builder().build();
 
+        when(partitionServiceCache.get(partId)).thenReturn(null);
         when(partitionServiceImpl.createPartition(partId, newPi)).thenReturn(null);
 
         cachedPartitionServiceImpl.createPartition(partId, newPi);
 
         verify(partitionServiceImpl, times(1)).createPartition(partId, newPi);
+        verify(partitionServiceCache, times(0)).put(any(), any());
+        verify(partitionServiceCache, times(1)).get(any());
+    }
+
+    @Test
+    public void updatePartitionSucceed() {
+        String partId = "key";
+
+        PartitionInfo newPi = PartitionInfo.builder().build();
+        PartitionInfo retPi = PartitionInfo.builder().build();
+
+        when(partitionServiceImpl.updatePartition(partId, newPi)).thenReturn(retPi);
+
+        cachedPartitionServiceImpl.updatePartition(partId, newPi);
+
+        verify(partitionServiceImpl, times(1)).updatePartition(partId, newPi);
+        verify(partitionServiceCache, times(1)).put(partId, retPi);
+    }
+
+    @Test
+    public void updatePartitionFailed() {
+        String partId = "key";
+        PartitionInfo newPi = PartitionInfo.builder().build();
+
+        when(partitionServiceImpl.updatePartition(partId, newPi)).thenReturn(null);
+
+        cachedPartitionServiceImpl.updatePartition(partId, newPi);
+
+        verify(partitionServiceImpl, times(1)).updatePartition(partId, newPi);
         verify(partitionServiceCache, times(0)).put(any(), any());
         verify(partitionServiceCache, times(0)).get(any());
     }
