@@ -16,14 +16,17 @@ package org.opengroup.osdu.partition.provider.aws.service;
 
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 /***
  * We don't want to use cache.  Implement a dummy service to always return a cache miss.
  */
 @Service
-public class PartitionServiceDummyCacheImpl implements IPartitionServiceCache<String, Object> {
-    public PartitionServiceDummyCacheImpl() {
+@Qualifier("partitionListCache")
+public class PartitionServiceDummyListCacheImpl implements IPartitionServiceCache<String, List<String>> {
+    public PartitionServiceDummyListCacheImpl() {
         
     }
 
@@ -38,12 +41,12 @@ public class PartitionServiceDummyCacheImpl implements IPartitionServiceCache<St
     }
 
     @Override
-    public PartitionInfo get(String arg0) {
+    public List<String> get(String arg0) {
         return null;
     }
 
     @Override
-    public void put(String arg0, Object arg1) {
+    public void put(String arg0, List<String> arg1) {
         return;
     }
 }
