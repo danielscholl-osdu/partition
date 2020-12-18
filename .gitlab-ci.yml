@@ -7,6 +7,9 @@ variables:
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
   AZURE_TEST_SUBDIR: testing/partition-test-azure
+  
+  IBM_BUILD_SUBDIR: provider/partition-ibm
+  IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
 
 
 include:
@@ -27,3 +30,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure.yml"
+    
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/ibm.yml"

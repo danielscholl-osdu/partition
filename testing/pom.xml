@@ -35,6 +35,7 @@
 		<module>partition-test-core</module>
 		<module>partition-test-azure</module>
 		<module>partition-test-aws</module>
+		<module>partition-test-ibm</module>
 	</modules>
 
 	<repositories>
