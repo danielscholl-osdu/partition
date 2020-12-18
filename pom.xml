@@ -92,6 +92,7 @@
     <module>partition-core</module>
     <module>provider/partition-azure</module>
     <module>provider/partition-aws</module>
+    <module>provider/partition-ibm</module>
   </modules>
 
   <profiles>
@@ -132,6 +133,18 @@
       </activation>
       <modules>
         <module>provider/partition-aws</module>
+      </modules>
+    </profile>
+     <profile>
+      <id>partition-ibm</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>partition-ibm</value>
+        </property>
+      </activation>
+      <modules>
+        <module>provider/partition-ibm</module>
       </modules>
     </profile>
     <profile>
