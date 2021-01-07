@@ -50,7 +50,7 @@ public class CachedPartitionServiceImpl implements IPartitionService {
 
         if (pi != null) {
             partitionServiceCache.put(partitionId, partitionInfo);
-            partitionListCache.clearAll();
+            partitionListCache.get(PARTITION_LIST_KEY).add(partitionId);
         }
 
         return pi;
@@ -87,7 +87,7 @@ public class CachedPartitionServiceImpl implements IPartitionService {
         if (partitionService.deletePartition(partitionId)) {
             if (partitionServiceCache.get(partitionId) != null) {
                 partitionServiceCache.delete(partitionId);
-                partitionListCache.clearAll();
+                partitionListCache.get(PARTITION_LIST_KEY).remove(partitionId);
             }
 
             return true;
