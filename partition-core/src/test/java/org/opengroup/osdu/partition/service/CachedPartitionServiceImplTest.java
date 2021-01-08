@@ -44,25 +44,19 @@ public class CachedPartitionServiceImplTest {
     @InjectMocks
     private CachedPartitionServiceImpl cachedPartitionServiceImpl;
 
-    private static final String PARTITION_LIST_KEY = "getAllPartitions";
-
     @Test
     public void createPartitionSucceed() {
         String partId = "key";
-
-        List<String> partitions = new ArrayList<>();
 
         PartitionInfo newPi = PartitionInfo.builder().build();
         PartitionInfo retPi = PartitionInfo.builder().build();
 
         when(partitionServiceImpl.createPartition(partId, newPi)).thenReturn(retPi);
-        when(partitionListCache.get(PARTITION_LIST_KEY)).thenReturn(partitions);
-
         cachedPartitionServiceImpl.createPartition(partId, newPi);
 
         verify(partitionServiceImpl, times(1)).createPartition(partId, newPi);
         verify(partitionServiceCache, times(1)).put(partId, retPi);
-        verify(partitionListCache, times(1)).get(PARTITION_LIST_KEY);
+        verify(partitionListCache, times(1)).clearAll();
     }
 
     @Test
@@ -77,7 +71,7 @@ public class CachedPartitionServiceImplTest {
 
         verify(partitionServiceImpl, times(1)).createPartition(partId, newPi);
         verify(partitionServiceCache, times(0)).put(any(), any());
-        verify(partitionListCache, times(0)).get(PARTITION_LIST_KEY);
+        verify(partitionListCache, times(0)).clearAll();
         verify(partitionServiceCache, times(1)).get(any());
     }
 
@@ -130,18 +124,15 @@ public class CachedPartitionServiceImplTest {
         String partId = "key";
         PartitionInfo retPi = PartitionInfo.builder().build();
 
-        List<String> partitions = new ArrayList<>();
-
         when(partitionServiceImpl.deletePartition(partId)).thenReturn(true);
         when(partitionServiceCache.get(partId)).thenReturn(retPi);
-        when(partitionListCache.get(PARTITION_LIST_KEY)).thenReturn(partitions);
 
         cachedPartitionServiceImpl.deletePartition(partId);
 
         verify(partitionServiceImpl, times(1)).deletePartition(partId);
         verify(partitionServiceCache, times(1)).delete(partId);
         verify(partitionServiceCache, times(1)).get(partId);
-        verify(partitionListCache, times(1)).get(PARTITION_LIST_KEY);
+        verify(partitionListCache, times(1)).clearAll();
     }
 
     @Test
@@ -150,9 +141,10 @@ public class CachedPartitionServiceImplTest {
 
         when(partitionServiceImpl.getAllPartitions()).thenReturn(partitions);
         cachedPartitionServiceImpl.getAllPartitions();
-        verify(partitionListCache, times(1)).get(PARTITION_LIST_KEY);
+        String partKey = "getAllPartitions";
+        verify(partitionListCache, times(1)).get(partKey);
         verify(partitionServiceImpl, times(1)).getAllPartitions();
-        verify(partitionListCache, times(1)).put(PARTITION_LIST_KEY, partitions);
+        verify(partitionListCache, times(1)).put(partKey, partitions);
     }
 
 }
