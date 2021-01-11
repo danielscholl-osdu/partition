@@ -29,7 +29,7 @@ public interface PartitionPropertyEntityRepository extends
 
   List<PartitionPropertyEntity> findByPartitionId(String partitionId);
 
-  PartitionPropertyEntity findByName(String partitionId, String name);
+  PartitionPropertyEntity findByPartitionIdAndName(String partitionId, String name);
 
   void deleteByPartitionId(String partitionId);
 

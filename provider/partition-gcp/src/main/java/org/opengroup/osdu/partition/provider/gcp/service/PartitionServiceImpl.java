@@ -17,9 +17,11 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -34,6 +36,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PartitionServiceImpl implements IPartitionService {
 
+  private static final String UNKNOWN_ERROR_REASON = "unknown error";
+
   private final PartitionPropertyEntityRepository partitionPropertyEntityRepository;
 
   @Override
@@ -44,10 +48,10 @@ public class PartitionServiceImpl implements IPartitionService {
             entry.getKey(), entry.getValue());
         partitionPropertyEntityRepository.save(partitionPropertyEntity);
       }
-      return partitionInfo;
+      return getPartition(partitionId);
 
     } else {
-      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error",
+      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
           "Partition already exists.");
     }
 
@@ -56,13 +60,13 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
     if (!partitionExists(partitionId)) {
-      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error",
+      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
           "An attempt to update not existing partition.");
 
     } else {
       for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
-        PartitionPropertyEntity entity = partitionPropertyEntityRepository.findByName(partitionId,
-            entry.getKey());
+        PartitionPropertyEntity entity = partitionPropertyEntityRepository
+            .findByPartitionIdAndName(partitionId, entry.getKey());
         if (entity != null) {
           entity.setSensitive(entry.getValue().isSensitive());
           entity.setValue(entry.getValue().getValue());
@@ -70,11 +74,10 @@ public class PartitionServiceImpl implements IPartitionService {
         } else {
           entity = new PartitionPropertyEntity(partitionId, entry.getKey(), entry.getValue());
         }
-        //ToDo updating doesn't work
         partitionPropertyEntityRepository.save(entity);
       }
     }
-    return partitionInfo;
+    return getPartition(partitionId);
   }
 
   @Override
@@ -93,7 +96,7 @@ public class PartitionServiceImpl implements IPartitionService {
       return partitionInfo;
 
     } else {
-      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error",
+      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
           "Partition does not exist.");
     }
 
@@ -106,7 +109,7 @@ public class PartitionServiceImpl implements IPartitionService {
       return true;
 
     } else {
-      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error",
+      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
           "An attempt to delete not existing partition.");
     }
 
@@ -114,7 +117,13 @@ public class PartitionServiceImpl implements IPartitionService {
 
   @Override
   public List<String> getAllPartitions() {
-    return null;
+    Iterable<PartitionPropertyEntity> entities = partitionPropertyEntityRepository.findAll();
+    List<String> allPartitions = new ArrayList<>();
+    entities.forEach(
+        partitionPropertyEntity -> allPartitions.add(partitionPropertyEntity.getPartitionId()));
+    List<String> distinctPartitions = allPartitions.stream().distinct()
+        .collect(Collectors.toList());
+    return distinctPartitions.isEmpty() ? null : distinctPartitions;
   }
 
   private boolean partitionExists(String partitionId) {
