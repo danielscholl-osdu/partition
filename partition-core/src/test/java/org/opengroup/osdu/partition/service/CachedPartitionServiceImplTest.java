@@ -52,11 +52,11 @@ public class CachedPartitionServiceImplTest {
         PartitionInfo retPi = PartitionInfo.builder().build();
 
         when(partitionServiceImpl.createPartition(partId, newPi)).thenReturn(retPi);
-
         cachedPartitionServiceImpl.createPartition(partId, newPi);
 
         verify(partitionServiceImpl, times(1)).createPartition(partId, newPi);
         verify(partitionServiceCache, times(1)).put(partId, retPi);
+        verify(partitionListCache, times(1)).clearAll();
     }
 
     @Test
@@ -71,6 +71,7 @@ public class CachedPartitionServiceImplTest {
 
         verify(partitionServiceImpl, times(1)).createPartition(partId, newPi);
         verify(partitionServiceCache, times(0)).put(any(), any());
+        verify(partitionListCache, times(0)).clearAll();
         verify(partitionServiceCache, times(1)).get(any());
     }
 
@@ -131,6 +132,7 @@ public class CachedPartitionServiceImplTest {
         verify(partitionServiceImpl, times(1)).deletePartition(partId);
         verify(partitionServiceCache, times(1)).delete(partId);
         verify(partitionServiceCache, times(1)).get(partId);
+        verify(partitionListCache, times(1)).clearAll();
     }
 
     @Test
