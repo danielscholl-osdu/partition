@@ -20,17 +20,14 @@ package org.opengroup.osdu.partition.provider.gcp.security;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
-  @Value("${AUTHORIZE_API}")
   private String authorizeApi;
 
-  @Value("${AUTHORIZE_API_KEY:}")
   private String authorizeApiKey;
 
   @Override
