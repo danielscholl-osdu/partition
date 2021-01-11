@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.inject.Named;
+import java.util.List;
 
 @Configuration
 public class RedisConfig {
@@ -44,6 +45,11 @@ public class RedisConfig {
             return new RedisCache<>(host, port, password, expiration, database, String.class, PartitionInfo.class);
         }
 
+        @Bean
+        public RedisCache<String, List<String>> partitionListCache(@Named("REDIS_HOST") String host, @Named("REDIS_PASSWORD") String password) {
+            return new RedisCache(host, port, password, expiration, database, String.class, List.class);
+        }
+
     }
 
     @Configuration
@@ -62,6 +68,11 @@ public class RedisConfig {
         @Bean
         public RedisCache<String, PartitionInfo> partitionServiceCache(@Named("REDIS_HOST") String host) {
             return new RedisCache<>(host, port, expiration, database, String.class, PartitionInfo.class);
+        }
+
+        @Bean
+        public RedisCache<String, List<String>> partitionListCache(@Named("REDIS_HOST") String host) {
+            return new RedisCache(host, port, expiration, database, String.class, List.class);
         }
 
     }
