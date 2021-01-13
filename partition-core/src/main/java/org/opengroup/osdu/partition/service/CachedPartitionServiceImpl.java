@@ -87,9 +87,8 @@ public class CachedPartitionServiceImpl implements IPartitionService {
         if (partitionService.deletePartition(partitionId)) {
             if (partitionServiceCache.get(partitionId) != null) {
                 partitionServiceCache.delete(partitionId);
-                partitionListCache.clearAll();
             }
-
+            partitionListCache.clearAll();
             return true;
         }
 
