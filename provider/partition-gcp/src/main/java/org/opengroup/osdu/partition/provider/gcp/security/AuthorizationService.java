@@ -1,6 +1,6 @@
 /*
-  Copyright 2020 Google LLC
-  Copyright 2020 EPAM Systems, Inc
+  Copyright 2002-2021 Google LLC
+  Copyright 2002-2021 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,12 +48,11 @@ public class AuthorizationService implements IAuthorizationService {
       throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Authentication Failure",
           e.getMessage(), e);
     }
-
   }
 
   private boolean hasRole(String requiredRole) {
-    String user = entitlementsAndCacheService.authorize(headers, requiredRole);
-    headers.put(DpsHeaders.USER_EMAIL, user);
+    String user = this.entitlementsAndCacheService.authorize(headers, requiredRole);
+    this.headers.put(DpsHeaders.USER_EMAIL, user);
     return true;
   }
 }

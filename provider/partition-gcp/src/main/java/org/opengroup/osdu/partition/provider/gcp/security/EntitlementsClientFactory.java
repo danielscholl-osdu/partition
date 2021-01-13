@@ -1,6 +1,6 @@
 /*
-  Copyright 2020 Google LLC
-  Copyright 2020 EPAM Systems, Inc
+  Copyright 2002-2021 Google LLC
+  Copyright 2002-2021 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,26 +17,26 @@
 
 package org.opengroup.osdu.partition.provider.gcp.security;
 
+import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
+import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
-  private String authorizeApi;
-
-  private String authorizeApiKey;
+  private final PropertiesConfiguration properties;
 
   @Override
   protected IEntitlementsFactory createInstance() throws Exception {
 
     return new EntitlementsFactory(EntitlementsAPIConfig
         .builder()
-        .rootUrl(authorizeApi)
-        .apiKey(authorizeApiKey)
+        .rootUrl(properties.getAuthorizeApi())
         .build());
   }
 

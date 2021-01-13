@@ -1,6 +1,6 @@
 /*
-  Copyright 2020 Google LLC
-  Copyright 2020 EPAM Systems, Inc
+  Copyright 2002-2021 Google LLC
+  Copyright 2002-2021 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,18 +19,22 @@ package org.opengroup.osdu.partition.provider.gcp.repository;
 
 import com.google.cloud.datastore.Key;
 import java.util.List;
+import java.util.Optional;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.springframework.cloud.gcp.data.datastore.repository.DatastoreRepository;
+import org.springframework.cloud.gcp.data.datastore.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PartitionPropertyEntityRepository extends
     DatastoreRepository<PartitionPropertyEntity, Key> {
 
-  List<PartitionPropertyEntity> findByPartitionId(String partitionId);
+  Optional<List<PartitionPropertyEntity>> findByPartitionId(String partitionId);
 
   PartitionPropertyEntity findByPartitionIdAndName(String partitionId, String name);
 
   void deleteByPartitionId(String partitionId);
 
+  @Query("SELECT DISTINCT partition_id FROM PartitionProperty")
+  List<String> getAllPartitions();
 }
