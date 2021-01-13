@@ -1,6 +1,6 @@
 /*
-  Copyright 2020 Google LLC
-  Copyright 2020 EPAM Systems, Inc
+  Copyright 2002-2021 Google LLC
+  Copyright 2002-2021 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,27 +18,30 @@
 package org.opengroup.osdu.partition.provider.gcp.cache;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.core.common.cache.VmCache;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class VmCacheConfiguration {
 
-  private int cacheExpiration;
-
-  private int cacheMaxSize;
+  private final PropertiesConfiguration properties;
 
   @Bean(name = "partitionListCache")
   public VmCache<String, List<String>> partitionListCache() {
-    return new VmCache<>(cacheExpiration * 60, cacheMaxSize);
+    return new VmCache<>(this.properties.getCacheExpiration() * 60,
+        this.properties.getCacheMaxSize());
   }
 
   @ConfigurationProperties
   @Bean(name = "partitionServiceCache")
   public VmCache<String, PartitionInfo> partitionServiceCache() {
-    return new VmCache<>(cacheExpiration * 60, cacheMaxSize);
+    return new VmCache<>(this.properties.getCacheExpiration() * 60,
+        this.properties.getCacheMaxSize());
   }
 }

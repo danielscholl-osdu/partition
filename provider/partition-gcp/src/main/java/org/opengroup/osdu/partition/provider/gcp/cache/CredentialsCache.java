@@ -15,22 +15,16 @@
   limitations under the License.
  */
 
-package org.opengroup.osdu.partition.provider.gcp.config;
+package org.opengroup.osdu.partition.provider.gcp.cache;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.opengroup.osdu.core.common.cache.VmCache;
+import org.opengroup.osdu.core.gcp.multitenancy.credentials.GcsCredential;
+import org.springframework.stereotype.Component;
 
-@Configuration
-@ConfigurationProperties
-@Getter
-@Setter
-public class PropertiesConfiguration {
+@Component
+public class CredentialsCache extends VmCache<String, GcsCredential> {
 
-  private String authorizeApi;
-
-  private int cacheExpiration;
-
-  private int cacheMaxSize;
+  public CredentialsCache() {
+    super(30, 1000);
+  }
 }

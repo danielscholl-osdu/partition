@@ -1,6 +1,6 @@
 /*
-  Copyright 2020 Google LLC
-  Copyright 2020 EPAM Systems, Inc
+  Copyright 2002-2021 Google LLC
+  Copyright 2002-2021 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -44,10 +44,15 @@ public class PartitionPropertyEntity {
 
   private Object value;
 
+
   public PartitionPropertyEntity(String partitionId, String name, Property property) {
     this.partitionId = partitionId;
     this.name = name;
     this.sensitive = property.isSensitive();
     this.value = property.getValue();
+  }
+
+  public boolean isSensitive() {
+    return this.sensitive;
   }
 }
