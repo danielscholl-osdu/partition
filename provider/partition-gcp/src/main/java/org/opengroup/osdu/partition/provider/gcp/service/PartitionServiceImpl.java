@@ -18,6 +18,7 @@
 package org.opengroup.osdu.partition.provider.gcp.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,16 +49,18 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
     if (this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
-      throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
+      throw new AppException(HttpStatus.SC_CONFLICT, UNKNOWN_ERROR_REASON,
           "Partition already exists.");
     }
+    List<PartitionPropertyEntity> partitionProperties = new ArrayList<>();
+    for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
+      PartitionPropertyEntity entity = new PartitionPropertyEntity(partitionId,
+          entry.getKey(), entry.getValue());
+      encryptPartitionPropertyEntityIfNeeded(entity);
+      partitionProperties.add(entity);
+    }
     this.partitionPropertyEntityRepository.performTransaction(repository -> {
-      for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
-        PartitionPropertyEntity entity = new PartitionPropertyEntity(partitionId,
-            entry.getKey(), entry.getValue());
-        encryptPartitionPropertyEntityIfNeeded(entity);
-        repository.save(entity);
-      }
+      repository.saveAll(partitionProperties);
       return true;
     });
     return getEncryptedPartition(partitionId);
@@ -99,6 +102,7 @@ public class PartitionServiceImpl implements IPartitionService {
         .orElseThrow(
             () -> new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
                 "An attempt to update not existing partition."));
+    List<PartitionPropertyEntity> partitionProperties = new ArrayList<>();
     for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
       PartitionPropertyEntity entity = this.partitionPropertyEntityRepository
           .findByPartitionIdAndName(partitionId, entry.getKey());
@@ -109,8 +113,9 @@ public class PartitionServiceImpl implements IPartitionService {
         entity = new PartitionPropertyEntity(partitionId, entry.getKey(), entry.getValue());
       }
       encryptPartitionPropertyEntityIfNeeded(entity);
-      this.partitionPropertyEntityRepository.save(entity);
+      partitionProperties.add(entity);
     }
+    this.partitionPropertyEntityRepository.saveAll(partitionProperties);
     return getEncryptedPartition(partitionId);
   }
 
