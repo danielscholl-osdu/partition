@@ -36,7 +36,8 @@
 		<module>partition-test-azure</module>
 		<module>partition-test-aws</module>
 		<module>partition-test-ibm</module>
-	</modules>
+    <module>partition-test-gcp</module>
+  </modules>
 
 	<repositories>
 		<repository>
