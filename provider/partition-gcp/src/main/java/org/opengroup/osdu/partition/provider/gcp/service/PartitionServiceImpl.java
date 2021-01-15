@@ -98,10 +98,15 @@ public class PartitionServiceImpl implements IPartitionService {
   @Transactional
   @Override
   public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+    if(partitionInfo.getProperties().containsKey("id")) {
+      throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id", "the field id can not be updated");
+    }
+
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
           "An attempt to update not existing partition.");
     }
+
     List<PartitionPropertyEntity> partitionProperties = new ArrayList<>();
     for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
       PartitionPropertyEntity entity = this.partitionPropertyEntityRepository
