@@ -36,12 +36,12 @@ public class AuthorizationService implements IAuthorizationService {
 
   private final DpsHeaders headers;
 
-  private final org.opengroup.osdu.core.common.provider.interfaces.IAuthorizationService authorizationService;
+  private final org.opengroup.osdu.core.common.provider.interfaces.IAuthorizationService authorizationServiceImpl;
 
   @Override
   public boolean isDomainAdminServiceAccount() {
     try {
-      authorizationService.authorizeAny(headers, PARTITION_ADMIN_ROLE);
+      authorizationServiceImpl.authorizeAny(headers, PARTITION_ADMIN_ROLE);
     } catch (AppException e) {
       throw e;
     } catch (Exception e) {
