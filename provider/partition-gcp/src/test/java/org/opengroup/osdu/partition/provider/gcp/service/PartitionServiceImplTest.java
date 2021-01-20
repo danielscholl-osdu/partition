@@ -109,8 +109,6 @@ public class PartitionServiceImplTest {
         .thenReturn(this.partitionPropertyEntityList);
     when(this.partitionPropertyEntityRepository.findByPartitionIdAndName(PARTITION_ID, NAME))
         .thenReturn(null);
-    when(this.partitionPropertyEntityRepository.save(this.partitionPropertyEntity))
-        .thenReturn(this.partitionPropertyEntity);
 
     PartitionInfo actualPartitionInfo = this.partitionServiceImpl
         .updatePartition(PARTITION_ID, this.expectedPartitionInfo);
