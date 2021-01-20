@@ -59,7 +59,6 @@ $ cat ~/.m2/settings.xml
     </servers>
 </settings>
 ```
-
 * Update the Google cloud SDK to the latest version:
 
 ```bash
@@ -80,15 +79,10 @@ gcloud auth application-default login
 * Navigate to partition service's root folder and run:
 
 ```bash
-mvn jetty:run
-## Testing
-* Navigate to partition service's root folder and run:
- 
-```bash
 mvn clean install   
 ```
 
-* If you wish to see the coverage report then go to testing/target/site/jacoco-aggregate and open index.html
+* If you wish to see the coverage report then go to target/site/jacoco/index.html and open index.html
 
 * If you wish to build the project without running tests
 
@@ -139,7 +133,7 @@ $ (cd testing/partition-test-gcp/ && mvn clean test)
 ```
 
 ## Deployment
-Storage Service is compatible with App Engine Flexible Environment and Cloud Run.
+Partition Service is compatible with App Engine Flexible Environment and Cloud Run.
 
 * To deploy into Cloud run, please, use this documentation:
   https://cloud.google.com/run/docs/quickstarts/build-and-deploy
