@@ -63,7 +63,7 @@ public class PartitionServiceImpl implements IPartitionService {
       repository.saveAll(partitionProperties);
       return true;
     });
-    return getEncryptedPartition(partitionId);
+    return getPartition(partitionId);
   }
 
   private void encryptPartitionPropertyEntityIfNeeded(PartitionPropertyEntity entity) {
@@ -78,28 +78,11 @@ public class PartitionServiceImpl implements IPartitionService {
     }
   }
 
-  private PartitionInfo getEncryptedPartition(String partitionId) {
-    List<PartitionPropertyEntity> partitionPropertiesList = this.partitionPropertyEntityRepository
-        .findByPartitionId(partitionId)
-        .orElseThrow(
-            () -> new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
-                "Partition does not exist."));
-    PartitionInfo partitionInfo = new PartitionInfo();
-    Map<String, Property> partitionInfoProperties = new HashMap<>();
-    for (PartitionPropertyEntity entity : partitionPropertiesList) {
-      partitionInfoProperties
-          .put(entity.getName(), new Property(entity.getSensitive(), entity.getValue()));
-    }
-    partitionInfo.setProperties(partitionInfoProperties);
-
-    return partitionInfo;
-  }
-
-  @Transactional
   @Override
   public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
-    if(partitionInfo.getProperties().containsKey("id")) {
-      throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id", "the field id can not be updated");
+    if (partitionInfo.getProperties().containsKey("id")) {
+      throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id",
+          "the field id can not be updated");
     }
 
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
@@ -120,17 +103,36 @@ public class PartitionServiceImpl implements IPartitionService {
       encryptPartitionPropertyEntityIfNeeded(entity);
       partitionProperties.add(entity);
     }
-    this.partitionPropertyEntityRepository.saveAll(partitionProperties);
-    return getEncryptedPartition(partitionId);
+    this.partitionPropertyEntityRepository.performTransaction(repository -> {
+      repository.saveAll(partitionProperties);
+      return true;
+    });
+    return getPartition(partitionId);
   }
 
-  @Transactional
   @Override
   public PartitionInfo getPartition(String partitionId) {
     PartitionInfo partitionInfo = getEncryptedPartition(partitionId);
     for (Property property : partitionInfo.getProperties().values()) {
       decryptPartitionPropertyIfNeeded(property);
     }
+    return partitionInfo;
+  }
+
+  private PartitionInfo getEncryptedPartition(String partitionId) {
+    List<PartitionPropertyEntity> partitionPropertiesList = this.partitionPropertyEntityRepository
+        .findByPartitionId(partitionId)
+        .orElseThrow(
+            () -> new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
+                "Partition does not exist."));
+    PartitionInfo partitionInfo = new PartitionInfo();
+    Map<String, Property> partitionInfoProperties = new HashMap<>();
+    for (PartitionPropertyEntity entity : partitionPropertiesList) {
+      partitionInfoProperties
+          .put(entity.getName(), new Property(entity.getSensitive(), entity.getValue()));
+    }
+    partitionInfo.setProperties(partitionInfoProperties);
+
     return partitionInfo;
   }
 
