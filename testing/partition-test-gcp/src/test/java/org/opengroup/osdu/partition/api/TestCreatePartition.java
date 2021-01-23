@@ -17,8 +17,12 @@
 
 package org.opengroup.osdu.partition.api;
 
+import static org.junit.Assert.assertEquals;
+
+import com.sun.jersey.api.client.ClientResponse;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.opengroup.osdu.partition.util.GCPTestUtils;
 
 public class TestCreatePartition extends CreatePartitionTest {
@@ -33,5 +37,13 @@ public class TestCreatePartition extends CreatePartitionTest {
   @After
   public void tearDown() throws Exception {
     this.testUtils = null;
+  }
+
+  @Override
+  @Test
+  public void should_return40XResponseCode_when_makingRequest_withInvalidPayload() throws Exception {
+    String invalidPayload = "invalidPayload";
+    ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
+    assertEquals(400, response.getStatus());
   }
 }

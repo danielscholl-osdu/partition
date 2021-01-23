@@ -161,16 +161,6 @@ Add **Cloud KMS CryptoKey Encrypter/Decrypter** role to the **App Engine default
 
 Add "Cloud KMS Encrypt/Decrypt" role to the "App Engine default service account" of ***master project***
 
-#### Memory Store (Redis Instance) Setup
-
-Create a new Standard tier Redis instance on the ***service project***
-
-The Redis instance must be created under the same region with the App Engine application which needs to access it.
-
-```bash
-    gcloud beta redis instances create redis-cache-search --size=10 --region=<service-deployment-region> --zone=<service-deployment-zone> --tier=STANDARD
-```
-
 ## Licence
 Copyright © Google LLC
 Copyright © EPAM Systems
