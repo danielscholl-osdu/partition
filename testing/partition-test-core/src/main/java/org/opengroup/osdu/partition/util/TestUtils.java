@@ -58,6 +58,7 @@ public abstract class TestUtils {
 			throws Exception {
 
         Map<String, String> headers = getOsduTenantHeaders();
+        headers.put("user", "test_user@gmail.com");
 
 		return send(path, httpMethod, token, requestBody, query, headers, enforceHttp);
 	}

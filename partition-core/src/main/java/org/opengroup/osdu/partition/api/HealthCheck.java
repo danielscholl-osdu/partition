@@ -14,6 +14,9 @@
 
 package org.opengroup.osdu.partition.api;
 
+import java.util.Collections;
+import org.opengroup.osdu.partition.logging.AuditLogger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path= "/_ah", produces = "application/json")
 public class HealthCheck {
 
+    @Autowired
+    private AuditLogger auditLogger;
+
     @GetMapping("/liveness_check")
     public ResponseEntity<String> livenessCheck() {
-        return new ResponseEntity<>("Partition service is alive", HttpStatus.OK);
+        ResponseEntity responseEntity = new ResponseEntity<>("Partition service is alive", HttpStatus.OK);
+        this.auditLogger.readServiceLivenessSuccess(Collections.singletonList(responseEntity.toString()));
+        return responseEntity;
     }
 
     @GetMapping("/readiness_check")

@@ -14,6 +14,8 @@
 
 package org.opengroup.osdu.partition.api;
 
+import java.util.Collections;
+import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
@@ -40,11 +42,15 @@ public class PartitionApi {
     @Qualifier("cachedPartitionServiceImpl")
     private IPartitionService partitionService;
 
+    @Autowired
+    private AuditLogger auditLogger;
+
     @PostMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     public ResponseEntity create(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
         this.partitionService.createPartition(partitionId, partitionInfo);
         URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+        this.auditLogger.createdPartitionSuccess(Collections.singletonList(partitionId));
         return ResponseEntity.created(partitionLocation).build();
     }
 
@@ -53,12 +59,14 @@ public class PartitionApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void patch(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
         this.partitionService.updatePartition(partitionId, partitionInfo);
+        this.auditLogger.updatedPartitionSecretSuccess(Collections.singletonList(partitionId));
     }
 
     @GetMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     public ResponseEntity<Map<String, Property>> get(@PathVariable("partitionId") String partitionId) {
         PartitionInfo partitionInfo = this.partitionService.getPartition(partitionId);
+        this.auditLogger.readPartitionSuccess(Collections.singletonList(partitionId));
         return ResponseEntity.ok(partitionInfo.getProperties());
     }
 
@@ -66,6 +74,7 @@ public class PartitionApi {
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     public ResponseEntity delete(@PathVariable("partitionId") String partitionId) {
         this.partitionService.deletePartition(partitionId);
+        this.auditLogger.deletedPartitionSuccess(Collections.singletonList(partitionId));
         return ResponseEntity.noContent().build();
     }
 
@@ -73,6 +82,8 @@ public class PartitionApi {
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     public List<String> list() {
         List<String> partitions = this.partitionService.getAllPartitions();
+        this.auditLogger.readListPartitionSuccess(
+            Collections.singletonList(String.format("Partition list size = %s", partitions.size())));
         return partitions;
     }
 }

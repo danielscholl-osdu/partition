@@ -19,6 +19,7 @@ package org.opengroup.osdu.partition.provider.gcp.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.provider.interfaces.IKmsClient;
+import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
@@ -46,9 +48,12 @@ public class PartitionServiceImpl implements IPartitionService {
 
   private final IKmsClient kmsClient;
 
+  private final AuditLogger auditLogger;
+
   @Override
   public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
     if (this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
+      this.auditLogger.createdPartitionFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_CONFLICT, UNKNOWN_ERROR_REASON,
           "Partition already exists.");
     }
@@ -81,11 +86,13 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
     if (partitionInfo.getProperties().containsKey("id")) {
+      this.auditLogger.updatedPartitionSecretFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id",
           "the field id can not be updated");
     }
 
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
+      this.auditLogger.updatedPartitionSecretFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
           "An attempt to update not existing partition.");
     }
@@ -120,11 +127,13 @@ public class PartitionServiceImpl implements IPartitionService {
   }
 
   private PartitionInfo getEncryptedPartition(String partitionId) {
+    if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
+      this.auditLogger.readPartitionFailure(Collections.singletonList(partitionId));
+      throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
+          "Partition does not exist.");
+    }
     List<PartitionPropertyEntity> partitionPropertiesList = this.partitionPropertyEntityRepository
-        .findByPartitionId(partitionId)
-        .orElseThrow(
-            () -> new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
-                "Partition does not exist."));
+        .findByPartitionId(partitionId).get();
     PartitionInfo partitionInfo = new PartitionInfo();
     Map<String, Property> partitionInfoProperties = new HashMap<>();
     for (PartitionPropertyEntity entity : partitionPropertiesList) {
@@ -152,6 +161,7 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public boolean deletePartition(String partitionId) {
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
+      this.auditLogger.deletedPartitionFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
           "An attempt to delete not existing partition.");
     }
