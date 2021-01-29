@@ -11,6 +11,12 @@ variables:
   IBM_BUILD_SUBDIR: provider/partition-ibm
   IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
 
+  # --- osdu gcp specific variables ---
+  OSDU_GCP_SERVICE: partition
+  OSDU_GCP_VENDOR: gcp
+  OSDU_GCP_APPLICATION_NAME: os-partition
+  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_AUTHORIZE_API,GOOGLE_CLOUD_PROJECT=$OSDU_GCP_PROJECT
+  MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -33,3 +39,11 @@ include:
     
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
+
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: 'cloud-providers/osdu-gcp-cloudrun.yml'
+
+osdu-gcp-test:
+  variables:
+    CLIENT_TENANT: osdu
+

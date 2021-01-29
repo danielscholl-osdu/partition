@@ -93,6 +93,7 @@
     <module>provider/partition-azure</module>
     <module>provider/partition-aws</module>
     <module>provider/partition-ibm</module>
+    <module>provider/partition-gcp</module>
   </modules>
 
   <profiles>
