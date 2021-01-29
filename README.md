@@ -6,6 +6,7 @@ The Partition service is responsible for creating and retrieving partition speci
 ## Running Locally - Azure
 Instructions for running the Azure implementation locally can be found [here](./provider/partition-azure/README.md)
 ## Running Locally - GCP
+Instructions for running the GCP implementation locally can be found [here](./provider/partition-gcp/README.md)
 ## Running Locally - IBM
 
 ## Running Integration Tests
