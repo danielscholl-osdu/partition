@@ -33,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.model.http.AppException;
+import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
@@ -49,6 +50,9 @@ public class PartitionServiceImplTest {
 
   @Mock
   private PartitionPropertyEntityRepository partitionPropertyEntityRepository;
+
+  @Mock
+  private AuditLogger auditLogger;
 
   @InjectMocks
   private PartitionServiceImpl partitionServiceImpl;
