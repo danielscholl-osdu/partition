@@ -49,7 +49,7 @@ public class CachedPartitionServiceImpl implements IPartitionService {
         PartitionInfo pi = partitionService.createPartition(partitionId, partitionInfo);
 
         if (pi != null) {
-            partitionServiceCache.put(partitionId, partitionInfo);
+            partitionServiceCache.put(partitionId, pi);
             partitionListCache.clearAll();
         }
 
