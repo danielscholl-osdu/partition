@@ -12,22 +12,22 @@ import org.opengroup.osdu.core.common.logging.audit.AuditStatus;
 public class AuditEvents {
 
   private static final String CREATE_PARTITION_ACTION_ID = "PT001";
-  private static final String CREATE_PARTITION_MESSAGE = "Partition creation";
+  private static final String CREATE_PARTITION_MESSAGE = "Create partition";
 
   private static final String READ_PARTITION_ACTION_ID = "PT002";
-  private static final String READ_PARTITION_MESSAGE = "Partition read";
+  private static final String READ_PARTITION_MESSAGE = "Read partition";
 
   private static final String DELETE_PARTITION_ACTION_ID = "PT003";
-  private static final String DELETE_PARTITION_MESSAGE = "Partition removal";
+  private static final String DELETE_PARTITION_MESSAGE = "Delete partition";
 
   private static final String READ_SERVICE_LIVENESS_ACTION_ID = "PT004";
   private static final String READ_SERVICE_LIVENESS_MESSAGE = "Service run";
 
   private static final String UPDATE_PARTITION_ACTION_ID = "PT005";
-  private static final String UPDATE_PARTITION_MESSAGE = "Partition updating";
+  private static final String UPDATE_PARTITION_MESSAGE = "Update partition";
 
   private static final String READ_LIST_PARTITION_ACTION_ID = "PT006";
-  private static final String READ_LIST_PARTITION_MESSAGE = "Partition list read";
+  private static final String READ_LIST_PARTITION_MESSAGE = "Read partition list";
 
 
   private final String user;
