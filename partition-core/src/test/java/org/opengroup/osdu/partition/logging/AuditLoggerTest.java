@@ -3,6 +3,7 @@ package org.opengroup.osdu.partition.logging;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,13 +13,21 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditLoggerTest {
 
   @Mock
   private JaxRsDpsLog log;
+
+  @Mock
+  private IEntitlementsFactory factory;
+
+  @Mock
+  private DpsHeaders headers;
 
   @InjectMocks
   private AuditLogger sut;
@@ -27,6 +36,7 @@ public class AuditLoggerTest {
 
   @Before
   public void setup() {
+    when(this.headers.getUserEmail()).thenReturn("test_user@email.com");
     resources = Collections.singletonList("resources");
   }
 
