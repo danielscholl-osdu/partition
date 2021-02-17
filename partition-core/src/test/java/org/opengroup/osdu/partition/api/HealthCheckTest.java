@@ -14,19 +14,24 @@
 
 package org.opengroup.osdu.partition.api;
 
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+@RunWith(MockitoJUnitRunner.class)
 public class HealthCheckTest {
-    private HealthCheck sut;
 
-    @Before
-    public void setup() {
-        this.sut = new HealthCheck();
-    }
+    @Mock
+    private AuditLogger auditLogger;
+
+    @InjectMocks
+    private HealthCheck sut;
 
     @Test
     public void should_returnHttp200_when_checkLiveness() {
