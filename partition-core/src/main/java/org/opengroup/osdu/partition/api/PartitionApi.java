@@ -50,7 +50,7 @@ public class PartitionApi {
     public ResponseEntity create(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
         this.partitionService.createPartition(partitionId, partitionInfo);
         URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-        this.auditLogger.createdPartitionSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.createPartitionSuccess(Collections.singletonList(partitionId));
         return ResponseEntity.created(partitionLocation).build();
     }
 
@@ -59,7 +59,7 @@ public class PartitionApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void patch(@PathVariable("partitionId") String partitionId, @RequestBody @Valid PartitionInfo partitionInfo) {
         this.partitionService.updatePartition(partitionId, partitionInfo);
-        this.auditLogger.updatedPartitionSecretSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(partitionId));
     }
 
     @GetMapping("/{partitionId}")
@@ -74,7 +74,7 @@ public class PartitionApi {
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     public ResponseEntity delete(@PathVariable("partitionId") String partitionId) {
         this.partitionService.deletePartition(partitionId);
-        this.auditLogger.deletedPartitionSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.deletePartitionSuccess(Collections.singletonList(partitionId));
         return ResponseEntity.noContent().build();
     }
 

@@ -17,8 +17,10 @@
 
 package org.opengroup.osdu.partition.provider.gcp.security;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opengroup.osdu.core.common.model.entitlements.AuthorizationResponse;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
@@ -41,7 +43,11 @@ public class AuthorizationService implements IAuthorizationService {
   @Override
   public boolean isDomainAdminServiceAccount() {
     try {
-      authorizationServiceImpl.authorizeAny(headers, PARTITION_ADMIN_ROLE);
+      AuthorizationResponse authorizationResponse = authorizationServiceImpl
+          .authorizeAny(headers, PARTITION_ADMIN_ROLE);
+      if (Objects.nonNull(authorizationResponse)) {
+        headers.put("user", authorizationResponse.getUser());
+      }
     } catch (AppException e) {
       throw e;
     } catch (Exception e) {
