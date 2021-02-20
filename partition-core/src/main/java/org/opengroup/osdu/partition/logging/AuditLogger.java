@@ -1,27 +1,18 @@
-/*
-  Copyright 2002-2021 Google LLC
-  Copyright 2002-2021 EPAM Systems, Inc
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
- */
-
 package org.opengroup.osdu.partition.logging;
 
+import com.google.common.base.Strings;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
+import org.opengroup.osdu.core.common.entitlements.IEntitlementsService;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.logging.audit.AuditPayload;
 import org.opengroup.osdu.core.common.logging.audit.AuditStatus;
+import org.opengroup.osdu.core.common.model.entitlements.EntitlementsException;
+import org.opengroup.osdu.core.common.model.entitlements.Groups;
+import org.opengroup.osdu.core.common.model.http.AppException;
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -31,11 +22,27 @@ import org.springframework.web.context.annotation.RequestScope;
 public class AuditLogger {
 
   private final JaxRsDpsLog logger;
+
+  private final IEntitlementsFactory factory;
+
+  private final DpsHeaders headers;
+
   private AuditEvents events = null;
 
   private AuditEvents getAuditEvents() {
     if (this.events == null) {
-      this.events = new AuditEvents("partitionAccountUser");
+      if (Strings.isNullOrEmpty(this.headers.getUserEmail())) {
+        IEntitlementsService service = this.factory.create(headers);
+        try {
+          Groups groups = service.getGroups();
+          this.events = new AuditEvents(groups.getMemberEmail());
+        } catch (EntitlementsException e) {
+          throw new AppException(HttpStatus.UNAUTHORIZED.value(), "Authentication Failure",
+              e.getMessage(), e);
+        }
+      } else {
+        this.events = new AuditEvents(this.headers.getUserEmail());
+      }
     }
     return this.events;
   }
