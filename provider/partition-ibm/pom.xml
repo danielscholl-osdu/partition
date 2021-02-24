@@ -25,11 +25,11 @@
 
     <dependencies>
         <!-- Internal packages -->
-        <!-- <dependency>
+        <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-core-common</artifactId>
-            <version>${os-core-common.version}</version>
-        </dependency> -->
+            <version>0.3.16</version>
+        </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-core-lib-ibm</artifactId>
