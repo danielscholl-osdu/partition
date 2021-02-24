@@ -46,7 +46,7 @@ export ENVIRONMENT=$RESOURCE_PREFIX
 
 #### RUN INTEGRATION TEST #########################################################################
 
-mvn test -f "$SCRIPT_SOURCE_DIR"/../pom.xml
+mvn -ntp test -f "$SCRIPT_SOURCE_DIR"/../pom.xml
 TEST_EXIT_CODE=$?
 
 #### COPY TEST REPORTS #########################################################################
