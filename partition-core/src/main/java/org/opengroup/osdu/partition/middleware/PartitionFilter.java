@@ -15,6 +15,7 @@
 package org.opengroup.osdu.partition.middleware;
 
 import org.opengroup.osdu.core.common.http.ResponseHeaders;
+import org.opengroup.osdu.core.common.http.ResponseHeadersFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.http.Request;
@@ -41,6 +42,12 @@ public class PartitionFilter implements Filter {
     private JaxRsDpsLog logger;
     @Value("${ACCEPT_HTTP:false}")
     private boolean acceptHttp;
+
+    // defaults to * for any front-end, string must be comma-delimited if more than one domain
+    @Value("${ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS:*}")
+    String ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS;
+
+    private ResponseHeadersFactory responseHeadersFactory = new ResponseHeadersFactory();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -105,8 +112,8 @@ public class PartitionFilter implements Filter {
     }
 
     private void setResponseHeaders(HttpServletResponse httpServletResponse) {
-        Map<String, List<Object>> standardHeaders = ResponseHeaders.STANDARD_RESPONSE_HEADERS;
-        for (Map.Entry<String, List<Object>> header : standardHeaders.entrySet()) {
+        Map<String, String> responseHeaders = responseHeadersFactory.getResponseHeaders(ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS);
+        for(Map.Entry<String, String> header : responseHeaders.entrySet()){
             if("Cache-Control".equalsIgnoreCase(header.getKey())){
                 httpServletResponse.addHeader(header.getKey(), "private, max-age=300");
             }else {
