@@ -68,17 +68,17 @@ public abstract class BaseTestTemplate extends TestBase {
         ClientResponse response = descriptor.run(getId(), token);
         deleteResource();
         assertEquals(error(response.getStatus() == 204 ? "" : response.getEntity(String.class)), expectedOkResponseCode(), response.getStatus());
-        assertEquals("[GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH]", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("[origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey]", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
-        assertEquals("[*]", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
-        assertEquals("[true]", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
-        assertEquals("[default-src 'self']", response.getHeaders().getFirst("Content-Security-Policy"));
-        assertEquals("[max-age=31536000; includeSubDomains]", response.getHeaders().getFirst("Strict-Transport-Security"));
-        assertEquals("[0]", response.getHeaders().getFirst("Expires"));
+        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
+        assertEquals("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
+        assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
+        assertEquals("true", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
+        assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
+        assertEquals("max-age=31536000; includeSubDomains", response.getHeaders().getFirst("Strict-Transport-Security"));
+        assertEquals("0", response.getHeaders().getFirst("Expires"));
         assertEquals("DENY", response.getHeaders().getFirst("X-Frame-Options"));
         assertEquals("private, max-age=300", response.getHeaders().getFirst("Cache-Control"));
-        assertEquals("[1; mode=block]", response.getHeaders().getFirst("X-XSS-Protection"));
-        assertEquals("[nosniff]", response.getHeaders().getFirst("X-Content-Type-Options"));
+        assertEquals("1; mode=block", response.getHeaders().getFirst("X-XSS-Protection"));
+        assertEquals("nosniff", response.getHeaders().getFirst("X-Content-Type-Options"));
     }
 
     @Test
