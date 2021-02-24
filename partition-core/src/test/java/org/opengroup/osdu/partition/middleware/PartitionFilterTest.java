@@ -48,26 +48,26 @@ public class PartitionFilterTest {
         HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
         when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("https://test.com"));
-        FilterChain filterChain = mock(FilterChain.class);
-        when(headers.getCorrelationId()).thenReturn("correlation-id-value");
-        when(httpServletRequest.getMethod()).thenReturn("POST");
+        FilterChain filterChain = Mockito.mock(FilterChain.class);
+        Mockito.when(headers.getCorrelationId()).thenReturn("correlation-id-value");
+        Mockito.when(httpServletRequest.getMethod()).thenReturn("POST");
+        org.springframework.test.util.ReflectionTestUtils.setField(partitionFilter, "ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS", "custom-domain");
 
         partitionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
-        verify(httpServletResponse).addHeader("Access-Control-Allow-Origin", singletonList("*").toString());
-        verify(httpServletResponse).addHeader("Access-Control-Allow-Headers", singletonList("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey").toString());
-        verify(httpServletResponse).addHeader("Access-Control-Allow-Methods", singletonList("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH").toString());
-        verify(httpServletResponse).addHeader("Access-Control-Allow-Credentials", singletonList("true").toString());
-        verify(httpServletResponse).addHeader("X-Frame-Options", singletonList("DENY").toString());
-        verify(httpServletResponse).addHeader("X-XSS-Protection", singletonList("1; mode=block").toString());
-        verify(httpServletResponse).addHeader("X-Content-Type-Options", singletonList("nosniff").toString());
-        verify(httpServletResponse).addHeader("Cache-Control", "private, max-age=300");
-        verify(httpServletResponse).addHeader("Content-Security-Policy", singletonList("default-src 'self'").toString());
-        verify(httpServletResponse).addHeader("Strict-Transport-Security", singletonList("max-age=31536000; includeSubDomains").toString());
-        verify(httpServletResponse).addHeader("Expires", singletonList("0").toString());
-        verify(httpServletResponse).addHeader("correlation-id", "correlation-id-value");
-        verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
-        verify(logger).request(Mockito.any(Request.class));
+        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Origin", "custom-domain");
+        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey");
+        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH");
+        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Credentials", "true");
+        Mockito.verify(httpServletResponse).addHeader("X-Frame-Options", "DENY");
+        Mockito.verify(httpServletResponse).addHeader("X-XSS-Protection", "1; mode=block");
+        Mockito.verify(httpServletResponse).addHeader("X-Content-Type-Options", "nosniff");
+        Mockito.verify(httpServletResponse).addHeader("Cache-Control", "private, max-age=300");
+        Mockito.verify(httpServletResponse).addHeader("Content-Security-Policy", "default-src 'self'");
+        Mockito.verify(httpServletResponse).addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+        Mockito.verify(httpServletResponse).addHeader("Expires", "0");
+        Mockito.verify(httpServletResponse).addHeader("correlation-id", "correlation-id-value");
+        Mockito.verify(filterChain).doFilter(httpServletRequest, httpServletResponse);
     }
 
     @Test
@@ -77,6 +77,7 @@ public class PartitionFilterTest {
         when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://test.com"));
         FilterChain filterChain = mock(FilterChain.class);
         when(httpServletRequest.getMethod()).thenReturn("POST");
+        org.springframework.test.util.ReflectionTestUtils.setField(partitionFilter, "ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS", "custom-domain");
 
         partitionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
@@ -90,6 +91,7 @@ public class PartitionFilterTest {
         when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("https://test.com"));
         FilterChain filterChain = mock(FilterChain.class);
         when(httpServletRequest.getMethod()).thenReturn("OPTIONS");
+        org.springframework.test.util.ReflectionTestUtils.setField(partitionFilter, "ACCESS_CONTROL_ALLOW_ORIGIN_DOMAINS", "custom-domain");
 
         partitionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
