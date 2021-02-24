@@ -18,9 +18,12 @@ package org.opengroup.osdu.partition.provider.aws.security;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
+import org.opengroup.osdu.core.common.http.json.HttpResponseBodyMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
@@ -31,14 +34,16 @@ public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlements
 	@Value("${AUTHORIZE_API_KEY:}")
 	private String AUTHORIZE_API_KEY;
 
-	@Override
-	protected IEntitlementsFactory createInstance() throws Exception {
+	@Inject
+	private HttpResponseBodyMapper httpResponseBodyMapper;
 
+	@Override
+	protected IEntitlementsFactory createInstance() {
 		return new EntitlementsFactory(EntitlementsAPIConfig
 				.builder()
 				.rootUrl(AUTHORIZE_API)
 				.apiKey(AUTHORIZE_API_KEY)
-				.build());
+				.build(), httpResponseBodyMapper);
 	}
 
 	@Override
