@@ -95,7 +95,7 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
         return sb.toString();
     }
 
-    private String getValidBodyForUpdatePartition() {
+    protected String getValidBodyForUpdatePartition() {
         StringBuffer sb = new StringBuffer();
         sb.append("{\n");
         sb.append("  \"properties\": {")
