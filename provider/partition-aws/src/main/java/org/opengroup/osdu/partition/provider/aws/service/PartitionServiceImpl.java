@@ -49,7 +49,7 @@ public class PartitionServiceImpl implements IPartitionService {
 
         try {
             for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
-                ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue());
+                ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue().getValue());
             }
 
             /** 
