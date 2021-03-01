@@ -18,9 +18,13 @@
 package org.opengroup.osdu.partition.provider.gcp.security;
 
 import lombok.RequiredArgsConstructor;
+
+import javax.inject.Inject;
+
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
+import org.opengroup.osdu.core.common.http.json.HttpResponseBodyMapper;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
@@ -31,13 +35,17 @@ public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlements
 
   private final PropertiesConfiguration properties;
 
+  @Inject
+	private HttpResponseBodyMapper httpResponseBodyMapper;
+
   @Override
   protected IEntitlementsFactory createInstance() throws Exception {
 
     return new EntitlementsFactory(EntitlementsAPIConfig
         .builder()
         .rootUrl(properties.getAuthorizeApi())
-        .build());
+        .build(),
+        httpResponseBodyMapper);
   }
 
   @Override
