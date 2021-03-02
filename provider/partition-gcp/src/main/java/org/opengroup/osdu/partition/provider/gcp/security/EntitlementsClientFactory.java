@@ -18,6 +18,9 @@
 package org.opengroup.osdu.partition.provider.gcp.security;
 
 import lombok.RequiredArgsConstructor;
+
+import javax.inject.Inject;
+
 import org.opengroup.osdu.core.common.entitlements.EntitlementsAPIConfig;
 import org.opengroup.osdu.core.common.entitlements.EntitlementsFactory;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsFactory;
@@ -31,7 +34,9 @@ import org.springframework.stereotype.Component;
 public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlementsFactory> {
 
   private final PropertiesConfiguration properties;
-  private final HttpResponseBodyMapper mapper;
+
+  @Inject
+	private HttpResponseBodyMapper httpResponseBodyMapper;
 
   @Override
   protected IEntitlementsFactory createInstance() throws Exception {
@@ -39,7 +44,8 @@ public class EntitlementsClientFactory extends AbstractFactoryBean<IEntitlements
     return new EntitlementsFactory(EntitlementsAPIConfig
         .builder()
         .rootUrl(properties.getAuthorizeApi())
-        .build(), mapper);
+        .build(),
+        httpResponseBodyMapper);
   }
 
   @Override
