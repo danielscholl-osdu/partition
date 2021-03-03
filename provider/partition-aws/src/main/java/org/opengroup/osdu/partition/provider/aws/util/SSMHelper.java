@@ -15,10 +15,7 @@
 package org.opengroup.osdu.partition.provider.aws.util;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -73,6 +70,10 @@ public final class SSMHelper {
 
     private String getSsmPathForPartitition(String partitionName) {
         return URI.create(getTenantPrefix() + '/' + partitionName + '/').normalize().toString();
+    }
+
+    private String getSsmPathForPartititions() {
+        return URI.create(getTenantPrefix() + '/').normalize().toString();
     }
 
     private String getSsmPathForPartititionSecret(String partitionName, String secretName) {
@@ -162,6 +163,7 @@ public final class SSMHelper {
         PutParameterRequest request = new PutParameterRequest()
             .withName(ssmPath)
             .withType(ParameterType.SecureString)
+            .withOverwrite(true)
             .withValue(String.valueOf(secretValue));
 
 
@@ -199,6 +201,42 @@ public final class SSMHelper {
 
         return totalDeletedParams == expectedNumOfDeletedParams;
 
+    }
+
+    public List<String> getPartitions() {
+
+        List<String> partitions = new ArrayList<>();
+        Set<String> uniquePartitions = new HashSet<String>();
+        String ssmPath = getSsmPathForPartititions();
+
+        String nextToken = null;
+        GetParametersByPathResult result=null;
+        do {
+
+            GetParametersByPathRequest request = new GetParametersByPathRequest()
+                    .withPath(ssmPath)
+                    .withRecursive(true)
+                    .withNextToken(nextToken);
+
+             result = ssmManager.getParametersByPath(request);
+            nextToken = result.getNextToken();
+
+
+        }
+        while (nextToken != null);
+
+        for(Parameter p: result.getParameters())
+        {
+
+            String dp = (p.getName().substring(ssmPath.length()).split("/")[0]);
+
+            uniquePartitions.add(dp);
+        }
+
+         partitions.addAll(uniquePartitions);
+
+
+        return partitions;
     }
 
     private String getTenantPrefix() {
