@@ -106,7 +106,71 @@ public class PartitionServiceImpl implements IPartitionService {
 
     @Override
     public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
-        throw new AppException(HttpStatus.SC_NOT_IMPLEMENTED, "Not implemented", "Not implemented");
+
+
+        if (!ssmHelper.partitionExists(partitionId)) {
+            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition does not exist", "Partition doesn't exist");
+        }
+
+        if(partitionInfo.getProperties().containsKey("id")) {
+            throw new AppException(HttpStatus.SC_BAD_REQUEST, "Cannot update id", "the field id cannot be updated");
+        }
+
+        try {
+            for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
+                ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue().getValue());
+            }
+
+            /**
+             *   SSM parameters are not immediately available after pushing to System Manager.
+             *   This API is expected to return a 200 response meaning that the parameters should be available immediately.
+             *   This logic is added to validate when the parameters become available before returning the 200 response.
+             *   The performance hit is acceptable because partitions are only created as an early operation and shouldn't affect
+             *   the performance of runtime workflows
+             */
+            int retryCount = 10;
+            boolean partitionReady = false;
+            while (!partitionReady && retryCount > 0) {
+                retryCount--;
+                List<String> partitionCheck = ssmHelper.getSsmParamsPathsForPartition(partitionId);
+                if (partitionCheck.size() == partitionInfo.getProperties().size())
+                    partitionReady = true;
+                else
+                    Thread.sleep(500);
+            }
+
+            String rollbackSuccess = "Failed";
+            if (!partitionReady) {
+                try {
+                    ssmHelper.deletePartitionSecrets(partitionId);
+                    rollbackSuccess = "Succeeded";
+                }
+                catch (Exception e){
+
+                }
+
+                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update Failed", "One or more secrets couldn't be stored. Rollback " + rollbackSuccess);
+
+            }
+        }
+        catch (AppException appE) {
+            throw appE;
+        }
+        catch (Exception e) {
+
+            try {
+                Thread.sleep(2000); //wait for any existing ssm parameters that got added to normalize
+                ssmHelper.deletePartitionSecrets(partitionId);
+            }
+            catch (Exception deleteE) {
+                //if the partition didnt get created at all deletePartition will throw an exception. Eat it so we return the creation exception.
+            }
+
+            logger.error("Failed to update partition due to key creation failure in ssm", e.getMessage());
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update Failure", e.getMessage(), e);
+        }
+
+        return partitionInfo;
     }
 
     @Override
@@ -135,8 +199,8 @@ public class PartitionServiceImpl implements IPartitionService {
 
     @Override
     public List<String> getAllPartitions() {
-        //TODO: Pending to be implemented
-        return null;
+
+        return ssmHelper.getPartitions();
     }
 
 }
