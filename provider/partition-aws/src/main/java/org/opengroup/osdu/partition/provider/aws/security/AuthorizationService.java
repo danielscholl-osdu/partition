@@ -14,32 +14,84 @@
 
 package org.opengroup.osdu.partition.provider.aws.security;
 
+import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
 import org.opengroup.osdu.core.common.entitlements.IEntitlementsAndCacheService;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
+import org.opengroup.osdu.core.aws.entitlements.Authorizer;
+import org.opengroup.osdu.core.aws.ssm.SSMUtil;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
 @Component
-@RequestScope
+
 public class AuthorizationService implements IAuthorizationService {
 
-    public static final java.lang.String PARTITION_GROUP = "reserved_aws_admin";
-    public static final java.lang.String PARTITION_ADMIN_ROLE = "service.partition.admin";
 
-    @Autowired
-    private IEntitlementsAndCacheService entitlementsAndCacheService;
-    
+
     @Autowired
     private DpsHeaders headers;
 
+
+    @Value("${aws.dynamodb.region}")
+    private String awsRegion;
+
+    @Value("${aws.environment}")
+    private String awsEnvironment;
+
+    Authorizer authorizer;
+    String memberEmail=null;
+    SSMUtil ssmUtil = null;
+    String spu_email=null;
+
+    @PostConstruct
+    public void init() {
+        authorizer = new Authorizer(awsRegion, awsEnvironment);
+        if (ssmUtil == null) {
+            ssmUtil = new SSMUtil("/osdu/" + awsEnvironment + "/");
+        }
+        //get sp email
+        spu_email = ssmUtil.getSsmParameterAsString("service-principal-user");
+
+    }
+
     @Override
     public boolean isDomainAdminServiceAccount() {
+
         try {
-            return hasRole(PARTITION_ADMIN_ROLE);
+            Map<String, String> dpsheaders =   headers.getHeaders();
+            String authorizationContents = dpsheaders.get(RequestKeys.AUTHORIZATION_HEADER_KEY);
+            if(authorizationContents == null){
+                authorizationContents = dpsheaders.get(RequestKeys.AUTHORIZATION_HEADER_KEY.toLowerCase());
+            }
+            //no JWT
+            if(authorizationContents == null)
+            {
+                throw  AppException.createUnauthorized("No JWT token. Access is Forbidden");
+            }
+
+
+            memberEmail = authorizer.validateJWT(authorizationContents);
+            if(memberEmail != null)
+            {
+                if(memberEmail.equals(spu_email)){
+                    return true;
+                }
+                else{
+                    throw  AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
+                }
+            }
+            if(memberEmail == null){
+                throw  AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
+            }
+
         }
         catch (AppException appE) {
             throw appE;
@@ -47,15 +99,11 @@ public class AuthorizationService implements IAuthorizationService {
         catch (Exception e) {
             throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Authentication Failure", e.getMessage(), e);
         }
-        
+        return false;
     }
 
-    private boolean hasRole(String requiredRole) {        
-        headers.put(DpsHeaders.DATA_PARTITION_ID, PARTITION_GROUP);
-        String user = entitlementsAndCacheService.authorize(headers, requiredRole);
-        headers.put(DpsHeaders.USER_EMAIL, user);
-        return true;
-    }
+
+
 
 }
 
