@@ -38,7 +38,7 @@ public class AwsTestUtils extends TestUtils {
     String client_credentials_clientid;
     ServicePrincipal sp;
     private String awsOauthCustomScope;
-    private final static String ENVIRONMENT = "ENVIRONMENT";
+    private final static String ENVIRONMENT = "RESOURCE_PREFIX";
     private final static String REGION = "AWS_REGION";
 
 
@@ -126,15 +126,8 @@ public class AwsTestUtils extends TestUtils {
     }
 
     private String getSsmParameter(String parameterKey) {
-        String p ="";
-        try {
-            GetParameterRequest paramRequest = (new GetParameterRequest()).withName(parameterKey).withWithDecryption(true);
-            GetParameterResult paramResult = ssmManager.getParameter(paramRequest);
-            p= paramResult.getParameter().getValue();
-        }catch(Exception e)
-        {
-            System.out.println("SSM parameter not found="+parameterKey);
-        }
-        return p;
+        GetParameterRequest paramRequest = (new GetParameterRequest()).withName(parameterKey).withWithDecryption(true);
+        GetParameterResult paramResult = ssmManager.getParameter(paramRequest);
+        return paramResult.getParameter().getValue();
     }
 }
