@@ -126,6 +126,7 @@ public class AwsTestUtils extends TestUtils {
     }
 
     private String getSsmParameter(String parameterKey) {
+        System.out.println(parameterKey);
         GetParameterRequest paramRequest = (new GetParameterRequest()).withName(parameterKey).withWithDecryption(true);
         GetParameterResult paramResult = ssmManager.getParameter(paramRequest);
         return paramResult.getParameter().getValue();
