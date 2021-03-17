@@ -28,21 +28,10 @@ echo "$SCRIPT_SOURCE_DIR"
 (cd "$SCRIPT_SOURCE_DIR"/../bin && ./install-deps.sh)
 
 #### ADD REQUIRED ENVIRONMENT VARIABLES HERE ###############################################
-# The following variables are automatically populated from the environment during integration testing
-# see os-deploy-aws/build-aws/integration-test-env-variables.py for an updated list
-
-# AWS_COGNITO_CLIENT_ID
-# PARTITION_URL
-export AWS_COGNITO_AUTH_FLOW=USER_PASSWORD_AUTH
-export AWS_COGNITO_AUTH_PARAMS_PASSWORD=$ADMIN_PASSWORD
-export AWS_COGNITO_AUTH_PARAMS_USER=$ADMIN_USER
-export AWS_COGNITO_AUTH_PARAMS_USER_NO_ACCESS=$USER_NO_ACCESS
-export AWS_COGNITO_CLIENT_ID=$AWS_COGNITO_CLIENT_ID
-export DOMAIN=testing.com
 export PARTITION_BASE_URL=$PARTITION_BASE_URL
 export CLIENT_TENANT=common
 export MY_TENANT=opendes
-export ENVIRONMENT=$RESOURCE_PREFIX
+export RESOURCE_PREFIX=$RESOURCE_PREFIX
 
 #### RUN INTEGRATION TEST #########################################################################
 
