@@ -16,38 +16,77 @@
 
 package org.opengroup.osdu.partition.util;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
+import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
+import com.amazonaws.services.simplesystemsmanagement.model.GetParameterResult;
 import com.google.common.base.Strings;
-import org.opengroup.osdu.core.aws.cognito.AWSCognitoClient;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.opengroup.osdu.core.aws.entitlements.ServicePrincipal;
+import org.opengroup.osdu.core.aws.iam.IAMConfig;
+import org.opengroup.osdu.core.aws.secrets.SecretsManager;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Base64;
+import java.security.*;
 import java.util.Date;
 
 public class AwsTestUtils extends TestUtils {
 
-    private AWSCognitoClient cognitoClient;
 
-    public AwsTestUtils() {
-        cognitoClient = new AWSCognitoClient();
-    }
+    String client_credentials_secret;
+    String client_credentials_clientid;
+    ServicePrincipal sp;
+    private String awsOauthCustomScope;
+    private final static String ENVIRONMENT = "RESOURCE_PREFIX";
+    private final static String REGION = "AWS_REGION";
+
+
+
+
+    private AWSCredentialsProvider amazonAWSCredentials;
+    private AWSSimpleSystemsManagement ssmManager;
+    String sptoken=null;
+
 
     @Override
     public synchronized String getAccessToken() throws Exception {
-        if (Strings.isNullOrEmpty(token)) {
-            token = cognitoClient.getTokenForUserWithAccess();
+        if(sptoken==null) {
+            SecretsManager sm = new SecretsManager();
+            String environment = System.getProperty(ENVIRONMENT, System.getenv(ENVIRONMENT));
+            String amazonRegion = System.getProperty(REGION, System.getenv(REGION));
+
+            String oauth_token_url = "/osdu/" + environment + "/oauth-token-uri";
+            String oauth_custom_scope = "/osdu/" + environment + "/oauth-custom-scope";
+
+            String client_credentials_client_id = "/osdu/" + environment + "/client-credentials-client-id";
+            String client_secret_key = "client_credentials_client_secret";
+            String client_secret_secretName = "/osdu/" + environment + "/client_credentials_secret";
+
+            amazonAWSCredentials = IAMConfig.amazonAWSCredentials();
+            ssmManager = AWSSimpleSystemsManagementClientBuilder.standard()
+                    .withCredentials(amazonAWSCredentials)
+                    .withRegion(amazonRegion)
+                    .build();
+
+            client_credentials_clientid = getSsmParameter(client_credentials_client_id);
+
+            client_credentials_secret = sm.getSecret(client_secret_secretName, amazonRegion, client_secret_key);
+
+            String tokenUrl = getSsmParameter(oauth_token_url);
+
+            awsOauthCustomScope = getSsmParameter(oauth_custom_scope);
+
+            sp = new ServicePrincipal(amazonRegion, environment, tokenUrl, awsOauthCustomScope);
+            sptoken = sp.getServicePrincipalAccessToken(client_credentials_clientid, client_credentials_secret);
         }
-        
-        return "Bearer " + token;
+
+        return sptoken;
+
+
+
     }
+
 
     @Override
     public synchronized String getNoAccessToken() throws Exception {
@@ -84,5 +123,11 @@ public class AwsTestUtils extends TestUtils {
         }
         
 
+    }
+
+    private String getSsmParameter(String parameterKey) {
+        GetParameterRequest paramRequest = (new GetParameterRequest()).withName(parameterKey).withWithDecryption(true);
+        GetParameterResult paramResult = ssmManager.getParameter(paramRequest);
+        return paramResult.getParameter().getValue();
     }
 }

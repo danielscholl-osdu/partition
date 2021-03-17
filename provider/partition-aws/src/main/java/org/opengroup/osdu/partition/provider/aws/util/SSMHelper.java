@@ -14,24 +14,10 @@
 
 package org.opengroup.osdu.partition.provider.aws.util;
 
-import java.net.URI;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
-import com.amazonaws.services.simplesystemsmanagement.model.DeleteParametersRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.DeleteParametersResult;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersByPathRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersByPathResult;
-import com.amazonaws.services.simplesystemsmanagement.model.ParameterType;
-import com.amazonaws.services.simplesystemsmanagement.model.PutParameterRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.PutParameterResult;
-import com.amazonaws.services.simplesystemsmanagement.model.Parameter;
-
+import com.amazonaws.services.simplesystemsmanagement.model.*;
 import org.opengroup.osdu.core.aws.iam.IAMConfig;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.aws.AwsServiceConfig;
@@ -39,10 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -57,8 +40,8 @@ public final class SSMHelper {
     public SSMHelper() {
         amazonAWSCredentials = IAMConfig.amazonAWSCredentials();
         ssmManager = AWSSimpleSystemsManagementClientBuilder.standard()
-                        .withCredentials(amazonAWSCredentials)
-                        .build();
+                .withCredentials(amazonAWSCredentials)
+                .build();
     }
 
     // public boolean secretExists(String secretName) {
@@ -90,10 +73,10 @@ public final class SSMHelper {
         do {
 
             GetParametersByPathRequest request = new GetParametersByPathRequest()
-                .withPath(ssmPath)
-                .withRecursive(true)
-                .withNextToken(nextToken)
-                .withWithDecryption(true);
+                    .withPath(ssmPath)
+                    .withRecursive(true)
+                    .withNextToken(nextToken)
+                    .withWithDecryption(true);
 
             GetParametersByPathResult result = ssmManager.getParametersByPath(request);
             nextToken = result.getNextToken();
@@ -123,9 +106,9 @@ public final class SSMHelper {
         do {
 
             GetParametersByPathRequest request = new GetParametersByPathRequest()
-                .withPath(ssmPath)
-                .withRecursive(true)
-                .withNextToken(nextToken);
+                    .withPath(ssmPath)
+                    .withRecursive(true)
+                    .withNextToken(nextToken);
 
             GetParametersByPathResult result = ssmManager.getParametersByPath(request);
             nextToken = result.getNextToken();
@@ -161,10 +144,10 @@ public final class SSMHelper {
         String ssmPath = getSsmPathForPartititionSecret(partitionName, secretName);
 
         PutParameterRequest request = new PutParameterRequest()
-            .withName(ssmPath)
-            .withType(ParameterType.SecureString)
-            .withOverwrite(true)
-            .withValue(String.valueOf(secretValue));
+                .withName(ssmPath)
+                .withType(ParameterType.SecureString)
+                .withOverwrite(true)
+                .withValue(String.valueOf(secretValue));
 
 
         PutParameterResult result = ssmManager.putParameter(request);
@@ -190,7 +173,7 @@ public final class SSMHelper {
             ssmParamPaths = ssmParamPaths.subList(subListCount, ssmParamPaths.size());
 
             DeleteParametersRequest request = new DeleteParametersRequest()
-                .withNames(paramsToDelete);
+                    .withNames(paramsToDelete);
 
             DeleteParametersResult result =  ssmManager.deleteParameters(request);
 
@@ -218,22 +201,22 @@ public final class SSMHelper {
                     .withRecursive(true)
                     .withNextToken(nextToken);
 
-             result = ssmManager.getParametersByPath(request);
+            result = ssmManager.getParametersByPath(request);
+            for(Parameter p: result.getParameters())
+            {
+
+                String dp = (p.getName().substring(ssmPath.length()).split("/")[0]);
+
+                uniquePartitions.add(dp);
+            }
             nextToken = result.getNextToken();
 
 
         }
         while (nextToken != null);
 
-        for(Parameter p: result.getParameters())
-        {
 
-            String dp = (p.getName().substring(ssmPath.length()).split("/")[0]);
-
-            uniquePartitions.add(dp);
-        }
-
-         partitions.addAll(uniquePartitions);
+        partitions.addAll(uniquePartitions);
 
 
         return partitions;
