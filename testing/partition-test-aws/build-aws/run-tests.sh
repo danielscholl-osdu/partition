@@ -31,7 +31,7 @@ echo "$SCRIPT_SOURCE_DIR"
 export PARTITION_BASE_URL=$PARTITION_BASE_URL
 export CLIENT_TENANT=common
 export MY_TENANT=opendes
-export ENVIRONMENT=$RESOURCE_PREFIX
+export RESOURCE_PREFIX=$RESOURCE_PREFIX
 
 #### RUN INTEGRATION TEST #########################################################################
 
