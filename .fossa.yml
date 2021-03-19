@@ -16,7 +16,19 @@ analyze:
     type: mvn
     target: partition-core/pom.xml
     path: .
-  - name: partition-aks
+  - name: partition-azure
     type: mvn
     target: provider/partition-azure/pom.xml
+    path: .
+  - name: partition-aws
+    type: mvn
+    target: provider/partition-aws/pom.xml
+    path: .
+  - name: partition-ibm
+    type: mvn
+    target: provider/partition-ibm/pom.xml
+    path: .
+  - name: partition-gcp
+    type: mvn
+    target: provider/partition-gcp/pom.xml
     path: .
