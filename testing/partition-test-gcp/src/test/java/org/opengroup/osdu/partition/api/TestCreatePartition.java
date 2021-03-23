@@ -42,7 +42,7 @@ public class TestCreatePartition extends CreatePartitionTest {
   @Override
   @Test
   public void should_return40XResponseCode_when_makingRequest_withInvalidPayload() throws Exception {
-    String invalidPayload = "invalidPayload";
+    String invalidPayload = "{\"properties_invalid\":{}}";
     ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
     assertEquals(400, response.getStatus());
   }
