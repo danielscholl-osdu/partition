@@ -14,6 +14,7 @@
 
 package org.opengroup.osdu.partition.model;
 
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class PartitionInfo {
 
+    @NotEmpty
     @Builder.Default
     Map<String, Property> properties = new HashMap<>();
 }

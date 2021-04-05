@@ -31,6 +31,7 @@ import org.springframework.web.context.annotation.RequestScope;
 public class AuditLogger {
 
   private final JaxRsDpsLog logger;
+
   private AuditEvents events = null;
 
   private AuditEvents getAuditEvents() {
