@@ -45,9 +45,6 @@ public class AuthorizationService implements IAuthorizationService {
     try {
       AuthorizationResponse authorizationResponse = authorizationServiceImpl
           .authorizeAny(headers, PARTITION_ADMIN_ROLE);
-      if (Objects.nonNull(authorizationResponse)) {
-        headers.put("user", authorizationResponse.getUser());
-      }
     } catch (AppException e) {
       throw e;
     } catch (Exception e) {

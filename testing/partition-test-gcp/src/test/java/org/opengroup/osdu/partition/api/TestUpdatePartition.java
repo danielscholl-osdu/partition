@@ -25,13 +25,13 @@ public class TestUpdatePartition extends UpdatePartitionTest {
 
   @Override
   @Before
-  public void setup() throws Exception {
+  public void setup() {
     this.testUtils = new GCPTestUtils();
   }
 
   @Override
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     this.testUtils = null;
   }
 }
