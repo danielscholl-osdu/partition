@@ -21,6 +21,8 @@ In order to run the service locally or remotely, you will need to have the follo
 | `SERVER_SERVLET_CONTEXPATH` | `/api/partition/v1` | Servlet context path | no | - |
 | `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
 | `GOOGLE_CLOUD_PROJECT` | ex `osdu-cicd-epam` | Google Cloud Project Id| no | output of infrastructure deployment |
+| `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
+| `PARTITION_ADMIN_ACCOUNT` | ex `admin@domen.iam.gserviceaccount.com` | Partition Admin account email | no | - |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 
 ### Run Locally
@@ -115,14 +117,9 @@ You will need to have the following environment variables defined.
 | `PARTITION_BASE_URL` | ex `http://localhost:8080/` | service base URL | yes |  |
 | `CLIENT_TENANT` | ex `opendes` | name of the client partition | yes |  |
 | `MY_TENANT` | ex `opendes` | name of the OSDU partition | yes |  |
-| `INTEGRATION_TESTER` | `********` | Service account for API calls. Note: this user must have entitlements configured already. Base64 encoded string | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
+| `INTEGRATION_TESTER` | `********` | Service account for API calls. Note: this user must be `PARTITION_ADMIN_ACCOUNT` | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `NO_DATA_ACCESS_TESTER` | `********` | Service account base64 encoded string without data access | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `INTEGRATION_TEST_AUDIENCE` | `********` | client application ID | yes | https://console.cloud.google.com/apis/credentials |
-**Entitlements configuration for integration accounts**
-
-| INTEGRATION_TESTER | NO_DATA_ACCESS_TESTER | 
-| ---  | ---   |
-| users<br/>service.entitlements.user<br/>service.partition.admin<br/>data.test1<br/>data.integration.test<br/>users@{tenant1}@{domain}.com | users <br/>service.entitlements.user<br/> |
 
 Execute following command to build code and run all the integration tests:
 
