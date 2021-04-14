@@ -28,9 +28,11 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class PropertiesConfiguration {
 
-  private String authorizeApi;
+    private String googleAudiences;
 
-  private int cacheExpiration;
+    private String partitionAdminAccount;
 
-  private int cacheMaxSize;
+    private int cacheExpiration;
+
+    private int cacheMaxSize;
 }
