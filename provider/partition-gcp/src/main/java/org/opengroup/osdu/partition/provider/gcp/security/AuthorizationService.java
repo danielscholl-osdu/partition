@@ -26,6 +26,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
@@ -44,6 +45,9 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public boolean isDomainAdminServiceAccount() {
+        if (Objects.isNull(headers.getAuthorization()) || headers.getAuthorization().isEmpty()) {
+            throw AppException.createUnauthorized("No JWT token. Access is Forbidden");
+        }
         try {
             GoogleIdTokenVerifier verifier =
                 new GoogleIdTokenVerifier.Builder(
@@ -56,17 +60,26 @@ public class AuthorizationService implements IAuthorizationService {
             GoogleIdToken googleIdToken = verifier.verify(authorization);
             if (Objects.isNull(googleIdToken)) {
                 log.warn("Not valid token provided");
-                return false;
+                throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
             }
             String email = googleIdToken.getPayload().getEmail();
             String partitionAdminAccount = configuration.getPartitionAdminAccount();
             if (Objects.nonNull(partitionAdminAccount) && !partitionAdminAccount.isEmpty()) {
-                return email.equals(partitionAdminAccount);
+                if (email.equals(partitionAdminAccount)) {
+                    return true;
+                } else {
+                    throw AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
+                }
+            } else {
+                if (StringUtils.endsWithIgnoreCase(email, "gserviceaccount.com")) {
+                    return true;
+                } else {
+                    throw AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
+                }
             }
-            return StringUtils.endsWithIgnoreCase(email, "gserviceaccount.com");
         } catch (Exception e) {
             log.warn("Not valid or expired token provided");
-            return false;
+            throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
         }
     }
 }
