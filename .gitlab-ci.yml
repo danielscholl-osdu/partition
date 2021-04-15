@@ -7,7 +7,7 @@ variables:
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
   AZURE_TEST_SUBDIR: testing/partition-test-azure
-  
+
   IBM_BUILD_SUBDIR: provider/partition-ibm
   IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
 
@@ -15,7 +15,7 @@ variables:
   OSDU_GCP_SERVICE: partition
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_APPLICATION_NAME: os-partition
-  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_AUTHORIZE_API,GOOGLE_CLOUD_PROJECT=$OSDU_GCP_PROJECT
+  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_AUTHORIZE_API,GOOGLE_CLOUD_PROJECT=$OSDU_GCP_PROJECT,GOOGLE_AUDIENCES=$GOOGLE_AUDIENCE,PARTITION_ADMIN_ACCOUNT=$OSDU_GCP_SERVICE_ACCOUNT
   MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
   OSDU_GCP_TEST_SUBDIR: testing/$OSDU_GCP_SERVICE-test-$OSDU_GCP_VENDOR
 
@@ -32,19 +32,18 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "scanners/fossa-maven.yml"
 
-  - project: 'osdu/platform/ci-cd-pipelines'
-    file: 'cloud-providers/aws.yml'
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/aws.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure.yml"
-    
+
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: 'cloud-providers/osdu-gcp-cloudrun.yml'
+    file: "cloud-providers/osdu-gcp-cloudrun.yml"
 
 osdu-gcp-test:
   variables:
     CLIENT_TENANT: osdu
-
