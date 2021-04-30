@@ -17,7 +17,7 @@
   <properties>
     <osdu.partition-core.version>0.9.0-SNAPSHOT</osdu.partition-core.version>
     <osdu.corelibazure.version>0.8.0-rc1</osdu.corelibazure.version>
-    <osdu.oscorecommon.version>v0.9.0-rc6</osdu.oscorecommon.version>
+    <osdu.oscorecommon.version>0.9.0-rc6</osdu.oscorecommon.version>
     <azure.version>2.3.5</azure.version>
     <junit.version>4.12</junit.version>
     <mockito.version>2.25.0</mockito.version>
