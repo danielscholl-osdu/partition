@@ -279,6 +279,7 @@ The following software have components provided under the terms of this license:
 - Cobertura code coverage (from http://cobertura.sourceforge.net)
 - Commons Digester (from http://commons.apache.org/digester/)
 - Commons IO (from http://commons.apache.org/io/)
+- Commons IO (from http://commons.apache.org/io/)
 - Commons Lang (from http://commons.apache.org/lang/)
 - Converter: Jackson (from )
 - Doxia :: APT Module (from )
@@ -308,6 +309,7 @@ The following software have components provided under the terms of this license:
 - Gson (from https://github.com/google/gson)
 - Guava InternalFutureFailureAccess and InternalFutures (from )
 - Guava ListenableFuture only (from )
+- Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - HPPC Collections (from http://labs.carrotsearch.com)
 - Hibernate Validator Engine (from )
@@ -526,6 +528,7 @@ The following software have components provided under the terms of this license:
 - datastore-v1-proto-client (from )
 - elasticsearch-core (from https://github.com/elastic/elasticsearch)
 - elasticsearch-geo (from https://github.com/elastic/elasticsearch)
+- error-prone annotations (from )
 - error-prone annotations (from )
 - io.grpc:grpc-alts (from https://github.com/grpc/grpc-java)
 - io.grpc:grpc-api (from https://github.com/grpc/grpc-java)
@@ -864,6 +867,7 @@ The following software have components provided under the terms of this license:
 - Azure Spring Boot AutoConfigure (from https://github.com/Microsoft/azure-spring-boot)
 - Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Checker Qual (from https://checkerframework.org)
+- Checker Qual (from https://checkerframework.org)
 - Extensions on Apache Proton-J library (from https://github.com/Azure/qpid-proton-j-extensions)
 - JOpt Simple (from http://pholser.github.io/jopt-simple)
 - JUL to SLF4J bridge (from http://www.slf4j.org)
@@ -963,6 +967,7 @@ SPL-1.0
 The following software have components provided under the terms of this license:
 
 - Checker Qual (from https://checkerframework.org)
+- Checker Qual (from https://checkerframework.org)
 
 ========================================================================
 W3C
@@ -991,6 +996,7 @@ The following software have components provided under the terms of this license:
 - Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
 - Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
+- Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - Joda-Time (from http://www.joda.org/joda-time/)
@@ -1017,6 +1023,7 @@ The following software have components provided under the terms of this license:
 - Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
 - Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Byte Buddy (without dependencies) (from )
+- Checker Qual (from https://checkerframework.org)
 - JUnit (from http://junit.org)
 - JUnit (from http://junit.org)
 - JUnit Jupiter (Aggregator) (from https://junit.org/junit5/)
