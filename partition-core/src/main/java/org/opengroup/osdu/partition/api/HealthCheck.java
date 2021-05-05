@@ -14,27 +14,25 @@
 
 package org.opengroup.osdu.partition.api;
 
-import java.util.Collections;
 import org.opengroup.osdu.partition.logging.AuditLogger;
-import org.opengroup.osdu.partition.model.PartitionInfo;
-import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
+import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+
 @RestController
-@RequestMapping(path= "/_ah", produces = "application/json")
+@RequestMapping(path = "/_ah", produces = "application/json")
 public class HealthCheck {
 
     @Autowired
     private AuditLogger auditLogger;
     @Autowired
-    @Qualifier("partitionServiceCache")
-    private IPartitionServiceCache<String, PartitionInfo> dummyCache;
+    private IHealthCheckService healthCheckService;
 
     @GetMapping("/liveness_check")
     public ResponseEntity<String> livenessCheck() {
@@ -45,14 +43,7 @@ public class HealthCheck {
 
     @GetMapping("/readiness_check")
     public ResponseEntity<String> readinessCheck() {
-        customReadinessCheckList();
+        healthCheckService.performReadinessCheck();
         return new ResponseEntity<>("Partition service is ready", HttpStatus.OK);
-    }
-
-    /**
-     * Cache layer must be ready before the pod can serve the traffic
-     */
-    private void customReadinessCheckList() {
-        dummyCache.get("dummy-key");
     }
 }

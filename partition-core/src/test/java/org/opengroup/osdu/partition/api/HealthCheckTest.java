@@ -20,8 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.partition.logging.AuditLogger;
-import org.opengroup.osdu.partition.model.PartitionInfo;
-import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
+import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +32,7 @@ public class HealthCheckTest {
     @Mock
     private AuditLogger auditLogger;
     @Mock
-    private IPartitionServiceCache<String, PartitionInfo> dummyCache;
+    private IHealthCheckService healthCheckService;
 
     @InjectMocks
     private HealthCheck sut;
@@ -46,6 +45,6 @@ public class HealthCheckTest {
     @Test
     public void should_returnHttp200_when_checkReadiness() {
         assertEquals(HttpStatus.OK, this.sut.readinessCheck().getStatusCode());
-        verify(dummyCache).get("dummy-key");
+        verify(healthCheckService).performReadinessCheck();
     }
 }
