@@ -16,7 +16,10 @@ package org.opengroup.osdu.partition.api;
 
 import java.util.Collections;
 import org.opengroup.osdu.partition.logging.AuditLogger;
+import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +32,9 @@ public class HealthCheck {
 
     @Autowired
     private AuditLogger auditLogger;
+    @Autowired
+    @Qualifier("partitionServiceCache")
+    private IPartitionServiceCache<String, PartitionInfo> dummyCache;
 
     @GetMapping("/liveness_check")
     public ResponseEntity<String> livenessCheck() {
@@ -39,6 +45,14 @@ public class HealthCheck {
 
     @GetMapping("/readiness_check")
     public ResponseEntity<String> readinessCheck() {
+        customReadinessCheckList();
         return new ResponseEntity<>("Partition service is ready", HttpStatus.OK);
+    }
+
+    /**
+     * Cache layer must be ready before the pod can serve the traffic
+     */
+    private void customReadinessCheckList() {
+        dummyCache.get("dummy-key");
     }
 }
