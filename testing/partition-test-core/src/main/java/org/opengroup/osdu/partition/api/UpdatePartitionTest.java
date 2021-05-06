@@ -71,7 +71,6 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
         deleteResource();
         assertEquals(response.getStatus(), HttpStatus.NO_CONTENT.value());
         assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
         assertTrue("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")) ||
                 "access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")));
         assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
