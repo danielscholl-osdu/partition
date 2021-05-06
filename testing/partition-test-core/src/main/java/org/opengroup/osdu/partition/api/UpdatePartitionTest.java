@@ -9,6 +9,7 @@ import org.opengroup.osdu.partition.util.BaseTestTemplate;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public abstract class UpdatePartitionTest extends BaseTestTemplate {
 
@@ -70,7 +71,9 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
         deleteResource();
         assertEquals(response.getStatus(), HttpStatus.NO_CONTENT.value());
         assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
+        assertEquals("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
+        assertTrue("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")) ||
+                "access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")));
         assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
         assertEquals("true", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
         assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
