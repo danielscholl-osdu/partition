@@ -20,6 +20,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public abstract class BaseTestTemplate extends TestBase {
 
@@ -69,7 +70,8 @@ public abstract class BaseTestTemplate extends TestBase {
         deleteResource();
         assertEquals(error(response.getStatus() == 204 ? "" : response.getEntity(String.class)), expectedOkResponseCode(), response.getStatus());
         assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
+        assertTrue("origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")) ||
+                "access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey".equals(response.getHeaders().getFirst("Access-Control-Allow-Headers")));
         assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
         assertEquals("true", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
         assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
