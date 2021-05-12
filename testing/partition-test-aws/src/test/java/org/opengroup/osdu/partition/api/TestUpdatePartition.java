@@ -30,6 +30,12 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     @After
     @Override
     public void tearDown() {
+        try {
+            this.deleteResource();
+        }
+        catch (Exception e) {
+            
+        }
         this.testUtils = null;
     }
 
