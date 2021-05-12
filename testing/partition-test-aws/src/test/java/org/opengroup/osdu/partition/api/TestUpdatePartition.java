@@ -39,4 +39,11 @@ public class TestUpdatePartition extends UpdatePartitionTest {
         this.testUtils = null;
     }
 
+    @Override
+    protected void deleteResource() throws Exception {
+        DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
+        deletePartitionDes.setPartitionId(partitionId);
+        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());        
+    }
+
 }
