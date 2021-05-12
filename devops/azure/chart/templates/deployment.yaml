@@ -55,7 +55,7 @@ spec:
           failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /api/partition/v1/v2/_ah/liveness_check
+            path: /api/partition/v1/_ah/liveness_check
             port: 80
         volumeMounts:
         - name: azure-keyvault
