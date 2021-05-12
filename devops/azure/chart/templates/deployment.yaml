@@ -48,14 +48,14 @@ spec:
             cpu: "300m"
         readinessProbe:
           httpGet:
-            path: {{ .Values.server.servlet.contextPath }}/_ah/readiness_check
+            path: /api/partition/v1/_ah/readiness_check
             port: 80
           periodSeconds: 30
           timeoutSeconds: 10
           failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: {{ .Values.server.servlet.contextPath }}/_ah/liveness_check
+            path: /api/partition/v1/v2/_ah/liveness_check
             port: 80
         volumeMounts:
         - name: azure-keyvault
