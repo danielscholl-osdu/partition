@@ -24,6 +24,7 @@ import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,9 +43,21 @@ public class HealthCheckTest {
         assertEquals(HttpStatus.OK, this.sut.livenessCheck().getStatusCode());
     }
 
+    @Test(expected = Exception.class)
+    public void should_throwException_when_customizedLivenessCheckFail() {
+        doThrow(new Exception()).when(healthCheckService).performLivenessCheck();
+        this.sut.livenessCheck();
+    }
+
     @Test
     public void should_returnHttp200_when_checkReadiness() {
         assertEquals(HttpStatus.OK, this.sut.readinessCheck().getStatusCode());
         verify(healthCheckService).performReadinessCheck();
+    }
+
+    @Test(expected = Exception.class)
+    public void should_throwException_when_customizedReadinessCheckFail() {
+        doThrow(new Exception()).when(healthCheckService).performReadinessCheck();
+        this.sut.readinessCheck();
     }
 }
