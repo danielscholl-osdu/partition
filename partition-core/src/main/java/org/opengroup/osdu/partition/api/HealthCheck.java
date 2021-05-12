@@ -36,6 +36,7 @@ public class HealthCheck {
 
     @GetMapping("/liveness_check")
     public ResponseEntity<String> livenessCheck() {
+        healthCheckService.performLivenessCheck();
         ResponseEntity responseEntity = new ResponseEntity<>("Partition service is alive", HttpStatus.OK);
         this.auditLogger.readServiceLivenessSuccess(Collections.singletonList(responseEntity.toString()));
         return responseEntity;
