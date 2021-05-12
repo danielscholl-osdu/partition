@@ -14,9 +14,12 @@
 
 package org.opengroup.osdu.partition.api;
 
+import com.sun.jersey.api.client.ClientResponse;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.util.AwsTestUtils;
 
 public class TestUpdatePartition extends UpdatePartitionTest {

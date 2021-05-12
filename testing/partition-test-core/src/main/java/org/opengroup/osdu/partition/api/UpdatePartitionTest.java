@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class UpdatePartitionTest extends BaseTestTemplate {
 
-    private String partitionId = getIntegrationTestPrefix() + System.currentTimeMillis();
+    protected String partitionId = getIntegrationTestPrefix() + System.currentTimeMillis();
 
     private String nonExistentPartitionId = "nonexistent-partition"+System.currentTimeMillis();
 
