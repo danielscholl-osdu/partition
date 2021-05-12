@@ -16,6 +16,11 @@ public class HealthCheckServiceImpl implements IHealthCheckService {
     @Qualifier("partitionServiceCache")
     private IPartitionServiceCache<String, PartitionInfo> partitionServiceCache;
 
+    @Override
+    public void performLivenessCheck() {
+
+    }
+
     /**
      * Cache layer must be ready before the pod can serve the traffic
      */
