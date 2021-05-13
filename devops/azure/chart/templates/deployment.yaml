@@ -50,9 +50,6 @@ spec:
           httpGet:
             path: /api/partition/v1/_ah/readiness_check
             port: 80
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
         livenessProbe:
           httpGet:
             path: /api/partition/v1/_ah/liveness_check
