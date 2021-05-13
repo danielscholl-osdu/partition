@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnMissingBean
+@ConditionalOnMissingBean(value = IHealthCheckService.class)
 public class DefaultHealthCheckImpl implements IHealthCheckService {
 
     @Override
