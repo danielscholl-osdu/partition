@@ -348,6 +348,7 @@ The following software have components provided under the terms of this license:
 - Java Native Access (from https://github.com/java-native-access/jna)
 - Java Native Access Platform (from https://github.com/java-native-access/jna)
 - Javassist (from http://www.javassist.org/)
+- Javassist (from http://www.javassist.org/)
 - Jetty Server (from )
 - Jetty Utilities (from )
 - Joda-Time (from http://www.joda.org/joda-time/)
@@ -358,6 +359,15 @@ The following software have components provided under the terms of this license:
 - KeePassJava2 :: KDB (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-kdb)
 - KeePassJava2 :: KDBX (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-kdbx)
 - KeePassJava2 :: Simple (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-simple)
+- KeyCloak Authz: Client API (from )
+- Keycloak :: Spring :: Boot :: Default ::  Starter (from )
+- Keycloak Adapter Core (from )
+- Keycloak Adapter SPI (from )
+- Keycloak Common (from )
+- Keycloak Core (from )
+- Keycloak Spring Boot 2 Integration (from )
+- Keycloak Spring Boot Adapter Core (from )
+- Keycloak Spring Security Integration (from )
 - Logback Contrib :: JSON :: Classic (from )
 - Logback Contrib :: JSON :: Core (from )
 - Logback Contrib :: Jackson (from )
@@ -561,6 +571,7 @@ The following software have components provided under the terms of this license:
 - rest-high-level (from https://github.com/elastic/elasticsearch)
 - rxjava (from https://github.com/ReactiveX/RxJava)
 - secure-sm (from https://github.com/elastic/elasticsearch)
+- spring-boot-container-bundle (from )
 - spring-security-config (from http://spring.io/spring-security)
 - spring-security-core (from http://spring.io/spring-security)
 - spring-security-oauth2-client (from http://spring.io/spring-security)
@@ -597,6 +608,7 @@ The following software have components provided under the terms of this license:
 - GAX (Google Api eXtensions) (from https://github.com/googleapis)
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/)
+- HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - Lucene Common Analyzers (from )
 - Plexus :: Default Container (from )
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils)
@@ -625,8 +637,10 @@ The following software have components provided under the terms of this license:
 - Google Auth Library for Java - OAuth2 HTTP (from )
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/)
+- HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - JDOM (from http://www.jdom.org)
 - JSch (from http://www.jcraft.com/jsch/)
+- JavaBeans Activation Framework (from )
 - JavaBeans Activation Framework API jar (from )
 - Lucene Common Analyzers (from )
 - Lucene Core (from )
@@ -795,6 +809,7 @@ The following software have components provided under the terms of this license:
 - Java Native Access (from https://github.com/java-native-access/jna)
 - Java Native Access Platform (from https://github.com/java-native-access/jna)
 - Javassist (from http://www.javassist.org/)
+- Javassist (from http://www.javassist.org/)
 - Logback Classic Module (from )
 - Logback Contrib :: JSON :: Classic (from )
 - Logback Contrib :: JSON :: Core (from )
@@ -811,6 +826,7 @@ LGPL-2.1-or-later
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- Javassist (from http://www.javassist.org/)
 - SnakeYAML (from http://www.snakeyaml.org)
 
 ========================================================================
@@ -835,6 +851,7 @@ The following software have components provided under the terms of this license:
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Metrics Spring Boot Starter (from https://github.com/Microsoft/azure-spring-boot)
 - Azure Spring Boot AutoConfigure (from https://github.com/Microsoft/azure-spring-boot)
+- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Checker Qual (from https://checkerframework.org)
 - Extensions on Apache Proton-J library (from https://github.com/Azure/qpid-proton-j-extensions)
 - JOpt Simple (from http://pholser.github.io/jopt-simple)
@@ -886,12 +903,14 @@ The following software have components provided under the terms of this license:
 
 - Cobertura code coverage (from http://cobertura.sourceforge.net)
 - Javassist (from http://www.javassist.org/)
+- Javassist (from http://www.javassist.org/)
 
 ========================================================================
 MPL-2.0
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- Javassist (from http://www.javassist.org/)
 - Javassist (from http://www.javassist.org/)
 - OkHttp (from )
 
@@ -900,6 +919,7 @@ PHP-3.01
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- JavaBeans Activation Framework (from )
 - JavaBeans Activation Framework API jar (from )
 - jakarta.xml.bind-api (from )
 
@@ -952,9 +972,13 @@ The following software have components provided under the terms of this license:
 - AWS Java SDK :: SDK Core (from https://aws.amazon.com/sdkforjava)
 - AWS SDK for Java - Models (from https://aws.amazon.com/sdkforjava)
 - Asynchronous Http Client (from )
+- Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
+- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Guava: Google Core Libraries for Java (from https://github.com/google/guava.git)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
+- HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - Joda-Time (from http://www.joda.org/joda-time/)
+- Keycloak Common (from )
 - LatencyUtils (from http://latencyutils.github.io/LatencyUtils/)
 - Microsoft Application Insights Java SDK Core (from https://github.com/Microsoft/ApplicationInsights-Java)
 - Microsoft Azure SDK for SQL API of Azure Cosmos DB Service (from https://github.com/Azure/azure-sdk-for-java)
@@ -972,10 +996,13 @@ unknown
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
+- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Byte Buddy (without dependencies) (from )
 - JUnit (from http://junit.org)
 - JUnit (from http://junit.org)
 - JUnit Jupiter (Aggregator) (from https://junit.org/junit5/)
+- JavaBeans Activation Framework (from )
 - JavaBeans Activation Framework API jar (from )
 - JavaMail API (from )
 - Servlet Specification 2.5 API (from )
