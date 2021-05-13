@@ -74,7 +74,11 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /api/partition/v1/swagger-ui.html
+            path: /api/partition/v1/_ah/readiness_check
+            port: 80
+        livenessProbe:
+          httpGet:
+            path: /api/partition/v1/_ah/liveness_check
             port: 80
         volumeMounts:
         - name: azure-keyvault

@@ -4,22 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
+import org.opengroup.osdu.partition.service.DefaultHealthCheckImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class HealthCheckServiceImpl implements IHealthCheckService {
+public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
 
     @Autowired
     @Qualifier("partitionServiceCache")
     private IPartitionServiceCache<String, PartitionInfo> partitionServiceCache;
-
-    @Override
-    public void performLivenessCheck() {
-
-    }
 
     /**
      * Cache layer must be ready before the pod can serve the traffic
