@@ -7,9 +7,11 @@ import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
 import org.opengroup.osdu.partition.service.DefaultHealthCheckImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
 
