@@ -14,10 +14,9 @@
 
 package org.opengroup.osdu.partition.provider.azure.security;
 
-import com.microsoft.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipalManager;
+import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
+import com.azure.spring.autoconfigure.aad.UserPrincipalManager;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengroup.osdu.partition.api.PartitionApi;
