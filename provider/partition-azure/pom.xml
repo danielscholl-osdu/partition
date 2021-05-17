@@ -10,20 +10,15 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>partition-azure</artifactId>
-  <version>0.9.0-SNAPSHOT</version>
   <description>Partition service on Azure</description>
   <packaging>jar</packaging>
 
   <properties>
-    <osdu.partition-core.version>0.9.0-SNAPSHOT</osdu.partition-core.version>
-    <osdu.corelibazure.version>0.9.0-rc2</osdu.corelibazure.version>
-    <osdu.oscorecommon.version>0.9.0-rc6</osdu.oscorecommon.version>
-    <azure.version>2.3.5</azure.version>
+    <osdu.corelibazure.version>0.9.0-rc3</osdu.corelibazure.version>
     <junit.version>4.12</junit.version>
     <mockito.version>2.25.0</mockito.version>
     <powermock.version>2.0.2</powermock.version>
-    <nimbus-jose-jwt>7.9</nimbus-jose-jwt>
-    <jwks-rsa>0.12.0</jwks-rsa>
+    <json-smart.version>2.4.6</json-smart.version>
   </properties>
 
   <dependencyManagement>
@@ -44,7 +39,7 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>partition-core</artifactId>
-      <version>${osdu.partition-core.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
@@ -54,12 +49,16 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>os-core-common</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.elasticsearch.client</groupId>
-          <artifactId>elasticsearch-rest-client</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+
+    <!--
+    Many dependencies contain library with vulnerabilities: net.minidev:json-smart:jar:2.3
+    because of that we need to enforce the higher version
+    -->
+    <dependency>
+      <groupId>net.minidev</groupId>
+      <artifactId>json-smart</artifactId>
+      <version>${json-smart.version}</version>
     </dependency>
 
     <dependency>
@@ -88,36 +87,14 @@
     <!-- Azure dependencies -->
     <dependency>
       <groupId>com.microsoft.azure</groupId>
-      <artifactId>azure-spring-boot-metrics-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
       <artifactId>azure-storage</artifactId>
       <version>8.6.5</version>
     </dependency>
     <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>azure-active-directory-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>msal4j</artifactId>
+      <groupId>com.azure.spring</groupId>
+      <artifactId>azure-spring-boot-starter-active-directory</artifactId>
     </dependency>
     <!-- Other dependencies -->
-    <dependency>
-      <groupId>com.auth0</groupId>
-      <artifactId>jwks-rsa</artifactId>
-      <version>${jwks-rsa}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>${nimbus-jose-jwt}</version>
-    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
