@@ -14,11 +14,13 @@
 
 package org.opengroup.osdu.partition.provider.azure.utils;
 
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.autoconfigure.aad.UserPrincipal;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class AuthorizationService implements IAuthorizationService {
@@ -64,9 +66,10 @@ public class AuthorizationService implements IAuthorizationService {
      */
     private UserType getType(UserPrincipal u) {
         UserType type;
-        if (u.getUpn() != null) {
+        Map<String, Object> claims = u.getClaims();
+        if (claims != null && claims.get("upn") != null) {
             type = UserType.REGULAR_USER;
-        } else if (u.getUniqueName() != null) {
+        } else if (claims != null && claims.get("unique_name") != null) {
             type = UserType.GUEST_USER;
         } else {
             type = UserType.SERVICE_PRINCIPAL;

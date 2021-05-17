@@ -14,7 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.azure.utils;
 
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.autoconfigure.aad.UserPrincipal;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
@@ -69,7 +69,7 @@ public class AuthorizationServiceTest {
                 .build();
         final JWSObject jwsObject = new JWSObject(new JWSHeader.Builder(JWSAlgorithm.RS256).build(),
                 new Payload(jwtClaimsSet.toString()));
-        return new UserPrincipal(jwsObject, jwtClaimsSet);
+        return new UserPrincipal("token", jwsObject, jwtClaimsSet);
     }
 
     private DummyAuthToken createSAuthToken(final String email, final String appcode) {

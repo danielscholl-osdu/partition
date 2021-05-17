@@ -56,7 +56,7 @@ public class PartitionFilterTest {
         partitionFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
         Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Origin", "custom-domain");
-        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey");
+        Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Headers", "access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey");
         Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH");
         Mockito.verify(httpServletResponse).addHeader("Access-Control-Allow-Credentials", "true");
         Mockito.verify(httpServletResponse).addHeader("X-Frame-Options", "DENY");
