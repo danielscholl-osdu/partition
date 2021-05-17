@@ -32,6 +32,7 @@ export PARTITION_BASE_URL=$PARTITION_BASE_URL
 export CLIENT_TENANT=common
 export MY_TENANT=opendes
 export RESOURCE_PREFIX=$RESOURCE_PREFIX
+export ENVIRONMENT=$RESOURCE_PREFIX
 
 #### RUN INTEGRATION TEST #########################################################################
 
