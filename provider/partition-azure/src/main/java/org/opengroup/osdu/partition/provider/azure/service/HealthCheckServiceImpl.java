@@ -2,18 +2,16 @@ package org.opengroup.osdu.partition.provider.azure.service;
 
 import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
-import org.opengroup.osdu.partition.service.DefaultHealthCheckImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
-@Primary
 @RequiredArgsConstructor
-public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
+public class HealthCheckServiceImpl implements IHealthCheckService {
 
     @Autowired
     @Qualifier("partitionServiceCache")

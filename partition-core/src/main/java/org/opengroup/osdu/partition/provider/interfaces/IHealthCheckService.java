@@ -1,6 +1,12 @@
 package org.opengroup.osdu.partition.provider.interfaces;
 
 public interface IHealthCheckService {
-    void performLivenessCheck();
-    void performReadinessCheck();
+
+    default void performLivenessCheck() {
+
+    }
+
+    default void performReadinessCheck() {
+
+    }
 }
