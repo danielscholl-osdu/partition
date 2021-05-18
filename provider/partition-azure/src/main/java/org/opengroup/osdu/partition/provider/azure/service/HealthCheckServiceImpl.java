@@ -20,10 +20,7 @@ public class HealthCheckServiceImpl implements IHealthCheckService {
     @Value("${redis.custom.readiness.check.enabled}")
     private boolean redisCustomReadinessCheck;
 
-
-    /**
-     * Cache layer must be ready before the pod can serve the traffic
-     */
+    
     @Override
     public void performReadinessCheck() {
         if (redisCustomReadinessCheck) {
