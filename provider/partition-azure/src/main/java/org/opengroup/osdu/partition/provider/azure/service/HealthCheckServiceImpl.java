@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
+import org.opengroup.osdu.partition.service.DefaultHealthCheckImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @RequiredArgsConstructor
-public class HealthCheckServiceImpl implements IHealthCheckService {
+public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
 
     @Autowired
     @Qualifier("partitionServiceCache")
@@ -20,7 +23,7 @@ public class HealthCheckServiceImpl implements IHealthCheckService {
     @Value("${redis.custom.readiness.check.enabled}")
     private boolean redisCustomReadinessCheck;
 
-    
+
     @Override
     public void performReadinessCheck() {
         if (redisCustomReadinessCheck) {
