@@ -14,9 +14,12 @@
 
 package org.opengroup.osdu.partition.api;
 
+import com.sun.jersey.api.client.ClientResponse;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.util.AwsTestUtils;
 
 public class TestUpdatePartition extends UpdatePartitionTest {
@@ -30,7 +33,20 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     @After
     @Override
     public void tearDown() {
+        try {
+            this.deleteResource();
+        }
+        catch (Exception e) {
+            
+        }
         this.testUtils = null;
+    }
+
+    @Override
+    protected void deleteResource() throws Exception {
+        DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
+        deletePartitionDes.setPartitionId(partitionId);
+        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());        
     }
 
 }
