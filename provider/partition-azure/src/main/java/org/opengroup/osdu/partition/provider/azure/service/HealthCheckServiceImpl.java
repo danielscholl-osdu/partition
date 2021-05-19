@@ -2,19 +2,19 @@ package org.opengroup.osdu.partition.provider.azure.service;
 
 import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.partition.model.PartitionInfo;
-import org.opengroup.osdu.partition.provider.interfaces.IHealthCheckService;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionServiceCache;
-import org.opengroup.osdu.partition.service.DefaultHealthCheckImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
 @Primary
 @RequiredArgsConstructor
-public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
+class CacheServiceHealthIndicatorImpl implements HealthIndicator {
 
     @Autowired
     @Qualifier("partitionServiceCache")
@@ -23,11 +23,15 @@ public class HealthCheckServiceImpl extends DefaultHealthCheckImpl {
     @Value("${redis.custom.readiness.check.enabled}")
     private boolean redisCustomReadinessCheck;
 
-
     @Override
-    public void performReadinessCheck() {
+    public Health health() {
         if (redisCustomReadinessCheck) {
-            partitionServiceCache.get("dummy-key");
+            try {
+                partitionServiceCache.get("dummy-key");
+            } catch (Exception ex) {
+                return Health.down().withDetail("Cache service", ex).build();
+            }
         }
+        return Health.up().build();
     }
 }
