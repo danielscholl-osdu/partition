@@ -107,7 +107,7 @@ $ (cd testing/partition-test-core/ && mvn clean install)
 $ (cd testing/partition-test-azure/ && mvn clean test)
 ```
 
-A liveness check can also be performed at `http://localhost:8080/api/partition/v1/_ah/liveness_check`. Other apis can be found on the swagger page
+A liveness check can also be performed at `http://localhost:8080/api/partition/v1/actuator/health`. Other apis can be found on the swagger page
 
 ## Debugging
 
