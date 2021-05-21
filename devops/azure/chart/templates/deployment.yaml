@@ -50,10 +50,6 @@ spec:
           httpGet:
             path: /api/partition/v1/actuator/health
             port: 8081
-        livenessProbe:
-          httpGet:
-            path: /api/partition/v1/actuator/health
-            port: 8081
         volumeMounts:
         - name: azure-keyvault
           mountPath: "/mnt/azure-keyvault"
