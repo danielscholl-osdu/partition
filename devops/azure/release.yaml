@@ -76,6 +76,12 @@ spec:
           httpGet:
             path: /actuator/health
             port: 8081
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 250
+          periodSeconds: 10
         volumeMounts:
         - name: azure-keyvault
           mountPath: "/mnt/azure-keyvault"
