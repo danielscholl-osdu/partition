@@ -74,7 +74,7 @@ spec:
         - containerPort: 80
         readinessProbe:
           httpGet:
-            path: /api/partition/v1/actuator/health
+            path: /actuator/health
             port: 8081
         volumeMounts:
         - name: azure-keyvault
