@@ -18,13 +18,13 @@ Partition service is responsible for creating and retrieving the partition speci
 ## Health Check <a name="checking-service-health"></a>
 An endpoint to check if service is up and running.
 ```
-GET api/partition/v1/_ah/liveness_check
+GET api/partition/v1/actuator/health
 ```
 <details><summary>curl</summary>
 
 ```
 curl --request GET \
-  --url 'https://<base_url>/api/partition/v1/_ah/liveness_check'
+  --url 'https://<base_url>/api/partition/v1/actuator/health'
 ```
 </details>
 
