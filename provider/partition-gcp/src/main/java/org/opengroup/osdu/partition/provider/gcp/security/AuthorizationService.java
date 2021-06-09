@@ -39,47 +39,50 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequiredArgsConstructor
 public class AuthorizationService implements IAuthorizationService {
 
-    private final PropertiesConfiguration configuration;
+  private final PropertiesConfiguration configuration;
 
-    private final DpsHeaders headers;
+  private final DpsHeaders headers;
 
-    @Override
-    public boolean isDomainAdminServiceAccount() {
-        if (Objects.isNull(headers.getAuthorization()) || headers.getAuthorization().isEmpty()) {
-            throw AppException.createUnauthorized("No JWT token. Access is Forbidden");
-        }
-        try {
-            GoogleIdTokenVerifier verifier =
-                new GoogleIdTokenVerifier.Builder(
-                    GoogleNetHttpTransport.newTrustedTransport(),
-                    JacksonFactory.getDefaultInstance())
-                    .setAudience(Collections.singleton(configuration.getGoogleAudiences()))
-                    .build();
-
-            String authorization = headers.getAuthorization().replace("Bearer ", "");
-            GoogleIdToken googleIdToken = verifier.verify(authorization);
-            if (Objects.isNull(googleIdToken)) {
-                log.warn("Not valid token provided");
-                throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
-            }
-            String email = googleIdToken.getPayload().getEmail();
-            String partitionAdminAccount = configuration.getPartitionAdminAccount();
-            if (Objects.nonNull(partitionAdminAccount) && !partitionAdminAccount.isEmpty()) {
-                if (email.equals(partitionAdminAccount)) {
-                    return true;
-                } else {
-                    throw AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
-                }
-            } else {
-                if (StringUtils.endsWithIgnoreCase(email, "gserviceaccount.com")) {
-                    return true;
-                } else {
-                    throw AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
-                }
-            }
-        } catch (Exception e) {
-            log.warn("Not valid or expired token provided");
-            throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
-        }
+  @Override
+  public boolean isDomainAdminServiceAccount() {
+    if (Objects.isNull(headers.getAuthorization()) || headers.getAuthorization().isEmpty()) {
+      throw AppException.createUnauthorized("No JWT token. Access is Forbidden");
     }
+    String email = null;
+    try {
+      GoogleIdTokenVerifier verifier =
+          new GoogleIdTokenVerifier.Builder(
+              GoogleNetHttpTransport.newTrustedTransport(),
+              JacksonFactory.getDefaultInstance())
+              .setAudience(Collections.singleton(configuration.getGoogleAudiences()))
+              .build();
+
+      String authorization = headers.getAuthorization().replace("Bearer ", "");
+      GoogleIdToken googleIdToken = verifier.verify(authorization);
+      if (Objects.isNull(googleIdToken)) {
+        log.warn("Not valid token provided");
+        throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
+      }
+      email = googleIdToken.getPayload().getEmail();
+      String partitionAdminAccount = configuration.getPartitionAdminAccount();
+      if (Objects.nonNull(partitionAdminAccount) && !partitionAdminAccount.isEmpty()) {
+        if (email.equals(partitionAdminAccount)) {
+          return true;
+        } else {
+          throw AppException
+              .createUnauthorized(String.format("Unauthorized. The user %s is untrusted.", email));
+        }
+      } else {
+        if (StringUtils.endsWithIgnoreCase(email, "gserviceaccount.com")) {
+          return true;
+        } else {
+          throw AppException.createUnauthorized(
+              String.format("Unauthorized. The user %s is not Service Principal", email));
+        }
+      }
+    } catch (Exception ex) {
+      log.warn(String.format("User %s is not unauthorized. %s.", email, ex));
+      throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
+    }
+  }
 }
