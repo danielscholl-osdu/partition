@@ -18,6 +18,7 @@ variables:
   OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_AUTHORIZE_API,GOOGLE_CLOUD_PROJECT=$OSDU_GCP_PROJECT,GOOGLE_AUDIENCES=$GOOGLE_AUDIENCE,PARTITION_ADMIN_ACCOUNT=$OSDU_GCP_SERVICE_ACCOUNT
   MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
   OSDU_GCP_TEST_SUBDIR: testing/$OSDU_GCP_SERVICE-test-$OSDU_GCP_VENDOR
+  OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
