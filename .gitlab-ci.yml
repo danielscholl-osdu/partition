@@ -44,6 +44,9 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/osdu-gcp-cloudrun.yml"
 
+  - project: 'osdu/platform/ci-cd-pipelines'
+    file: 'publishing/pages.yml'
+
 osdu-gcp-test:
   variables:
     CLIENT_TENANT: osdu
