@@ -83,7 +83,7 @@ A sample output is shown below.
     },
     "crmAccountID": {
         "sensitive": false,
-        "value": "["osdu","osdu"]"
+        "value": ["osdu","osdu"]
     }
 }
 ```
@@ -94,6 +94,7 @@ A sample output is shown below.
 
 ### Create a new partition<a name="create-partition"></a>
 This api can be used to create a new partition. A plausible use case would be partition provisioning infrastructure script.
+The default namespace value of Cloud Datastore is `partition`.
 ```
 POST api/partition/v1/partitions/{partitionId}
 ```
@@ -136,7 +137,7 @@ curl --request POST \
         },
         "crmAccountID": {
             "sensitive": false,
-            "value": "["mypartition","mypartition"]"
+            "value": ["mypartition","mypartition"]
         }
       }
   }'
