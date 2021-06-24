@@ -10,4 +10,5 @@ data:
   PARTITION_ADMIN_ACCOUNT: "{{ .Values.data.partition_admin_account }}"
   GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
   KEY_RING: "{{ .Values.data.key_ring }}"
+  KMS_KEY: "{{ .Values.data.kms_key }}"
   LOG_LEVEL: "{{ .Values.data.log_level }}"
