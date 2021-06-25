@@ -3,6 +3,7 @@ data:
   partition_admin_account: ""
   google_audiences: ""
   key_ring: ""
+  kms_key: ""
   log_level: ""
 
 conf:
