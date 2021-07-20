@@ -5,6 +5,7 @@ data:
   key_ring: ""
   kms_key: ""
   log_level: ""
+  authorize_api: ""
 
 conf:
   configmap: "partition-config"
