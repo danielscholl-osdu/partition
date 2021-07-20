@@ -19,6 +19,15 @@ variables:
   MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
   OSDU_GCP_TEST_SUBDIR: testing/$OSDU_GCP_SERVICE-test-$OSDU_GCP_VENDOR
   OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
+  OSDU_GCP_HELM_DEPLOYMENT_DIR: "devops/gcp/deploy"
+  OSDU_GCP_HELM_CONFIG_DIR: "devops/gcp/configmap"
+  OSDU_GCP_HELM_NAMESPACE: "default"
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.authorize_api=$OSDU_GCP_AUTHORIZE_API --set data.google_cloud_project=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.partition_admin_account=osdu-gcp-sa@nice-etching-277309.iam.gserviceaccount.com --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY"
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA --set data.serviceAccountName=workload-identity-partition"
+  OSDU_GCP_HELM_CONFIG_SERVICE: "partition-config"
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE: "partition-deploy"
+
+
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -43,7 +52,7 @@ include:
     file: "cloud-providers/ibm.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/osdu-gcp-cloudrun.yml"
+    file: "cloud-providers/osdu-gcp-gke.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "publishing/pages.yml"
