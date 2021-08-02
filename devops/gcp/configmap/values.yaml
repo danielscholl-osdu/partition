@@ -1,6 +1,6 @@
 data:
   google_cloud_project: ""
-  partition_admin_account: ""
+  partition_admin_accounts: ""
   google_audiences: ""
   key_ring: ""
   kms_key: ""
