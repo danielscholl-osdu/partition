@@ -21,7 +21,7 @@
     <parent>
         <artifactId>partition</artifactId>
         <groupId>org.opengroup.osdu</groupId>
-        <version>0.9.0-SNAPSHOT</version>
+        <version>0.11.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>0.11.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
@@ -93,10 +93,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
@@ -181,6 +177,18 @@
                             <classifier>spring-boot</classifier>
                             <mainClass>org.opengroup.osdu.partition.provider.aws.PartitionApplication</mainClass>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

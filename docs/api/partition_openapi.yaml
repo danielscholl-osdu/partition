@@ -16,7 +16,7 @@ tags:
   - name: health-check
     description: Health Check
 paths:
-  /_ah/liveness_check:
+  /actuator/health:
     get:
       tags:
         - health-check
@@ -40,7 +40,7 @@ paths:
       security:
         - JWT:
             - global
-  /_ah/readiness_check:
+  /actuator/health:
     get:
       tags:
         - health-check

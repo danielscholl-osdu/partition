@@ -151,7 +151,7 @@ stages:
                   attempt_counter=0
                   max_attempts=60
                   # NOTE that the PARTITION_BASE_URL already has a '/' at the end of it
-                  until [ $(curl -s -o /dev/null -w "%{http_code}" $(PARTITION_BASE_URL)api/partition/v1/_ah/liveness_check) -eq 200 ]; do
+                  until [ $(curl -s -o /dev/null -w "%{http_code}" $(PARTITION_BASE_URL)api/partition/v1/actuator/health) -eq 200 ]; do
                   if [ ${attempt_counter} -eq ${max_attempts} ];then
                       echo "Service is not available, please check the deployment"
                       exit 1

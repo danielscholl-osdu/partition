@@ -1,0 +1,11 @@
+data:
+  google_cloud_project: ""
+  partition_admin_account: ""
+  google_audiences: ""
+  key_ring: ""
+  kms_key: ""
+  log_level: ""
+
+conf:
+  configmap: "partition-config"
+  app_name: "partition"
