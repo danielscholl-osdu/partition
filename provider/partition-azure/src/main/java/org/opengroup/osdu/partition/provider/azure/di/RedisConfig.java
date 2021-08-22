@@ -1,6 +1,8 @@
 package org.opengroup.osdu.partition.provider.azure.di;
 
 import com.azure.security.keyvault.secrets.SecretClient;
+import com.lambdaworks.redis.ClientOptions;
+import com.lambdaworks.redis.SocketOptions;
 import org.opengroup.osdu.azure.KeyVaultFacade;
 import org.opengroup.osdu.core.common.cache.RedisCache;
 import org.opengroup.osdu.partition.model.PartitionInfo;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.inject.Named;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class RedisConfig {
@@ -40,14 +43,23 @@ public class RedisConfig {
         @Value("${redis.database}")
         private int database;
 
+        @Value("${redis.connection.timeout}")
+        private long timeout;
+
         @Bean
         public RedisCache<String, PartitionInfo> partitionServiceCache(@Named("REDIS_HOST") String host, @Named("REDIS_PASSWORD") String password) {
-            return new RedisCache<>(host, port, password, expiration, database, String.class, PartitionInfo.class);
+            ClientOptions clientOptions = ClientOptions.builder()
+                    .socketOptions(SocketOptions.builder().connectTimeout(timeout, TimeUnit.SECONDS).build())
+                    .build();
+            return new RedisCache<>(host, port, password, expiration, database, clientOptions, String.class, PartitionInfo.class);
         }
 
         @Bean
         public RedisCache<String, List<String>> partitionListCache(@Named("REDIS_HOST") String host, @Named("REDIS_PASSWORD") String password) {
-            return new RedisCache(host, port, password, expiration, database, String.class, List.class);
+            ClientOptions clientOptions = ClientOptions.builder()
+                    .socketOptions(SocketOptions.builder().connectTimeout(timeout, TimeUnit.SECONDS).build())
+                    .build();
+            return new RedisCache(host, port, password, expiration, database, clientOptions, String.class, List.class);
         }
 
     }
@@ -65,14 +77,23 @@ public class RedisConfig {
         @Value("${redis.database}")
         private int database;
 
+        @Value("${redis.connection.timeout}")
+        private long timeout;
+
         @Bean
         public RedisCache<String, PartitionInfo> partitionServiceCache(@Named("REDIS_HOST") String host) {
-            return new RedisCache<>(host, port, expiration, database, String.class, PartitionInfo.class);
+            ClientOptions clientOptions = ClientOptions.builder()
+                    .socketOptions(SocketOptions.builder().connectTimeout(timeout, TimeUnit.SECONDS).build())
+                    .build();
+            return new RedisCache<>(host, port, expiration, database, clientOptions, String.class, PartitionInfo.class);
         }
 
         @Bean
         public RedisCache<String, List<String>> partitionListCache(@Named("REDIS_HOST") String host) {
-            return new RedisCache(host, port, expiration, database, String.class, List.class);
+            ClientOptions clientOptions = ClientOptions.builder()
+                    .socketOptions(SocketOptions.builder().connectTimeout(timeout, TimeUnit.SECONDS).build())
+                    .build();
+            return new RedisCache(host, port, expiration, database, clientOptions, String.class, List.class);
         }
 
     }

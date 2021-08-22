@@ -24,6 +24,9 @@ In order to run the service locally or remotely, you will need to have the follo
 | `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
 | `PARTITION_ADMIN_ACCOUNT` | ex `admin@domen.iam.gserviceaccount.com` | Partition Admin account email | no | - |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
+| `KEY_RING` | ex `csqp` | A key ring holds keys in a specific Google Cloud location and permit us to manage access control on groups of keys | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
+| `KMS_KEY` | ex `partitionService` | A key exists on one key ring linked to a specific location. | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
+
 
 ### Run Locally
 Check that maven is installed:
@@ -140,23 +143,23 @@ Partition Service is compatible with App Engine Flexible Environment and Cloud R
 
 #### Cloud KMS Setup
 
-Enable cloud KMS on master project
+Enable cloud KMS on master project.
 
 Create king ring and key in the ***master project***
 
 ```bash
     gcloud services enable cloudkms.googleapis.com
     export KEYRING_NAME="csqp"
-    export CRYPTOKEY_NAME="searchService"
+    export CRYPTOKEY_NAME="partionService"
     gcloud kms keyrings create $KEYRING_NAME --location global
     gcloud kms keys create $CRYPTOKEY_NAME --location global \
     		--keyring $KEYRING_NAME \
     		--purpose encryption
 ```
 
-Add **Cloud KMS CryptoKey Encrypter/Decrypter** role to the **App Engine default service account** of the master project through IAM - Role tab
+Add **Cloud KMS CryptoKey Encrypter/Decrypter** role to the used **service account** by Partition Service of the ***master project*** through IAM - Role tab.
 
-Add "Cloud KMS Encrypt/Decrypt" role to the "App Engine default service account" of ***master project***
+Add "Cloud KMS Encrypt/Decrypt" role to the used **service account** by Partition Service of the ***master project*** through IAM - Role tab.
 
 ## Licence
 Copyright © Google LLC
