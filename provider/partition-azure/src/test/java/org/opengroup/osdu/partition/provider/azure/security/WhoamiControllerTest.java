@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @PrepareForTest(SecurityContextHolder.class)
-@SpringBootTest(classes = {WhoamiController.class, AADSecurityConfig.class,
+@SpringBootTest(properties = {"azure.istio.auth.enabled=true"}, classes = {WhoamiController.class, AADSecurityConfig.class,
     AADAppRoleStatelessAuthenticationFilter.class})
 @WebAppConfiguration
 public class WhoamiControllerTest {

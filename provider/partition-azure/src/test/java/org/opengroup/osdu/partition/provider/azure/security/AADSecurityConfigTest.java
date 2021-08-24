@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {HomeController.class,
+@SpringBootTest(properties = {"azure.istio.auth.enabled=true"}, classes = {HomeController.class,
         PartitionApi.class,
         AADSecurityConfig.class,
         AADAppRoleStatelessAuthenticationFilter.class})
