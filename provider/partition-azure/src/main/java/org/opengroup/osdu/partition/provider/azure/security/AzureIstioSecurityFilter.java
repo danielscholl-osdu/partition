@@ -55,11 +55,9 @@ public class AzureIstioSecurityFilter extends OncePerRequestFilter {
                         .orElse(DEFAULT_ROLE_CLAIM);
 
                 // By default the authenticated is set to true as part PreAuthenticatedAuthenticationToken constructor.
-                // TODO: check where the claims were being set in case of ADSecurityConfig
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(
-                                // TODO: check if aadIssuedBearerToken parameter should be null here
                                 new PreAuthenticatedAuthenticationToken(
                                         new UserPrincipal(null,null, claimsSet),
                                         null,
