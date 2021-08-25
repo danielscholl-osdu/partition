@@ -19,9 +19,7 @@ package org.opengroup.osdu.partition.provider.gcp.security;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +41,8 @@ public class AuthorizationService implements IAuthorizationService {
 
   private final DpsHeaders headers;
 
+  private final GoogleIdTokenVerifier verifier;
+
   @Override
   public boolean isDomainAdminServiceAccount() {
     if (Objects.isNull(headers.getAuthorization()) || headers.getAuthorization().isEmpty()) {
@@ -50,13 +50,6 @@ public class AuthorizationService implements IAuthorizationService {
     }
     String email = null;
     try {
-      GoogleIdTokenVerifier verifier =
-          new GoogleIdTokenVerifier.Builder(
-              GoogleNetHttpTransport.newTrustedTransport(),
-              JacksonFactory.getDefaultInstance())
-              .setAudience(Collections.singleton(configuration.getGoogleAudiences()))
-              .build();
-
       String authorization = headers.getAuthorization().replace("Bearer ", "");
       GoogleIdToken googleIdToken = verifier.verify(authorization);
       if (Objects.isNull(googleIdToken)) {
@@ -64,25 +57,37 @@ public class AuthorizationService implements IAuthorizationService {
         throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
       }
       email = googleIdToken.getPayload().getEmail();
-      String partitionAdminAccount = configuration.getPartitionAdminAccount();
-      if (Objects.nonNull(partitionAdminAccount) && !partitionAdminAccount.isEmpty()) {
-        if (email.equals(partitionAdminAccount)) {
-          return true;
-        } else {
-          throw AppException
-              .createUnauthorized(String.format("Unauthorized. The user %s is untrusted.", email));
-        }
+      List<String> partitionAdminAccounts = configuration.getPartitionAdminAccounts();
+      if (Objects.nonNull(partitionAdminAccounts) && !partitionAdminAccounts.isEmpty()) {
+        return isAllowedAccount(email);
       } else {
-        if (StringUtils.endsWithIgnoreCase(email, "gserviceaccount.com")) {
+        if (StringUtils.endsWith(email, configuration.getServiceAccountTail())) {
           return true;
         } else {
           throw AppException.createUnauthorized(
               String.format("Unauthorized. The user %s is not Service Principal", email));
         }
       }
+    } catch (AppException e){
+      throw e;
     } catch (Exception ex) {
       log.warn(String.format("User %s is not unauthorized. %s.", email, ex));
       throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
     }
+  }
+
+  private boolean isAllowedAccount(String accountEmail) {
+    if (StringUtils.endsWith(accountEmail, configuration.getServiceAccountTail())) {
+      for (String partitionAdmin : configuration.getPartitionAdminAccounts()) {
+        if (partitionAdmin.equals(accountEmail)) {
+          return true;
+        }
+        if (StringUtils.startsWith(accountEmail, partitionAdmin)) {
+          return true;
+        }
+      }
+    }
+    throw AppException
+        .createUnauthorized(String.format("Unauthorized. The user %s is untrusted.", accountEmail));
   }
 }

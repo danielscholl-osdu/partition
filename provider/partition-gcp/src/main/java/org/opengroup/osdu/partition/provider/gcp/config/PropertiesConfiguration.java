@@ -17,6 +17,9 @@
 
 package org.opengroup.osdu.partition.provider.gcp.config;
 
+import java.util.List;
+import java.util.Objects;
+import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,9 +33,21 @@ public class PropertiesConfiguration {
 
     private String googleAudiences;
 
-    private String partitionAdminAccount;
+    private List<String> partitionAdminAccounts;
+
+    private String googleCloudProject;
 
     private int cacheExpiration;
 
     private int cacheMaxSize;
+
+    private String serviceAccountTail;
+
+    @PostConstruct
+    public void setUp() {
+        if (Objects.isNull(serviceAccountTail) || serviceAccountTail.isEmpty()) {
+            this.serviceAccountTail = googleCloudProject + ".iam.gserviceaccount.com";
+        }
+    }
+
 }

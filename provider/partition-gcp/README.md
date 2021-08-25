@@ -22,7 +22,7 @@ In order to run the service locally or remotely, you will need to have the follo
 | `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
 | `GOOGLE_CLOUD_PROJECT` | ex `osdu-cicd-epam` | Google Cloud Project Id| no | output of infrastructure deployment |
 | `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
-| `PARTITION_ADMIN_ACCOUNT` | ex `admin@domen.iam.gserviceaccount.com` | Partition Admin account email | no | - |
+| `PARTITION_ADMIN_ACCOUNTS` | ex `admin@domen.iam.gserviceaccount.com,osdu-gcp-sa,workload-identity` | List of partition admin account emails, could be in full form like `admin@domen.iam.gserviceaccount.com` or in `starts with` pattern like `osdu-gcp-sa`| no | - |
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `KEY_RING` | ex `csqp` | A key ring holds keys in a specific Google Cloud location and permit us to manage access control on groups of keys | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
 | `KMS_KEY` | ex `partitionService` | A key exists on one key ring linked to a specific location. | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
