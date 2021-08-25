@@ -4,7 +4,7 @@ variables:
   AWS_SERVICE: partition
   AWS_ENVIRONMENT: dev
   AWS_DEPLOY_TARGET: EKS
-  AWS_EKS_DEPLOYMENT_NAME: os-entitlements
+  AWS_EKS_DEPLOYMENT_NAME: os-partition
 
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
