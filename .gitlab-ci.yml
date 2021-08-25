@@ -3,6 +3,8 @@ variables:
   AWS_TEST_SUBDIR: testing/partition-test-aws
   AWS_SERVICE: partition
   AWS_ENVIRONMENT: dev
+  AWS_DEPLOY_TARGET: EKS
+  AWS_EKS_DEPLOYMENT_NAME: os-entitlements
 
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
