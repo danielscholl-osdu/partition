@@ -1,4 +1,4 @@
-// Copyright © 2020 Amazon Web Services
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,50 @@
 
 package org.opengroup.osdu.partition.provider.aws.cache;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
+import org.opengroup.osdu.core.common.cache.ICache;
+import org.opengroup.osdu.core.common.cache.RedisCache;
+import org.opengroup.osdu.core.common.cache.VmCache;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.core.common.model.entitlements.Groups;
-import org.opengroup.osdu.core.common.cache.RedisCache;
 import org.opengroup.osdu.core.common.util.Crc32c;
+import org.opengroup.osdu.core.aws.cache.DummyCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
+
 @Component
-public class GroupCache extends RedisCache<String, Groups> {
-    public GroupCache(@Value("${aws.elasticache.cluster.endpoint}") final String REDIS_GROUP_HOST, @Value("${aws.elasticache.cluster.port}") final String REDIS_GROUP_PORT, @Value("${aws.elasticache.cluster.key}") final String REDIS_GROUP_KEY) {
-        super(REDIS_GROUP_HOST, Integer.parseInt(REDIS_GROUP_PORT), REDIS_GROUP_KEY, 30, String.class, Groups.class);
+public class GroupCache {
+    @Value("${aws.elasticache.cluster.endpoint}")
+    String REDIS_SEARCH_HOST;
+    @Value("${aws.elasticache.cluster.port}")
+    String REDIS_SEARCH_PORT;
+    @Value("${aws.elasticache.cluster.key}")
+    String REDIS_SEARCH_KEY;
+    public ICache<String, Groups> GetGroupCache() throws K8sParameterNotFoundException, JsonProcessingException {
+        K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
+        if (provider.getLocalMode()){
+            if (Boolean.parseBoolean(System.getenv("DISABLE_CACHE"))){
+                return new DummyCache();
+            }
+            return new VmCache<>(60, 10);
+        }else {
+            String host = provider.getParameterAsStringOrDefault("CACHE_CLUSTER_ENDPOINT", REDIS_SEARCH_HOST);
+            int port = Integer.parseInt(provider.getParameterAsStringOrDefault("CACHE_CLUSTER_PORT", REDIS_SEARCH_PORT));
+            Map<String, String > credential =provider.getCredentialsAsMap("CACHE_CLUSTER_KEY");
+            String password;
+            if (credential !=null){
+                password = credential.get("token");
+            }else{
+                password = REDIS_SEARCH_KEY;
+            }
+            return new RedisCache(host, port, password, 60, String.class, Groups.class);
+        }
     }
 
     public static String getGroupCacheKey(DpsHeaders headers) {
