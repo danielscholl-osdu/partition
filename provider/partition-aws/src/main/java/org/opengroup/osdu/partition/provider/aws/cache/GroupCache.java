@@ -33,11 +33,11 @@ import java.util.Map;
 
 @Component
 public class GroupCache {
-    @Value("${aws.elasticache.cluster.endpoint:null}")
+    @Value("${aws.elasticache.cluster.endpoint}")
     String REDIS_SEARCH_HOST;
-    @Value("${aws.elasticache.cluster.port:null}")
+    @Value("${aws.elasticache.cluster.port}")
     String REDIS_SEARCH_PORT;
-    @Value("${aws.elasticache.cluster.key:null}")
+    @Value("${aws.elasticache.cluster.key}")
     String REDIS_SEARCH_KEY;
     public ICache<String, Groups> GetGroupCache() throws K8sParameterNotFoundException, JsonProcessingException {
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
