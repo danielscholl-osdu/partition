@@ -25,6 +25,9 @@ import java.util.Map;
 @Component
 public class AuthorizationService implements IAuthorizationService {
 
+    private final String AAD_issuer_v1 = "https://sts.windows.net";
+    private final String AAD_issuer_v2 = "https://login.microsoftonline.com";
+
     enum UserType {
         REGULAR_USER,
         GUEST_USER,
@@ -40,12 +43,22 @@ public class AuthorizationService implements IAuthorizationService {
         }
 
         final UserPrincipal userPrincipal = (UserPrincipal) principal;
+        String issuer = userPrincipal.getClaim("iss").toString();
 
         UserType type = getType(userPrincipal);
-        if (type == UserType.SERVICE_PRINCIPAL) {
+        if (type == UserType.SERVICE_PRINCIPAL && issuedByAAD(issuer)) {
             return true;
         }
         return false;
+    }
+
+    /***
+     * Check that issuer string startswith accepted prefix of AAD issuer url (V1 or V2).
+     * @param issuer claim for "issuer"
+     * @return true if issuer startswith V1 url or V2 url
+     */
+    private boolean issuedByAAD(String issuer) {
+        return issuer.startsWith(AAD_issuer_v1) || issuer.startsWith(AAD_issuer_v2);
     }
 
     /**
