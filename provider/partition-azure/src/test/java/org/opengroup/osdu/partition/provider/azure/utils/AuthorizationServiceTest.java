@@ -103,9 +103,21 @@ public class AuthorizationServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenAADTokenIsSetInContext() {
+    public void shouldReturnTrueWhenAADTokenIsSetInContext_AndIssuerIsAAD() {
         createAADUserPrincipalSetSecurityContext(TestUtils.APPID, TestUtils.getAppId(), TestUtils.getAadIssuer());
         assertTrue(authorizationService.isDomainAdminServiceAccount());
+    }
+
+    @Test
+    public void shouldReturnTrueWhenAADTokenIsSetInContext_AndIssuerIsAADV2() {
+        createAADUserPrincipalSetSecurityContext(TestUtils.APPID, TestUtils.getAppId(), TestUtils.getAadIssuerV2());
+        assertTrue(authorizationService.isDomainAdminServiceAccount());
+    }
+
+    @Test
+    public void shouldReturnFalseWhenAADTokenIsSetInContext_AndIssuerIsNotAAD() {
+        createAADUserPrincipalSetSecurityContext(TestUtils.APPID, TestUtils.getAppId(), TestUtils.getNonAadIssuer());
+        assertFalse(authorizationService.isDomainAdminServiceAccount());
     }
 
     @Getter
