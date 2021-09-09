@@ -3,14 +3,13 @@
 
 package org.opengroup.osdu.partition.provider.ibm.security;
 
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -28,12 +27,14 @@ public class AuthorizationService implements IAuthorizationService {
 	@Override
 	public boolean isDomainAdminServiceAccount() {
 		try {
-			final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			@SuppressWarnings("unchecked")
-			KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
-			String upn =  principal.getName();
-			log.info("email : "+upn);
-			if(upn.equals(partitionAdminUser)) {
+			final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Jwt principal = (Jwt) authentication.getPrincipal();
+	        String memberEmail = principal.getClaimAsString("email");
+//			@SuppressWarnings("unchecked")
+//			KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
+//			String upn =  principal.getName();
+			log.debug("email : "+memberEmail);
+			if(memberEmail.equals(partitionAdminUser)) {
 				return true;
 			} 
 		    else {

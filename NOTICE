@@ -410,15 +410,6 @@ The following software have components provided under the terms of this license:
 - KeePassJava2 :: KDB (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-kdb)
 - KeePassJava2 :: KDBX (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-kdbx)
 - KeePassJava2 :: Simple (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/KeePassJava2-simple)
-- KeyCloak Authz: Client API (from https://repo1.maven.org/maven2/org/keycloak/keycloak-authz-client)
-- Keycloak :: Spring :: Boot :: Default ::  Starter (from https://repo1.maven.org/maven2/org/keycloak/keycloak-spring-boot-starter)
-- Keycloak Adapter Core (from https://repo1.maven.org/maven2/org/keycloak/keycloak-adapter-core)
-- Keycloak Adapter SPI (from https://repo1.maven.org/maven2/org/keycloak/keycloak-adapter-spi)
-- Keycloak Common (from https://repo1.maven.org/maven2/org/keycloak/keycloak-common)
-- Keycloak Core (from https://repo1.maven.org/maven2/org/keycloak/keycloak-core)
-- Keycloak Spring Boot 2 Integration (from https://repo1.maven.org/maven2/org/keycloak/keycloak-spring-boot-2-adapter)
-- Keycloak Spring Boot Adapter Core (from https://repo1.maven.org/maven2/org/keycloak/keycloak-spring-boot-adapter-core)
-- Keycloak Spring Security Integration (from https://repo1.maven.org/maven2/org/keycloak/keycloak-spring-security-adapter)
 - Kotlin Stdlib (from https://kotlinlang.org/)
 - Kotlin Stdlib Common (from https://kotlinlang.org/)
 - Logback Contrib :: JSON :: Classic (from https://repo1.maven.org/maven2/ch/qos/logback/contrib/logback-json-classic)
@@ -580,7 +571,6 @@ The following software have components provided under the terms of this license:
 - spring-boot-actuator (from https://spring.io/projects/spring-boot)
 - spring-boot-actuator-autoconfigure (from https://spring.io/projects/spring-boot)
 - spring-boot-autoconfigure (from https://spring.io/projects/spring-boot)
-- spring-boot-container-bundle (from https://repo1.maven.org/maven2/org/keycloak/spring-boot-container-bundle)
 - spring-boot-dependencies (from https://spring.io/projects/spring-boot)
 - spring-boot-starter (from https://spring.io/projects/spring-boot)
 - spring-boot-starter-actuator (from https://spring.io/projects/spring-boot)
@@ -656,7 +646,6 @@ The following software have components provided under the terms of this license:
 - Hamcrest (from http://hamcrest.org/JavaHamcrest/)
 - Hamcrest Core (from http://hamcrest.org/)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
-- Jakarta Activation (from https://repo1.maven.org/maven2/com/sun/activation/jakarta.activation)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 - Microsoft Application Insights Java SDK Core (from https://github.com/Microsoft/ApplicationInsights-Java)
@@ -888,7 +877,6 @@ The following software have components provided under the terms of this license:
 - Azure Java Client Runtime for ARM (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Java Client Runtime for AutoRest (from https://github.com/Azure/autorest-clientruntime-for-java)
 - Azure Spring Boot AutoConfigure (from https://github.com/Azure/azure-sdk-for-java)
-- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Checker Qual (from https://checkerframework.org)
 - Default Plexus Container (from https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-container-default)
 - Extensions on Apache Proton-J library (from https://github.com/Azure/qpid-proton-j-extensions)
@@ -956,7 +944,6 @@ PHP-3.01
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- Jakarta Activation (from https://repo1.maven.org/maven2/com/sun/activation/jakarta.activation)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 
@@ -1007,15 +994,12 @@ The following software have components provided under the terms of this license:
 
 - AWS SDK for Java - Models (from https://aws.amazon.com/sdkforjava)
 - Asynchronous Http Client (from https://repo1.maven.org/maven2/org/asynchttpclient/async-http-client)
-- Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
-- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Guava: Google Core Libraries for Java (from https://repo1.maven.org/maven2/com/google/guava/guava)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - JTidy (from http://jtidy.sourceforge.net)
 - Joda-Time (from https://www.joda.org/joda-time/)
 - Joda-Time (from https://www.joda.org/joda-time/)
 - Joda-Time (from https://www.joda.org/joda-time/)
-- Keycloak Common (from https://repo1.maven.org/maven2/org/keycloak/keycloak-common)
 - LatencyUtils (from http://latencyutils.github.io/LatencyUtils/)
 - Microsoft Application Insights Java SDK Core (from https://github.com/Microsoft/ApplicationInsights-Java)
 - Microsoft Azure SDK for EventGrid Management (from https://github.com/Azure/azure-sdk-for-java)
@@ -1035,8 +1019,6 @@ unknown
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs (from http://www.bouncycastle.org/java.html)
-- Bouncy Castle Provider (from http://www.bouncycastle.org/java.html)
 - Byte Buddy (without dependencies) (from https://repo1.maven.org/maven2/net/bytebuddy/byte-buddy)
 - Checker Qual (from https://checkerframework.org)
 - JSON in Java (from https://github.com/douglascrockford/JSON-java)
@@ -1048,7 +1030,6 @@ The following software have components provided under the terms of this license:
 - JUnit Jupiter Params (from https://junit.org/junit5/)
 - JUnit Platform Commons (from https://junit.org/junit5/)
 - JUnit Platform Engine API (from https://junit.org/junit5/)
-- Jakarta Activation (from https://repo1.maven.org/maven2/com/sun/activation/jakarta.activation)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api)
 - Spongy Castle (from http://rtyley.github.io/spongycastle/)
