@@ -21,3 +21,5 @@ image:
   repository: community.opengroup.org:5555/osdu/platform/system/partition
   branch: master
   tag: latest
+
+istioDnsHost: ""
