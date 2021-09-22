@@ -12,4 +12,3 @@ data:
   KEY_RING: "{{ .Values.data.key_ring }}"
   KMS_KEY: "{{ .Values.data.kms_key }}"
   LOG_LEVEL: "{{ .Values.data.log_level }}"
-  AUTHORIZE_API: "{{ .Values.data.authorize_api }}"
