@@ -45,6 +45,15 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
+        {{- if has .Values.env .Values.featureFlag.resourceLimits.enabledEnvs }}
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "600Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        {{- end }}
         readinessProbe:
           httpGet:
             path: /actuator/health
@@ -93,6 +102,6 @@ spec:
         - name: azure_activedirectory_AppIdUri
           value: "api://$(aad_client_id)"
         - name: azure_activedirectory_session_stateless
-          value: "true"
+          value: "false"
         - name: azure_istioauth_enabled
           value: "true"
