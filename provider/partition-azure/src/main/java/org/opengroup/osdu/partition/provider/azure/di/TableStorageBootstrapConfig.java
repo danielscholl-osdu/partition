@@ -15,12 +15,15 @@
 package org.opengroup.osdu.partition.provider.azure.di;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.RetryLinearRetry;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.table.CloudTable;
 import com.microsoft.azure.storage.table.CloudTableClient;
+import lombok.Setter;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.common.Validators;
 import org.opengroup.osdu.core.common.model.http.AppException;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -30,9 +33,15 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
 @Configuration
+@ConfigurationProperties(prefix = "azure.table-storage")
+@Setter
 public class TableStorageBootstrapConfig {
 
     private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
+
+    private int maximumExecutionTimeMs;
+    private int retryDeltaBackoffMs;
+    private int retryMaxAttempts;
 
     @Bean
     @Lazy
@@ -45,7 +54,10 @@ public class TableStorageBootstrapConfig {
 
             final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
             CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
-            return storageAccount.createCloudTableClient();
+            CloudTableClient cloudTableClient = storageAccount.createCloudTableClient();
+            cloudTableClient.getDefaultRequestOptions().setRetryPolicyFactory(new RetryLinearRetry(retryDeltaBackoffMs, retryMaxAttempts));
+            cloudTableClient.getDefaultRequestOptions().setMaximumExecutionTimeInMs(maximumExecutionTimeMs);
+            return cloudTableClient;
         } catch (URISyntaxException | InvalidKeyException e) {
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
         }
