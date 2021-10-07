@@ -133,57 +133,6 @@
 
   <profiles>
     <profile>
-      <id>partition-core</id>
-      <activation>
-        <!-- this profile is active by default -->
-        <activeByDefault>true</activeByDefault>
-        <!-- activate if system properties 'env=partition-core' -->
-        <property>
-          <name>env</name>
-          <value>partition-core</value>
-        </property>
-      </activation>
-      <modules>
-        <module>partition-core</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>partition-azure</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>partition-azure</value>
-        </property>
-      </activation>
-      <modules>
-        <module>provider/partition-azure</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>partition-aws</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>partition-aws</value>
-        </property>
-      </activation>
-      <modules>
-        <module>provider/partition-aws</module>
-      </modules>
-    </profile>
-     <profile>
-      <id>partition-ibm</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>partition-ibm</value>
-        </property>
-      </activation>
-      <modules>
-        <module>provider/partition-ibm</module>
-      </modules>
-    </profile>
-    <profile>
       <id>Default</id>
       <activation>
         <property>
