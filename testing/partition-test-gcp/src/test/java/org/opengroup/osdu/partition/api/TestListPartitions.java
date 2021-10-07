@@ -17,8 +17,10 @@
 
 package org.opengroup.osdu.partition.api;
 
+import com.sun.jersey.api.client.ClientResponse;
 import org.junit.After;
 import org.junit.Before;
+import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.util.GCPTestUtils;
 
 public class TestListPartitions extends ListPartitionsApitTest {
@@ -32,6 +34,14 @@ public class TestListPartitions extends ListPartitionsApitTest {
   @Override
   @After
   public void tearDown() throws Exception {
+    deleteResource();
     this.testUtils = null;
+  }
+
+  @Override
+  protected void deleteResource() throws Exception {
+    DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
+    deletePartitionDes.setPartitionId(getId());
+    ClientResponse response = deletePartitionDes.run(getId(), this.testUtils.getAccessToken());
   }
 }

@@ -36,14 +36,17 @@ public class TestCreatePartition extends CreatePartitionTest {
   @Override
   @After
   public void tearDown() throws Exception {
+    deleteResource();
     this.testUtils = null;
   }
 
   @Override
   @Test
-  public void should_return40XResponseCode_when_makingRequest_withInvalidPayload() throws Exception {
+  public void should_return40XResponseCode_when_makingRequest_withInvalidPayload()
+      throws Exception {
     String invalidPayload = "{\"properties_invalid\":{}}";
-    ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
+    ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload,
+        testUtils.getAccessToken());
     assertEquals(400, response.getStatus());
   }
 }
