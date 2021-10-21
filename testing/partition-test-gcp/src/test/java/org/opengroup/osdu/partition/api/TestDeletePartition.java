@@ -32,6 +32,7 @@ public class TestDeletePartition extends DeletePartitionTest {
   @Override
   @After
   public void tearDown() throws Exception {
+    deleteResource();
     this.testUtils = null;
   }
 }
