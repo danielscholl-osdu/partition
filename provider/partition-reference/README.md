@@ -26,9 +26,9 @@ In order to run the service locally or remotely, you will need to have the follo
 | `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
 | `KEY_RING` | ex `csqp` | A key ring holds keys in a specific Google Cloud location and permit us to manage access control on groups of keys | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
 | `KMS_KEY` | ex `partitionService` | A key exists on one key ring linked to a specific location. | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
-| `MONGO_DB_URL` | ex `mongodb://localhost:27017` | Mongo DB Url| yes | output of infrastructure deployment |
+| `MONGO_DB_URL` | ex `localhost:27017` | Mongo DB Url| yes | output of infrastructure deployment |
 | `MONGO_DB_USER` | ex `mongouser` | Mongo DB userName| yes | output of infrastructure deployment |
-| `MONGO_DB_PASSWORD` | ex `mongopassword` | Mongo DB userPassword| yes | output of infrastructure deployment |
+| `MONGO_DB_PASSWORD` | ex `mongopassword` | Mongo DB userPassword. If password contains `@` symbols, it must be encoded to URL-encoded format. | yes | output of infrastructure deployment |
 | `MONGO_DB_NAME` | ex `mongoDBName` | Mongo DB DbName| yes | output of infrastructure deployment |
 
 ### Run Locally
