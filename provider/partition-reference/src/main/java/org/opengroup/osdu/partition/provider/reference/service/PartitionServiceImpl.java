@@ -85,12 +85,12 @@ public class PartitionServiceImpl implements IPartitionService {
   public PartitionInfo getPartition(String partitionId) {
     Optional<PartitionInfo> result = partitionPropertyEntityRepository.findByPartitionId(
         partitionId);
-    if (result.isPresent()) {
-      result.get().getProperties()
-          .forEach((key, property) -> decryptPartitionPropertyIfNeeded(property));
-      return result.get();
+    if (!result.isPresent()) {
+      throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON, "Partition does not exist.");
     }
-    return new PartitionInfo();
+    result.get().getProperties()
+        .forEach((key, property) -> decryptPartitionPropertyIfNeeded(property));
+    return result.get();
   }
 
   @Override
