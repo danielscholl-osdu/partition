@@ -15,41 +15,56 @@
 package org.opengroup.osdu.partition.provider.azure.service;
 
 import org.apache.http.HttpStatus;
+import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
-    private final String PARTITION_NOT_FOUND = "partition not found";
+    static final String PARTITION_LIST_KEY = "getAllPartitions";
+    static final String PARTITION_NOT_FOUND = "partition not found";
 
     @Autowired
     private PartitionTableStore tableStore;
 
+    @Inject
+    @Qualifier("partitionServiceCache")
+    private ICache<String, PartitionInfo> partitionServiceCache;
+
+    @Inject
+    @Qualifier("partitionListCache")
+    private ICache<String, List<String>> partitionListCache;
+
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
-        if (this.tableStore.partitionExists(partitionId)) {
+        if (partitionServiceCache.get(partitionId) != null || tableStore.partitionExists(partitionId)) {
             throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
         }
 
-        this.tableStore.addPartition(partitionId, partitionInfo);
+        tableStore.addPartition(partitionId, partitionInfo);
+
+        partitionServiceCache.put(partitionId, partitionInfo);
+        partitionListCache.clearAll();
 
         return partitionInfo;
     }
 
     @Override
     public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
-        if (!this.tableStore.partitionExists(partitionId)) {
+        if (!tableStore.partitionExists(partitionId)) {
             throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
         }
 
@@ -57,35 +72,65 @@ public class PartitionServiceImpl implements IPartitionService {
             throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id", "the field id can not be updated");
         }
 
-        this.tableStore.addPartition(partitionId, partitionInfo);
-        return PartitionInfo.builder().properties(this.tableStore.getPartition(partitionId)).build();
+        tableStore.addPartition(partitionId, partitionInfo);
+        PartitionInfo pi = Optional.ofNullable(tableStore.getPartition(partitionId))
+                .map(map -> PartitionInfo.builder().properties(map).build())
+                .orElse(null);
+
+        if(pi != null) {
+            partitionServiceCache.put(partitionId, pi);
+        }
+
+        return pi;
     }
 
     @Override
     public PartitionInfo getPartition(String partitionId) {
-        Map<String, Property> out = new HashMap<>();
-        out.putAll(this.tableStore.getPartition(partitionId));
+        PartitionInfo pi = partitionServiceCache.get(partitionId);
 
-        if (out.isEmpty()) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
+        if (pi == null) {
+            Map<String, Property> out = new HashMap<>(tableStore.getPartition(partitionId));
+
+            if (out.isEmpty()) {
+                throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
+            }
+
+            pi = PartitionInfo.builder().properties(out).build();
+
+            if (pi != null) {
+                partitionServiceCache.put(partitionId, pi);
+            }
         }
 
-        return PartitionInfo.builder().properties(out).build();
+        return pi;
     }
 
     @Override
     public boolean deletePartition(String partitionId) {
-        if (!this.tableStore.partitionExists(partitionId)) {
+        if (!tableStore.partitionExists(partitionId)) {
             throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
         }
 
-        this.tableStore.deletePartition(partitionId);
+        tableStore.deletePartition(partitionId);
 
+        if (partitionServiceCache.get(partitionId) != null) {
+            partitionServiceCache.delete(partitionId);
+        }
+        partitionListCache.clearAll();
         return true;
     }
 
     @Override
     public List<String> getAllPartitions() {
-        return this.tableStore.getAllPartitions();
+        List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
+
+        if (partitions == null) {
+            partitions = tableStore.getAllPartitions();
+
+            if (partitions != null) {
+                partitionListCache.put(PARTITION_LIST_KEY, partitions);
+            }
+        }
+        return partitions;
     }
 }

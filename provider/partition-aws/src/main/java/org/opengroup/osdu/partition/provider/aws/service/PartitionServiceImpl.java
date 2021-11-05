@@ -14,9 +14,6 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -27,6 +24,12 @@ import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
+/**
+ * AWS implementation doesn't use cache.
+ */
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
