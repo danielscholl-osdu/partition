@@ -4,7 +4,9 @@
 package org.opengroup.osdu.partition.provider.ibm.security;
 
 import org.opengroup.osdu.core.common.model.http.AppException;
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AuthorizationService implements IAuthorizationService {
 
+	 @Autowired
+	 DpsHeaders dpsheaders;
+	 
 	@Value("${service.partition.admin.user}")
 	String partitionAdminUser;
 
@@ -27,20 +32,15 @@ public class AuthorizationService implements IAuthorizationService {
 	@Override
 	public boolean isDomainAdminServiceAccount() {
 		try {
-			final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			Jwt principal = (Jwt) authentication.getPrincipal();
-	        String memberEmail = principal.getClaimAsString("email");
-//			@SuppressWarnings("unchecked")
-//			KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal<KeycloakSecurityContext>) auth.getPrincipal();
-//			String upn =  principal.getName();
-			log.debug("email : "+memberEmail);
-			if(memberEmail.equals(partitionAdminUser)) {
+			
+			String userId = dpsheaders.getUserId();
+			log.debug("logged in email : " + userId);
+			if(userId != null  && partitionAdminUser != null && userId.equals(partitionAdminUser)) {
 				return true;
-			} 
-		    else {
+			} else {
 				throw AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
 			}
-				
+		
 		}
 		catch (AppException e) {
 			throw e;
