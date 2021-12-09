@@ -22,32 +22,8 @@ paths:
     get:
       tags:
         - health-check
-      summary: livenessCheck
-      operationId: livenessCheckUsingGET
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - JWT:
-            - global
-  /actuator/health:
-    get:
-      tags:
-        - health-check
-      summary: readinessCheck
-      operationId: readinessCheckUsingGET
+      summary: "Health check: liveness, readiness."
+      operationId: healthCheckUsingGET
       consumes:
         - application/json
       produces:
