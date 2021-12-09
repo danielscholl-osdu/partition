@@ -14,27 +14,37 @@
 
 package org.opengroup.osdu.partition.provider.azure.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PartitionServiceImplTest {
+
+    @Mock
+    private ICache<String, PartitionInfo> partitionServiceCache;
+
+    @Mock
+    private ICache<String, List<String>> partitionListCache;
 
     @Mock
     private PartitionTableStore tableStore;
@@ -46,7 +56,7 @@ public class PartitionServiceImplTest {
     private final static String PARTITION_ID = "my-tenant";
     private final Map<String, Property> properties = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         properties.put("id", Property.builder().value(PARTITION_ID).build());
         properties.put("storageAccount", Property.builder().value("storage-account").sensitive(true).build());
@@ -136,8 +146,6 @@ public class PartitionServiceImplTest {
 
     @Test
     public void should_throwException_when_deletingNonExistentPartition() {
-        when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
-
         try {
             this.sut.deletePartition("test-partition");
         } catch (AppException ae) {
@@ -146,10 +154,9 @@ public class PartitionServiceImplTest {
         }
     }
 
-    @Test(expected = AppException.class)
+    @Test
     public void should_throwException_when_deletingInvalidPartition() {
-
-        this.sut.deletePartition(null);
+        assertThrows(AppException.class, () -> sut.deletePartition(null));
     }
 
     @Test

@@ -17,15 +17,9 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.provider.interfaces.IKmsClient;
 import org.opengroup.osdu.partition.logging.AuditLogger;
@@ -37,12 +31,21 @@ import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PartitionServiceImpl implements IPartitionService {
 
-  private static final String UNKNOWN_ERROR_REASON = "unknown error";
-
+  static final String UNKNOWN_ERROR_REASON = "unknown error";
+  static final String PARTITION_LIST_KEY = "getAllPartitions";
 
   private final PartitionPropertyEntityRepository partitionPropertyEntityRepository;
 
@@ -50,17 +53,24 @@ public class PartitionServiceImpl implements IPartitionService {
 
   private final AuditLogger auditLogger;
 
+  private final ICache<String, PartitionInfo> partitionServiceCache;
+
+  private final ICache<String, List<String>> partitionListCache;
+
   @Override
   public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
+    if (partitionServiceCache.get(partitionId) != null)
+      throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
+
     if (this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
       this.auditLogger.createPartitionFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_CONFLICT, UNKNOWN_ERROR_REASON,
-          "Partition already exists.");
+              "Partition already exists.");
     }
     List<PartitionPropertyEntity> partitionProperties = new ArrayList<>();
     for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
       PartitionPropertyEntity entity = new PartitionPropertyEntity(partitionId,
-          entry.getKey(), entry.getValue());
+              entry.getKey(), entry.getValue());
       encryptPartitionPropertyEntityIfNeeded(entity);
       partitionProperties.add(entity);
     }
@@ -68,7 +78,13 @@ public class PartitionServiceImpl implements IPartitionService {
       repository.saveAll(partitionProperties);
       return true;
     });
-    return getPartition(partitionId);
+    PartitionInfo pi = getPartition(partitionId);
+
+    if (pi != null) {
+      partitionListCache.clearAll();
+    }
+
+    return pi;
   }
 
   private void encryptPartitionPropertyEntityIfNeeded(PartitionPropertyEntity entity) {
@@ -88,19 +104,19 @@ public class PartitionServiceImpl implements IPartitionService {
     if (partitionInfo.getProperties().containsKey("id")) {
       this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id",
-          "the field id can not be updated");
+              "the field id can not be updated");
     }
 
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
       this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
-          "An attempt to update not existing partition.");
+              "An attempt to update not existing partition.");
     }
 
     List<PartitionPropertyEntity> partitionProperties = new ArrayList<>();
     for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
       PartitionPropertyEntity entity = this.partitionPropertyEntityRepository
-          .findByPartitionIdAndName(partitionId, entry.getKey());
+              .findByPartitionIdAndName(partitionId, entry.getKey());
       if (Objects.nonNull(entity)) {
         entity.setSensitive(entry.getValue().isSensitive());
         entity.setValue(entry.getValue().getValue());
@@ -114,26 +130,37 @@ public class PartitionServiceImpl implements IPartitionService {
       repository.saveAll(partitionProperties);
       return true;
     });
+
     return getPartition(partitionId);
   }
 
   @Override
   public PartitionInfo getPartition(String partitionId) {
-    PartitionInfo partitionInfo = getEncryptedPartition(partitionId);
-    for (Property property : partitionInfo.getProperties().values()) {
-      decryptPartitionPropertyIfNeeded(property);
+    PartitionInfo pi = partitionServiceCache.get(partitionId);
+
+    if (pi == null) {
+      pi = getEncryptedPartition(partitionId);
+      for (Property property : pi.getProperties().values()) {
+        decryptPartitionPropertyIfNeeded(property);
+      }
+
+      if (pi != null) {
+        partitionServiceCache.put(partitionId, pi);
+      }
     }
-    return partitionInfo;
+
+    return pi;
   }
 
   private PartitionInfo getEncryptedPartition(String partitionId) {
-    if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
+    Optional<List<PartitionPropertyEntity>> partitionPropertyEntitiesOptional = partitionPropertyEntityRepository
+            .findByPartitionId(partitionId);
+    if (!partitionPropertyEntitiesOptional.isPresent()) {
       this.auditLogger.readPartitionFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
           "Partition does not exist.");
     }
-    List<PartitionPropertyEntity> partitionPropertiesList = this.partitionPropertyEntityRepository
-        .findByPartitionId(partitionId).get();
+    List<PartitionPropertyEntity> partitionPropertiesList = partitionPropertyEntitiesOptional.get();
     PartitionInfo partitionInfo = new PartitionInfo();
     Map<String, Property> partitionInfoProperties = new HashMap<>();
     for (PartitionPropertyEntity entity : partitionPropertiesList) {
@@ -163,16 +190,30 @@ public class PartitionServiceImpl implements IPartitionService {
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
       this.auditLogger.deletePartitionFailure(Collections.singletonList(partitionId));
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
-          "An attempt to delete not existing partition.");
+              "An attempt to delete not existing partition.");
     }
     this.partitionPropertyEntityRepository.deleteByPartitionId(partitionId);
+
+    if (partitionServiceCache.get(partitionId) != null) {
+      partitionServiceCache.delete(partitionId);
+    }
+    partitionListCache.clearAll();
     return true;
   }
 
   @Transactional
   @Override
   public List<String> getAllPartitions() {
-    List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
-    return (allPartitions.isEmpty() ? null : allPartitions);
+    List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
+
+    if (partitions == null) {
+      List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
+      partitions = (allPartitions.isEmpty() ? null : allPartitions);
+
+      if (partitions != null) {
+        partitionListCache.put(PARTITION_LIST_KEY, partitions);
+      }
+    }
+    return partitions;
   }
 }
