@@ -3,13 +3,13 @@
 
 package org.opengroup.osdu.partition.provider.ibm.service;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
+import com.cloudant.client.api.Database;
+import com.cloudant.client.api.model.Response;
+import com.cloudant.client.org.lightcouch.DocumentConflictException;
+import com.cloudant.client.org.lightcouch.NoDocumentException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
+import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.ibm.auth.ServiceCredentials;
@@ -18,24 +18,32 @@ import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.provider.ibm.model.PartitionDoc;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cloudant.client.api.Database;
-import com.cloudant.client.api.model.Response;
-import com.cloudant.client.org.lightcouch.DocumentConflictException;
-import com.cloudant.client.org.lightcouch.NoDocumentException;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.List;
 
 @Service
 @Slf4j
 public class PartitionServiceImpl implements IPartitionService {
 
 	private static final String PARTITION_DATABASE = "partition";
+	private static final String PARTITION_LIST_KEY = "getAllPartitions";
 
 	@Autowired
 	private JaxRsDpsLog logger;
+
+	@Autowired
+	@Qualifier("partitionServiceCache")
+	private ICache<String, PartitionInfo> partitionServiceCache;
+
+	@Autowired
+	@Qualifier("partitionListCache")
+	private ICache<String, List<String>> partitionListCache;
 
 	Database db;
 
@@ -69,10 +77,15 @@ public class PartitionServiceImpl implements IPartitionService {
 
 	@Override
 	public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
+		if (partitionServiceCache.get(partitionId) != null) {
+			throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
+		}
+
+		PartitionInfo pi;
 		PartitionDoc partitionDoc = new PartitionDoc(partitionId, partitionInfo);
 		try {
 			db.save(partitionDoc);
-			return partitionInfo;
+			pi = partitionInfo;
 		} catch (DocumentConflictException e) {
 			log.error("Partition already exists");
 			throw new AppException(e.getStatusCode(), "Conflict", "partition already exists", e);
@@ -81,11 +94,18 @@ public class PartitionServiceImpl implements IPartitionService {
 			e.printStackTrace();
 			throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage(), "Partition creation failed", e);
 		}
-		
+
+		if (pi != null) {
+			partitionServiceCache.put(partitionId, pi);
+			partitionListCache.clearAll();
+		}
+
+		return pi;
 	}
 
 	@Override
 	public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+		PartitionInfo pi;
 		if (partitionInfo.getProperties().containsKey("id")) {
 			throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id", "the field id can not be updated");
 		}
@@ -93,7 +113,7 @@ public class PartitionServiceImpl implements IPartitionService {
 			PartitionDoc partitionDoc = db.find(PartitionDoc.class, partitionId);
 			partitionDoc.getPartitionInfo().getProperties().putAll(partitionInfo.getProperties());
 			Response update = db.update(partitionDoc);
-			return partitionDoc.getPartitionInfo();
+			pi = partitionDoc.getPartitionInfo();
 		} catch (NoDocumentException e) {
 			log.error(String.format("%s partition does not exists", partitionId));
 			e.printStackTrace();
@@ -110,23 +130,38 @@ public class PartitionServiceImpl implements IPartitionService {
 			throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update failed", e.getMessage(), e);
 		}
 
+		if(pi != null) {
+			partitionServiceCache.put(partitionId, pi);
+		}
+
+		return pi;
 	}
 
 	@Override
 	public PartitionInfo getPartition(String partitionId) {
-		PartitionDoc partitionDoc = null;
-		try {
-			partitionDoc = db.find(PartitionDoc.class, partitionId);
-		} catch (NoDocumentException e) {
-			log.error(String.format("%s partition does not exists", partitionId));
-			e.printStackTrace();
-			throw new AppException(e.getStatusCode(), e.getReason(), String.format("%s partition does not exists", partitionId), e);
-		} catch (Exception e) {
-			log.error("Partition could not found");
-			e.printStackTrace();
-			throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error", "Partition could not found", e );
+		PartitionInfo pi = partitionServiceCache.get(partitionId);
+
+		if (pi == null) {
+			PartitionDoc partitionDoc = null;
+			try {
+				partitionDoc = db.find(PartitionDoc.class, partitionId);
+			} catch (NoDocumentException e) {
+				log.error(String.format("%s partition does not exists", partitionId));
+				e.printStackTrace();
+				throw new AppException(e.getStatusCode(), e.getReason(), String.format("%s partition does not exists", partitionId), e);
+			} catch (Exception e) {
+				log.error("Partition could not found");
+				e.printStackTrace();
+				throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "unknown error", "Partition could not found", e );
+			}
+			pi = partitionDoc.getPartitionInfo();
+
+			if (pi != null) {
+				partitionServiceCache.put(partitionId, pi);
+			}
 		}
-		return partitionDoc.getPartitionInfo();
+
+		return pi;
 	}
 
 	@Override
@@ -143,26 +178,38 @@ public class PartitionServiceImpl implements IPartitionService {
 			log.error("Deletion Failed. Unexpected error");
 			e.printStackTrace();
 		}
+
 		if(deleteStatus.getStatusCode() == 200) {
+			if (partitionServiceCache.get(partitionId) != null) {
+				partitionServiceCache.delete(partitionId);
+			}
+			partitionListCache.clearAll();
 			return true;
-		} 
+		}
+
 		return false;
-		
 	}
 
 	@Override
 	public List<String> getAllPartitions() {
-		List<String> partitionList = null;
-		try {
-			partitionList = db.getAllDocsRequestBuilder().includeDocs(true).build().getResponse().getDocIds();
-		} catch (IOException e) {
-			log.error("Partitions could not found. IOException occurred", e);
-			e.printStackTrace();
-		} catch (Exception e) {
-			log.error("Partition could not found.", e);
-			e.printStackTrace();
+		List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
+
+		if (partitions == null) {
+			try {
+				partitions = db.getAllDocsRequestBuilder().includeDocs(true).build().getResponse().getDocIds();
+			} catch (IOException e) {
+				log.error("Partitions could not found. IOException occurred", e);
+				e.printStackTrace();
+			} catch (Exception e) {
+				log.error("Partition could not found.", e);
+				e.printStackTrace();
+			}
+
+			if (partitions != null) {
+				partitionListCache.put(PARTITION_LIST_KEY, partitions);
+			}
 		}
-		return partitionList;
+		return partitions;
 	}
 
 }

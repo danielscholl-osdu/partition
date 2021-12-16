@@ -25,5 +25,13 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     public void tearDown() {
         this.testUtils = null;
     }
+    
+    //servicemesh changes response code - 403
+    @Override
+	public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
+		 ClientResponse response = descriptor.run(getId(), "");
+	     assertEquals(error(response.getEntity(String.class)), 403, response.getStatus());
+	}
+
 
 }
