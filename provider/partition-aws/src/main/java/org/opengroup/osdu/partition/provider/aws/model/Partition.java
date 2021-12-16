@@ -1,4 +1,4 @@
-// Copyright © 2020, Amazon Web Services
+// Copyright © 2021 Amazon Web Services
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.opengroup.osdu.partition.provider.aws;
+package org.opengroup.osdu.partition.provider.aws.model;
 
-import javax.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.opengroup.osdu.partition.model.Property;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import javax.validation.constraints.NotEmpty;
+import java.util.HashMap;
+import java.util.Map;
 
-@Component
-public class AwsServiceConfig {
-    
-    @Value("${aws.resource.prefix}")
-    public String environment;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Partition {
 
-    public String ssmPartitionPrefix;
+    @NotEmpty
+    @MongoId
+    String id;
 
-    @PostConstruct
-    public void init() {
-        ssmPartitionPrefix = "/osdu/" + environment + "/partition/partitions/";
-    }
+    Map<String, Property> properties = new HashMap<>();
+
 }
+
