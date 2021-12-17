@@ -68,7 +68,6 @@ public class MongoConfig {
         ConnectionString connectionString = new ConnectionString(this.getMongoURI());
 
         MongoClientFactoryBean mongo = new MongoClientFactoryBean();
-
         mongo.setConnectionString(connectionString);
 
         return mongo;
