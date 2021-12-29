@@ -29,7 +29,7 @@ import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
-import org.opengroup.osdu.partition.provider.gcp.repository.PartitionPropertyEntityRepository;
+import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class PartitionServiceImplTest {
     private ICache<String, List<String>> partitionListCache;
 
     @Mock
-    private PartitionPropertyEntityRepository partitionPropertyEntityRepository;
+    private OsmPartitionPropertyRepository partitionPropertyEntityRepository;
 
     @Mock
     private AuditLogger auditLogger;
