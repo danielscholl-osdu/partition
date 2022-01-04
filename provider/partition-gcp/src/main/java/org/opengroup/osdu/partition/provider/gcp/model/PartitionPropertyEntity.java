@@ -17,25 +17,18 @@
 
 package org.opengroup.osdu.partition.provider.gcp.model;
 
-import com.google.cloud.datastore.Key;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.opengroup.osdu.partition.model.Property;
-import org.springframework.cloud.gcp.data.datastore.core.mapping.Entity;
-import org.springframework.cloud.gcp.data.datastore.core.mapping.Field;
-import org.springframework.data.annotation.Id;
 
-@Entity(name = "PartitionProperty")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartitionPropertyEntity {
 
-  @Id
-  private Key key;
+  private String id;
 
-  @Field(name = "partition_id")
   private String partitionId;
 
   private String name;

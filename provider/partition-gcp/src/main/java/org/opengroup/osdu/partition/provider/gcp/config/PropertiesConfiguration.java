@@ -43,6 +43,10 @@ public class PropertiesConfiguration {
 
     private String serviceAccountTail;
 
+    private String partitionPropertyKind;
+
+    private String partitionNamespace;
+
     @PostConstruct
     public void setUp() {
         if (Objects.isNull(serviceAccountTail) || serviceAccountTail.isEmpty()) {
