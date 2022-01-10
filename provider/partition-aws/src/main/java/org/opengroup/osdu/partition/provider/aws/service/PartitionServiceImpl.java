@@ -14,12 +14,18 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
+import java.util.*;
+
+import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
+import org.bson.types.Binary;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
-import org.opengroup.osdu.partition.provider.aws.util.SSMHelper;
+import org.opengroup.osdu.partition.provider.aws.model.Partition;
+import org.opengroup.osdu.partition.provider.aws.model.IPartitionRepository;
+import org.opengroup.osdu.partition.provider.aws.util.AwsKmsEncryptionClient;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,145 +37,56 @@ import java.util.Map;
  * AWS implementation doesn't use cache.
  */
 @Service
+@RequiredArgsConstructor
 public class PartitionServiceImpl implements IPartitionService {
 
     @Autowired
     private JaxRsDpsLog logger;
-    
-    @Autowired
-    private SSMHelper ssmHelper;
 
-    public PartitionServiceImpl() {
-        
-    }
+    private final IPartitionRepository repository;
+
+    private final AwsKmsEncryptionClient awsKmsEncryptionClient;
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
-        
-        if (ssmHelper.partitionExists(partitionId)) {
+
+        // throw error if partition already exists
+        if (repository.findById(partitionId).isPresent()) {
             throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
         }
 
-        try {
-            for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
-                ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue().getValue());
-            }
+        Partition savedPartition = repository.save(new Partition(partitionId, encryptSensitiveProperties(partitionInfo, partitionId)));
 
-            /** 
-            *   SSM parameters are not immediately available after pushing to System Manager.
-            *   This API is expected to return a 200 response meaning that the parameters should be available immediately.
-            *   This logic is added to validate when the parameters become available before returning the 200 response.
-            *   The performance hit is acceptable because partitions are only created as an early operation and shouldn't affect
-            *   the performance of runtime workflows             
-            */
-            int retryCount = 10;
-            boolean partitionReady = false;
-            while (!partitionReady && retryCount > 0) {
-                retryCount--;
-                List<String> partitionCheck = ssmHelper.getSsmParamsPathsForPartition(partitionId);
-                if (partitionCheck.size() == partitionInfo.getProperties().size())
-                    partitionReady = true;
-                else
-                    Thread.sleep(500);
-            }
-
-            String rollbackSuccess = "Failed";
-            if (!partitionReady) {
-                try {
-                    ssmHelper.deletePartitionSecrets(partitionId);
-                    rollbackSuccess = "Succeeded";
-                }
-                catch (Exception e){ 
-
-                }
-
-                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition Creation Failed", "One or more secrets couldn't be stored. Rollback " + rollbackSuccess);
-                
-            }
-        }
-        catch (AppException appE) {
-            throw appE;
-        }
-        catch (Exception e) {
-
-            try {
-                Thread.sleep(2000); //wait for any existing ssm parameters that got added to normalize
-                ssmHelper.deletePartitionSecrets(partitionId);
-            }
-            catch (Exception deleteE) {                
-                //if the partition didnt get created at all deletePartition will throw an exception. Eat it so we return the creation exception.
-            }
-
-            logger.error("Failed to create partition due to key creation failure in ssm", e.getMessage());
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition Creation Failure", e.getMessage(), e);
-        }
-        
-        return partitionInfo;
+        return new PartitionInfo(savedPartition.getProperties());
     }
 
     @Override
     public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
 
+        Optional<Partition> partition = repository.findById(partitionId);
 
-        if (!ssmHelper.partitionExists(partitionId)) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition does not exist", "Partition doesn't exist");
+        // throw error if search did not return a result
+        if (!partition.isPresent()) {
+            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition does not exist", "Partition does not exist");
         }
 
-        if(partitionInfo.getProperties().containsKey("id")) {
+        // throw error if the client tries to update the id
+        if (partitionInfo.getProperties().containsKey("id")) {
             throw new AppException(HttpStatus.SC_BAD_REQUEST, "Cannot update id", "the field id cannot be updated");
         }
 
+        Map<String, Property> updatedProperties = partition.get().getProperties();
+        Map<String, Property> encryptedPropertiesToAdd = encryptSensitiveProperties(partitionInfo, partitionId);
+
+        for (Map.Entry<String, Property> e : encryptedPropertiesToAdd.entrySet()) {
+            updatedProperties.put(e.getKey(), e.getValue());
+        }
+
+        // throw error if save was unsuccessful
         try {
-            for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
-                ssmHelper.createOrUpdateSecret(partitionId, entry.getKey(), entry.getValue().getValue());
-            }
-
-            /**
-             *   SSM parameters are not immediately available after pushing to System Manager.
-             *   This API is expected to return a 200 response meaning that the parameters should be available immediately.
-             *   This logic is added to validate when the parameters become available before returning the 200 response.
-             *   The performance hit is acceptable because partitions are only created as an early operation and shouldn't affect
-             *   the performance of runtime workflows
-             */
-            int retryCount = 10;
-            boolean partitionReady = false;
-            while (!partitionReady && retryCount > 0) {
-                retryCount--;
-                List<String> partitionCheck = ssmHelper.getSsmParamsPathsForPartition(partitionId);
-                if (partitionCheck.size() == partitionInfo.getProperties().size())
-                    partitionReady = true;
-                else
-                    Thread.sleep(500);
-            }
-
-            String rollbackSuccess = "Failed";
-            if (!partitionReady) {
-                try {
-                    ssmHelper.deletePartitionSecrets(partitionId);
-                    rollbackSuccess = "Succeeded";
-                }
-                catch (Exception e){
-
-                }
-
-                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update Failed", "One or more secrets couldn't be stored. Rollback " + rollbackSuccess);
-
-            }
-        }
-        catch (AppException appE) {
-            throw appE;
-        }
-        catch (Exception e) {
-
-            try {
-                Thread.sleep(2000); //wait for any existing ssm parameters that got added to normalize
-                ssmHelper.deletePartitionSecrets(partitionId);
-            }
-            catch (Exception deleteE) {
-                //if the partition didnt get created at all deletePartition will throw an exception. Eat it so we return the creation exception.
-            }
-
-            logger.error("Failed to update partition due to key creation failure in ssm", e.getMessage());
+            repository.save(new Partition(partitionId, updatedProperties));
+        } catch (Exception e) {
+            logger.error("Failed to update partition", e.getMessage());
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update Failure", e.getMessage(), e);
         }
 
@@ -179,31 +96,99 @@ public class PartitionServiceImpl implements IPartitionService {
     @Override
     public PartitionInfo getPartition(String partitionId) {
 
-        Map<String,Property> secrets = ssmHelper.getPartitionSecrets(partitionId);
+        Optional<Partition> partition = repository.findById(partitionId);
 
-
-        //throw error if partition doesn't exist
-        if (secrets.size() <= 0) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition not found", String.format("%s partition not found", partitionId));
+        // throw error if partition doesn't exist
+        if (!partition.isPresent()) {
+            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition not found", String.format("%s partition not found", partitionId));
         }
-        
-        return PartitionInfo.builder().properties(secrets).build();
+
+        PartitionInfo partitionInfo;
+
+        try {
+            partitionInfo = decryptSensitiveProperties(partition.get().getProperties(), partitionId);
+        } catch (ClassCastException e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Corrupt data", String.format("%s contains unreadable data", partitionId));
+        } catch (IllegalStateException e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Illegal database modification", String.format("Partition %s has been modified without permission", partitionId));
+        }
+
+        return partitionInfo;
+
     }
 
     @Override
     public boolean deletePartition(String partitionId) {
-        
-        if (!ssmHelper.partitionExists(partitionId)) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "partition not found", String.format("%s partition not found", partitionId));
+
+        // throw error if partition doesn't exist
+        if (!repository.findById(partitionId).isPresent()) {
+            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition not found", String.format("%s partition not found", partitionId));
         }
 
-        return ssmHelper.deletePartitionSecrets(partitionId);
+        repository.deleteById(partitionId);
+
+        return true;
     }
 
     @Override
     public List<String> getAllPartitions() {
 
-        return ssmHelper.getPartitions();
+        List<Partition> partitionList = repository.findAll();
+
+        List<String> partitions = new ArrayList<>();
+
+        // populate list of ids, i.e. partition names
+        for (Partition p: partitionList) {
+            String id = p.getId();
+            partitions.add(id);
+        }
+
+        return partitions;
+    }
+
+    private Map<String, Property> encryptSensitiveProperties(PartitionInfo partitionInfo, String id) {
+
+        Map<String, Property> encryptedProperties = new HashMap<>();
+
+        // encrypt all properties that are flagged as sensitive
+        for (Map.Entry<String, Property> e : partitionInfo.getProperties().entrySet()) {
+
+            Property encryptedProp = new Property();
+            encryptedProp.setSensitive(e.getValue().isSensitive());
+
+            if (encryptedProp.isSensitive()) {
+                encryptedProp.setValue(awsKmsEncryptionClient.encrypt(e.getValue().getValue().toString(), id));
+            } else {
+                encryptedProp.setValue(e.getValue().getValue());
+            }
+
+            encryptedProperties.put(e.getKey(), encryptedProp);
+        }
+
+        return encryptedProperties;
+    }
+
+    private PartitionInfo decryptSensitiveProperties(Map<String, Property> properties, String id) throws ClassCastException {
+
+        HashMap<String,Property> decryptedProperties = new HashMap<>();
+
+        // decrypt all properties that are flagged as sensitive
+        for (Map.Entry<String, Property> e : properties.entrySet()) {
+
+            Property decryptedProp = new Property();
+            decryptedProp.setSensitive(e.getValue().isSensitive());
+
+            if (decryptedProp.isSensitive()) {
+                Binary bin = (Binary) e.getValue().getValue();
+                decryptedProp.setValue(awsKmsEncryptionClient.decrypt(bin.getData(), id));
+            } else {
+                decryptedProp.setValue(e.getValue().getValue());
+            }
+
+            decryptedProperties.put(e.getKey(), decryptedProp);
+        }
+
+        return new PartitionInfo(decryptedProperties);
     }
 
 }

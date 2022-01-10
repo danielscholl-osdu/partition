@@ -15,64 +15,86 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
+import org.bson.types.Binary;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
-import org.opengroup.osdu.partition.provider.aws.util.SSMHelper;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.opengroup.osdu.partition.provider.aws.model.Partition;
+import org.opengroup.osdu.partition.provider.aws.model.IPartitionRepository;
+import org.opengroup.osdu.partition.provider.aws.util.AwsKmsEncryptionClient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.Mockito.verify;
 
-@RunWith(PowerMockRunner.class)
+
+@RunWith(MockitoJUnitRunner.class)
 public class PartitionServiceImplTest {
 
     @Mock
-    private SSMHelper ssmHelper;
+    private IPartitionRepository repository;
+
+    @Mock
+    private AwsKmsEncryptionClient awsKmsEncryptionClient;
+
+    @Captor
+    private ArgumentCaptor<Partition> partitionArgumentCaptor;
 
     @InjectMocks
     private PartitionServiceImpl partService;
 
-    private PartitionInfo partitionInfo = new PartitionInfo();
-
-    private Map<String, Property> partitionSecretMap = new HashMap<>();
+    private String id;
+    private PartitionInfo partitionInfoDummy = new PartitionInfo();
+    private Partition partitionDummy = new Partition();
+    private Partition encryptedPartitionDummy = new Partition();
 
     @Before
     public void setup() {
 
-        partitionSecretMap.put("id", Property.builder().value("my-tenant").build());
-        partitionSecretMap.put("storageAccount", Property.builder().value("storage-account").build());
-        partitionSecretMap.put("complianceRuleSet", Property.builder().value("compliance-rule-set").build());
-        partitionInfo.setProperties(partitionSecretMap);
+        id = "id";
+
+        Map<String, Property> partitionSecretMap = new HashMap<>();
+        partitionSecretMap.put("storageAccount", Property.builder()
+                .value("storage-account")
+                .sensitive(true).build());
+        partitionSecretMap.put("complianceRuleSet", Property.builder()
+                .value("compliance-rule-set")
+                .sensitive(false).build());
+
+        partitionInfoDummy.setProperties(partitionSecretMap);
+
+        partitionDummy.setId(id);
+        partitionDummy.setProperties(partitionSecretMap);
+
+        Map<String, Property> encryptedPartitionSecretMap = new HashMap<>();
+        encryptedPartitionSecretMap.put("storageAccount", Property.builder()
+                .value(new Binary("storage-account".getBytes(StandardCharsets.UTF_8)))
+                .sensitive(true).build());
+        encryptedPartitionSecretMap.put("complianceRuleSet", Property.builder()
+                .value("compliance-rule-set")
+                .sensitive(false).build());
+
+        encryptedPartitionDummy.setId(id);
+        encryptedPartitionDummy.setProperties(encryptedPartitionSecretMap);
 
     }
 
     @Test
     public void should_ThrowConflictError_when_createPartition_whenPartitionExists() {
-        when(ssmHelper.partitionExists(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
 
         try {
-            partService.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
+            partService.createPartition(id, partitionInfoDummy);
             //we should never hit this code because create partition should end in an error
             assertTrue("Expected partService.createPartition to throw an exception, but passed", false);
         } catch (AppException e) {
@@ -85,43 +107,75 @@ public class PartitionServiceImplTest {
     @Test
     public void should_returnPartitionInfo_when_createPartition_whenPartitionDoesntExist() {
 
-        when(ssmHelper.partitionExists(any())).thenReturn(false);
-        when(ssmHelper.createOrUpdateSecret(any(), any(), any())).thenReturn(true);
-        when(ssmHelper.getSsmParamsPathsForPartition(any())).thenReturn(new ArrayList<String>(this.partitionInfo.getProperties().keySet()));
+        when(repository.findById(any())).thenReturn(Optional.empty());
+        when(repository.save(any())).thenReturn(partitionDummy);
+        when(awsKmsEncryptionClient.encrypt(any(), any())).thenReturn("ENCRYPTED".getBytes(StandardCharsets.UTF_8));
 
-        PartitionInfo partInfo = partService.createPartition(this.partitionInfo.getProperties().get("id").toString(), this.partitionInfo);
-        assertTrue(partInfo.getProperties().size() == 3);
-        assertTrue(partInfo.getProperties().containsKey("id"));
-        assertTrue(partInfo.getProperties().containsKey("complianceRuleSet"));
-        assertTrue(partInfo.getProperties().containsKey("storageAccount"));
+        PartitionInfo partInfo = partService.createPartition(partitionDummy.getId(), partitionInfoDummy);
+        assertTrue(partInfo.getProperties().size() == 2);
+
+        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
+            assertTrue(partInfo.getProperties().containsKey(e.getKey()));
+        }
     }
 
     @Test
     public void should_returnPartition_when_partitionExists() {
 
-        String Key1 = "my-tenant-id";
-        String Key2 = "my-tenant-groups";
-        String Key3 = "my-tenant-complianceRuleSet";
+        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
+        when(awsKmsEncryptionClient.decrypt(any(), any())).thenReturn("DECRYPTED");
 
-        HashMap<String, Property> propertiesMap = new HashMap<>();
-        propertiesMap.put("id", Property.builder().value("my-tenant").build());
-        propertiesMap.put(Key1, null);
-        propertiesMap.put(Key2, null);
-        propertiesMap.put(Key3, null);
+        PartitionInfo partitionInfo = partService.getPartition(id);
 
+        assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
+        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
+    }
 
-        when(ssmHelper.getPartitionSecrets(any())).thenReturn(propertiesMap);
+    @Test
+    public void should_call_awsEncryptionClient_encrypt_when_isSensitive() {
 
-        PartitionInfo partitionInfo = this.partService.getPartition(this.partitionInfo.getProperties().get("id").toString());
-        assertTrue(partitionInfo.getProperties().containsKey(Key1));
-        assertTrue(partitionInfo.getProperties().containsKey(Key2));
-        assertTrue(partitionInfo.getProperties().containsKey(Key3));
-        assertTrue(partitionInfo.getProperties().containsKey("id"));
+        when(repository.findById(any())).thenReturn(Optional.empty());
+        when(repository.save(any())).thenReturn(partitionDummy);
+        when(awsKmsEncryptionClient.encrypt(any(), any())).thenReturn("ENCRYPTED".getBytes(StandardCharsets.UTF_8));
+
+        partService.createPartition(partitionDummy.getId(), partitionInfoDummy);
+
+        verify(repository).save(partitionArgumentCaptor.capture());
+        Map<String, Property> encryptedProps = partitionArgumentCaptor.getValue().getProperties();
+
+        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
+            if (e.getValue().isSensitive()) {
+                // just check to see if the sensitive value has been modified
+                assertTrue(encryptedProps.get(e.getKey()).getValue() != e.getValue().getValue());
+            } else {
+                assertTrue(encryptedProps.get(e.getKey()).getValue() == e.getValue().getValue());
+            }
+        }
+    }
+
+    @Test
+    public void should_call_awsEncryptionClient_decrypt_when_isSensitive() {
+
+        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
+        when(awsKmsEncryptionClient.decrypt(any(), any())).thenReturn("DECRYPTED");
+
+        PartitionInfo partitionInfo = partService.getPartition(id);
+        Map<String, Property> encryptedProps = partitionInfo.getProperties();
+
+        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
+            if (e.getValue().isSensitive()) {
+                assertTrue(encryptedProps.get(e.getKey()).getValue().equals("DECRYPTED"));
+            } else {
+                assertTrue(encryptedProps.get(e.getKey()).getValue() == e.getValue().getValue());
+            }
+        }
+
+        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
     }
 
     @Test
     public void should_throwNotFoundException_when_partitionDoesntExist() {
-        when(this.ssmHelper.getPartitionSecrets("my-tenant")).thenReturn(new HashMap<>());
+        when(repository.findById(any())).thenReturn(Optional.empty());
 
         try {
             partService.getPartition("my-tenant");
@@ -137,16 +191,13 @@ public class PartitionServiceImplTest {
     @Test
     public void should_returnTrue_when_successfullyDeletingSecretes() {
 
-        when(ssmHelper.partitionExists(any())).thenReturn(true);
-        when(ssmHelper.getSsmParamsPathsForPartition(any())).thenReturn(Arrays.asList("/my-tenant/partition/partitions/dummy-param"));
-        when(ssmHelper.deletePartitionSecrets(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
 
-        assertTrue(this.partService.deletePartition("test-partition"));
+        assertTrue(partService.deletePartition("test-partition"));
     }
 
     @Test
     public void should_throwException_when_deletingNonExistentPartition() {
-
 
         try {
             this.partService.deletePartition("some-invalid-partition");
@@ -163,4 +214,5 @@ public class PartitionServiceImplTest {
 
         this.partService.deletePartition(null);
     }
+
 }

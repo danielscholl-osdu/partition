@@ -3,6 +3,7 @@
 The Partition service is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not. It is a Maven multi-module project with each cloud implementation placed in its submodule.
  
 ## Running Locally - AWS
+Instructions for running the AWS implementation locally can be found [here](./provider/partition-aws/README.md)
 ## Running Locally - Azure
 Instructions for running the Azure implementation locally can be found [here](./provider/partition-azure/README.md)
 ## Running Locally - GCP
