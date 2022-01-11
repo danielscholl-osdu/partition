@@ -29,16 +29,10 @@ import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -178,7 +172,6 @@ public class PartitionServiceImpl implements IPartitionService {
     }
   }
 
-  @Transactional
   @Override
   public boolean deletePartition(String partitionId) {
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
@@ -195,16 +188,15 @@ public class PartitionServiceImpl implements IPartitionService {
     return true;
   }
 
-  @Transactional
   @Override
   public List<String> getAllPartitions() {
     List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
 
     if (partitions == null) {
       List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
-      partitions = (allPartitions.isEmpty() ? null : allPartitions);
+      partitions = (allPartitions.isEmpty() ? Collections.emptyList() : allPartitions);
 
-      if (partitions != null) {
+      if (!CollectionUtils.isEmpty(partitions)) {
         partitionListCache.put(PARTITION_LIST_KEY, partitions);
       }
     }
