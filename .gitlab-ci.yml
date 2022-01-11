@@ -17,13 +17,12 @@ variables:
   OSDU_GCP_SERVICE: partition
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_APPLICATION_NAME: os-partition
-  OSDU_GCP_ENV_VARS: AUTHORIZE_API=$OSDU_GCP_ENTITLEMENTS_V2_URL,GOOGLE_CLOUD_PROJECT=$OSDU_GCP_PROJECT,GOOGLE_AUDIENCES=$GOOGLE_AUDIENCE,PARTITION_ADMIN_ACCOUNT=$OSDU_GCP_SERVICE_ACCOUNT
   MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
   OSDU_GCP_TEST_SUBDIR: testing/$OSDU_GCP_SERVICE-test-$OSDU_GCP_VENDOR
   OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
   OSDU_GCP_HELM_NAMESPACE: default
   OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS --set data.google_cloud_project=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY"
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA --set data.serviceAccountName=workload-identity-partition"
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s"
   OSDU_GCP_HELM_CONFIG_SERVICE: partition-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: partition-deploy
 
@@ -51,9 +50,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/osdu-gcp-gke.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: 'cloud-providers/osdu-gcp-global.yml'
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "publishing/pages.yml"
