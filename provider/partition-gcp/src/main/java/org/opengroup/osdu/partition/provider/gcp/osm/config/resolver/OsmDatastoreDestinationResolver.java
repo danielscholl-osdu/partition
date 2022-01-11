@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import org.threeten.bp.Duration;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
 
@@ -43,7 +44,7 @@ public class OsmDatastoreDestinationResolver implements DsDestinationResolver {
 
     protected static final RetrySettings RETRY_SETTINGS = RetrySettings.newBuilder().setMaxAttempts(6).setInitialRetryDelay(Duration.ofSeconds(10L)).setMaxRetryDelay(Duration.ofSeconds(32L)).setRetryDelayMultiplier(2.0D).setTotalTimeout(Duration.ofSeconds(50L)).setInitialRpcTimeout(Duration.ofSeconds(50L)).setRpcTimeoutMultiplier(1.0D).setMaxRpcTimeout(Duration.ofSeconds(50L)).build();
     protected static final TransportOptions TRANSPORT_OPTIONS = HttpTransportOptions.newBuilder().setReadTimeout(30000).build();
-    private final Datastore partitionDatastore;
+    private final Map<String, Datastore> datastoreCache;
 
     /**
      * Takes provided Destination with partitionId set to needed tenantId, returns its TenantInfo.projectId.
@@ -54,22 +55,23 @@ public class OsmDatastoreDestinationResolver implements DsDestinationResolver {
     @Override
     public DsDestinationResolution resolve(Destination destination) {
         String projectId = destination.getPartitionId();
-
-        Datastore datastore =
-                partitionDatastore == null
-                        ? DatastoreOptions.newBuilder()
-                                    .setRetrySettings(RETRY_SETTINGS)
-                                    .setTransportOptions(TRANSPORT_OPTIONS)
-                                    .setProjectId(projectId)
-                                    .setNamespace(destination.getNamespace().getName())
-                                .build()
-                            .getService()
-                        : partitionDatastore;
+        Datastore datastore = datastoreCache.computeIfAbsent(projectId, key -> getDatastoreFor(destination, key, projectId));
 
         return DsDestinationResolution.builder()
                 .projectId(datastore.getOptions().getProjectId())
                 .datastore(datastore)
                 .build();
+    }
+
+    private Datastore getDatastoreFor(Destination destination, String key, String projectId) {
+        return datastoreCache.computeIfAbsent(key, k ->
+                DatastoreOptions.newBuilder()
+                    .setRetrySettings(RETRY_SETTINGS)
+                    .setTransportOptions(TRANSPORT_OPTIONS)
+                    .setProjectId(projectId)
+                    .setNamespace(destination.getNamespace().getName())
+                    .build()
+                    .getService());
     }
 
     @Override

@@ -71,7 +71,7 @@ public class AuthorizationService implements IAuthorizationService {
     } catch (AppException e){
       throw e;
     } catch (Exception ex) {
-      log.warn(String.format("User %s is not unauthorized. %s.", email, ex));
+      log.warn(String.format("User %s unauthorized. %s.", email, ex));
       throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
     }
   }

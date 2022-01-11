@@ -20,17 +20,13 @@ package org.opengroup.osdu.partition.provider.gcp;
 import org.opengroup.osdu.core.gcp.di.GcpPartitionClientFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.gcp.data.datastore.repository.config.EnableDatastoreRepositories;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
   @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {GcpPartitionClientFactory.class})
 )
 @SpringBootApplication
-@EnableDatastoreRepositories
-@EnableTransactionManagement
 public class PartitionGcpApplication {
 
   public static void main(String[] args) {
