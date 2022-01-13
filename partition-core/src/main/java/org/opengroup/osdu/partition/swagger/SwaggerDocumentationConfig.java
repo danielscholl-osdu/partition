@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.SecurityReference;
@@ -31,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@EnableSwagger2
+@EnableOpenApi
 @Profile("!noswagger")
 public class SwaggerDocumentationConfig {
 
@@ -40,7 +41,7 @@ public class SwaggerDocumentationConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.opengroup.osdu.partition.api"))
                 .build()
@@ -49,13 +50,13 @@ public class SwaggerDocumentationConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
+        return new ApiKey(AUTHORIZATION_HEADER, AUTHORIZATION_HEADER, "header");
     }
 
     private SecurityContext securityContext() {
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.regex(DEFAULT_INCLUDE_PATTERN))
+                .operationSelector(o -> PathSelectors.regex(DEFAULT_INCLUDE_PATTERN).test(o.requestMappingPattern()))
                 .build();
     }
 
@@ -65,6 +66,6 @@ public class SwaggerDocumentationConfig {
         AuthorizationScope[] authorizationScopes =
                 new AuthorizationScope[]{authorizationScope};
         return Collections.singletonList(
-                new SecurityReference("JWT", authorizationScopes));
+                new SecurityReference(AUTHORIZATION_HEADER, authorizationScopes));
     }
 }
