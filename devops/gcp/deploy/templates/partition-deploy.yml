@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - image: "{{ .Values.data.image }}"
-          imagePullPolicy: Always
+          imagePullPolicy: "{{ .Values.data.imagePullPolicy }}"
           name: "{{ .Values.conf.app_name }}"
           env:
             - name: "ACCEPT_HTTP"
