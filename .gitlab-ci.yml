@@ -22,6 +22,7 @@ variables:
   OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
   OSDU_GCP_HELM_NAMESPACE: default
   OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS --set data.google_cloud_project=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY"
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: "--set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS_DEV2 --set data.google_cloud_project=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY"
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s"
   OSDU_GCP_HELM_CONFIG_SERVICE: partition-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: partition-deploy
@@ -57,3 +58,7 @@ include:
 osdu-gcp-test:
   variables:
     CLIENT_TENANT: osdu
+
+osdu-gcp-dev2-test:
+  variables:
+    CLIENT_TENANT: devtwo
