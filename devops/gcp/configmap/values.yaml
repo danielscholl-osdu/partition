@@ -5,6 +5,8 @@ data:
   key_ring: ""
   kms_key: ""
   log_level: "INFO"
+  service_account_tail: ".iam.gserviceaccount.com"
+  
 
 conf:
   configmap: "partition-config"
