@@ -71,7 +71,7 @@ public class PartitionServiceImpl implements IPartitionService {
     this.partitionPropertyEntityRepository.saveAll(partitionProperties);
     PartitionInfo pi = getPartition(partitionId);
 
-    if (pi != null) {
+    if (Objects.nonNull(pi)) {
       partitionListCache.clearAll();
     }
 
@@ -118,6 +118,9 @@ public class PartitionServiceImpl implements IPartitionService {
       partitionProperties.add(entity);
     }
     this.partitionPropertyEntityRepository.saveAll(partitionProperties);
+    if (Objects.nonNull(partitionServiceCache.get(partitionId))) {
+      partitionServiceCache.delete(partitionId);
+    }
 
     return getPartition(partitionId);
   }
@@ -126,13 +129,13 @@ public class PartitionServiceImpl implements IPartitionService {
   public PartitionInfo getPartition(String partitionId) {
     PartitionInfo pi = partitionServiceCache.get(partitionId);
 
-    if (pi == null) {
+    if (Objects.isNull(pi)) {
       pi = getEncryptedPartition(partitionId);
       for (Property property : pi.getProperties().values()) {
         decryptPartitionPropertyIfNeeded(property);
       }
 
-      if (pi != null) {
+      if (Objects.nonNull(pi)) {
         partitionServiceCache.put(partitionId, pi);
       }
     }
@@ -181,7 +184,7 @@ public class PartitionServiceImpl implements IPartitionService {
     }
     this.partitionPropertyEntityRepository.deleteByPartitionId(partitionId);
 
-    if (partitionServiceCache.get(partitionId) != null) {
+    if (Objects.nonNull(partitionServiceCache.get(partitionId))) {
       partitionServiceCache.delete(partitionId);
     }
     partitionListCache.clearAll();
@@ -192,7 +195,7 @@ public class PartitionServiceImpl implements IPartitionService {
   public List<String> getAllPartitions() {
     List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
 
-    if (partitions == null) {
+    if (Objects.isNull(partitions)) {
       List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
       partitions = (allPartitions.isEmpty() ? Collections.emptyList() : allPartitions);
 
