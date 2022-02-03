@@ -81,6 +81,7 @@ In order to run the service locally or remotely, you will need to have the follo
 | `osm.postgres.url` | ex `jdbc:postgresql://127.0.0.1:5432/postgres` | Postgres server URL | no | - |
 | `osm.postgres.username` | ex `postgres` | Postgres admin username | no | - |
 | `osm.postgres.password` | ex `postgres` | Postgres admin password | yes | - |
+| `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
 
 ## Configuring mappers' Datasources
 
