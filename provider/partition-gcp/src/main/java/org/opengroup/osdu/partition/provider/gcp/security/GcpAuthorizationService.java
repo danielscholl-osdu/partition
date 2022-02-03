@@ -28,6 +28,7 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -35,7 +36,8 @@ import org.springframework.web.context.annotation.RequestScope;
 @Component
 @RequestScope
 @RequiredArgsConstructor
-public class AuthorizationService implements IAuthorizationService {
+@ConditionalOnProperty(name = "environment", havingValue = "gcp")
+public class GcpAuthorizationService implements IAuthorizationService {
 
   private final PropertiesConfiguration configuration;
 
