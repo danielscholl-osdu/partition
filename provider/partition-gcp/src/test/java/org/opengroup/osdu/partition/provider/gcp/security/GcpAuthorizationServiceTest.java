@@ -44,7 +44,7 @@ import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 
 @RunWith(Theories.class)
-public class AuthorizationServiceTest {
+public class GcpAuthorizationServiceTest {
 
     private final String token = "abc";
 
@@ -87,7 +87,7 @@ public class AuthorizationServiceTest {
     private Payload payload = new Payload();
 
     @InjectMocks
-    private AuthorizationService authorizationService;
+    private GcpAuthorizationService gcpAuthorizationService;
 
     @Before
     public void setUp() throws GeneralSecurityException, IOException {
@@ -103,25 +103,25 @@ public class AuthorizationServiceTest {
     @Test
     public void testProvidedInConfigAdminAccountShouldReturnTrue() {
         payload.setEmail("service.account@project-id.iam.gserviceaccount.com");
-        assertTrue(authorizationService.isDomainAdminServiceAccount());
+        assertTrue(gcpAuthorizationService.isDomainAdminServiceAccount());
     }
 
     @Test(expected = AppException.class)
     public void testNotProvidedInConfigAdminAccountShouldThrowException() {
         payload.setEmail("user@google.com");
-        authorizationService.isDomainAdminServiceAccount();
+        gcpAuthorizationService.isDomainAdminServiceAccount();
     }
 
     @Theory
     public void testProvidedInConfigPatternShouldReturnTrue(@FromDataPoints("VALID_ACCOUNTS") String account) {
         payload.setEmail(account);
-        assertTrue(authorizationService.isDomainAdminServiceAccount());
+        assertTrue(gcpAuthorizationService.isDomainAdminServiceAccount());
     }
 
     @Theory
     public void testNotProvidedInConfigPatternShouldReturnTrue(@FromDataPoints("NOT_VALID_ACCOUNTS") String account) {
         exceptionRule.expect(AppException.class);
         payload.setEmail(account);
-        authorizationService.isDomainAdminServiceAccount();
+        gcpAuthorizationService.isDomainAdminServiceAccount();
     }
 }
