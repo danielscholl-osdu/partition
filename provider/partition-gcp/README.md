@@ -82,6 +82,7 @@ In order to run the service locally or remotely, you will need to have the follo
 | `osm.postgres.username` | ex `postgres` | Postgres admin username | no | - |
 | `osm.postgres.password` | ex `postgres` | Postgres admin password | yes | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
+| `SERVICE_ACCOUNT_TAIL` | `****` |By default Partition service while authenticating the request, verifies that the email in provided token belongs to a service account from a specific project by email tail `<GOOGLE_CLOUD_PROJECT> + .iam.gserviceaccount.com`, this behavior can be changed with this variable, you may specify which email tail exactly expected.| no | - |
 
 ## Configuring mappers' Datasources
 
