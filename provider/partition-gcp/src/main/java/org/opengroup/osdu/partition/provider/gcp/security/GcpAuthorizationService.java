@@ -79,11 +79,12 @@ public class GcpAuthorizationService implements IAuthorizationService {
   }
 
   private boolean isAllowedAccount(String accountEmail) {
+    for (String partitionAdmin : configuration.getPartitionAdminAccounts()) {
+      if (partitionAdmin.equals(accountEmail)) {
+        return true;
+      }
+
     if (StringUtils.endsWith(accountEmail, configuration.getServiceAccountTail())) {
-      for (String partitionAdmin : configuration.getPartitionAdminAccounts()) {
-        if (partitionAdmin.equals(accountEmail)) {
-          return true;
-        }
         if (StringUtils.startsWith(accountEmail, partitionAdmin)) {
           return true;
         }
