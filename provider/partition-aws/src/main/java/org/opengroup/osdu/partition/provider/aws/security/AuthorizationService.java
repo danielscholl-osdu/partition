@@ -78,7 +78,7 @@ public class AuthorizationService implements IAuthorizationService {
             }
 
 
-            memberEmail = authorizer.validateJWT(authorizationContents);
+            memberEmail = headers.getUserId();
             if(memberEmail != null)
             {
                 if(memberEmail.equals(spu_email)){
