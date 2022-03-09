@@ -1,0 +1,52 @@
+{{- if .Values.conf.on_prem_enabled }}
+{{- range $key, $spec := .Values.authorizations }}
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ (print $key "-default") | lower | quote }}
+  labels:
+    app.kubernetes.io/name: {{ $key | quote }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
+  namespace: {{ $.Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+{{- toYaml $spec.matchLabels | nindent 6 }}
+  action: ALLOW
+  rules:
+  {{- range $rule := $spec.rules }}
+  - from:
+    - source:
+        principals: 
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/entitlements-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/search-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/storage-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/register-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/notification-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-queue-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/schema-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/file-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/dataset-k8s
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal-k8s
+    to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /api/partition/v1/*
+  - from:
+    - source:
+        principals: 
+         - cluster.local/ns/{{ $rule.bootstrap_namespace }}/sa/workload-gke-bootstrap-sa
+    to:
+    - operation:
+        methods:
+        - POST
+        - PATCH
+        paths:
+        - /api/partition/v1/*
+{{- end }}
+{{- end }}
+{{- end }}

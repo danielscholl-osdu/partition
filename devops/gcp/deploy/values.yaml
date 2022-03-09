@@ -14,3 +14,14 @@ data:
 conf:
   configmap: "partition-config"
   app_name: "partition"
+  on_prem_enabled: false
+
+namespacePolicy:
+  mtlsMode: STRICT
+
+authorizations:
+  partitionPolicy:
+    matchLabels:
+      app: partition
+    rules:
+    - bootstrap_namespace: config
