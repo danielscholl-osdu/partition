@@ -17,19 +17,19 @@
 
 package org.opengroup.osdu.partition.provider.gcp;
 
-import org.opengroup.osdu.core.gcp.di.GcpPartitionClientFactory;
+import org.opengroup.osdu.core.di.GcpPartitionClientFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
 @ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
-  @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {GcpPartitionClientFactory.class})
+@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {GcpPartitionClientFactory.class})
 )
 @SpringBootApplication
 public class PartitionGcpApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(PartitionGcpApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(PartitionGcpApplication.class, args);
+    }
 }

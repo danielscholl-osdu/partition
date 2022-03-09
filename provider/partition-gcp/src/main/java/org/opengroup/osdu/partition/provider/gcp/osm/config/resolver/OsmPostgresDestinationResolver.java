@@ -17,7 +17,13 @@
 
 package org.opengroup.osdu.partition.provider.gcp.osm.config.resolver;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
+
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.PreDestroy;
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
@@ -26,17 +32,11 @@ import org.opengroup.osdu.core.gcp.osm.translate.postgresql.PgDestinationResolve
 import org.opengroup.osdu.partition.provider.gcp.config.PostgresOsmConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
-
-
+@Primary
 @Component
 @Scope(SCOPE_SINGLETON)
 @ConditionalOnProperty(name = "osmDriver", havingValue = "postgres")
@@ -66,18 +66,18 @@ public class OsmPostgresDestinationResolver implements PgDestinationResolver {
         }
 
         return PgDestinationResolution.builder()
-                .datasource(dataSource)
-                .build();
+            .datasource(dataSource)
+            .build();
     }
 
     private DataSource buildDataSourceFromProperties(String partitionId) {
         DataSource dataSource;
         dataSource = DataSourceBuilder.create()
-                .driverClassName(DRIVER_CLASS_NAME)
-                .url(properties.getUrl())
-                .username(properties.getUsername())
-                .password(properties.getPassword())
-                .build();
+            .driverClassName(DRIVER_CLASS_NAME)
+            .url(properties.getUrl())
+            .username(properties.getUsername())
+            .password(properties.getPassword())
+            .build();
 
         HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
         hikariDataSource.setMaximumPoolSize(properties.getMaximumPoolSize());
