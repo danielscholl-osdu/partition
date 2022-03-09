@@ -17,32 +17,36 @@
 
 package org.opengroup.osdu.partition.provider.gcp.osm.config.resolver;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
+
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.datastore.Datastore;
 import com.google.cloud.datastore.DatastoreOptions;
 import com.google.cloud.http.HttpTransportOptions;
+import java.io.IOException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.translate.datastore.DsDestinationResolution;
 import org.opengroup.osdu.core.gcp.osm.translate.datastore.DsDestinationResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.threeten.bp.Duration;
 
-import java.io.IOException;
-import java.util.Map;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
-
+@Primary
 @Component
 @Scope(SCOPE_SINGLETON)
 @ConditionalOnProperty(name = "osmDriver", havingValue = "datastore")
 @RequiredArgsConstructor
 public class OsmDatastoreDestinationResolver implements DsDestinationResolver {
 
-    protected static final RetrySettings RETRY_SETTINGS = RetrySettings.newBuilder().setMaxAttempts(6).setInitialRetryDelay(Duration.ofSeconds(10L)).setMaxRetryDelay(Duration.ofSeconds(32L)).setRetryDelayMultiplier(2.0D).setTotalTimeout(Duration.ofSeconds(50L)).setInitialRpcTimeout(Duration.ofSeconds(50L)).setRpcTimeoutMultiplier(1.0D).setMaxRpcTimeout(Duration.ofSeconds(50L)).build();
+    protected static final RetrySettings RETRY_SETTINGS =
+        RetrySettings.newBuilder().setMaxAttempts(6).setInitialRetryDelay(Duration.ofSeconds(10L)).setMaxRetryDelay(Duration.ofSeconds(32L))
+            .setRetryDelayMultiplier(2.0D).setTotalTimeout(Duration.ofSeconds(50L)).setInitialRpcTimeout(Duration.ofSeconds(50L)).setRpcTimeoutMultiplier(1.0D)
+            .setMaxRpcTimeout(Duration.ofSeconds(50L)).build();
     protected static final TransportOptions TRANSPORT_OPTIONS = HttpTransportOptions.newBuilder().setReadTimeout(30000).build();
     private final Map<String, Datastore> datastoreCache;
 
@@ -58,20 +62,20 @@ public class OsmDatastoreDestinationResolver implements DsDestinationResolver {
         Datastore datastore = datastoreCache.computeIfAbsent(projectId, key -> getDatastoreFor(destination, key, projectId));
 
         return DsDestinationResolution.builder()
-                .projectId(datastore.getOptions().getProjectId())
-                .datastore(datastore)
-                .build();
+            .projectId(datastore.getOptions().getProjectId())
+            .datastore(datastore)
+            .build();
     }
 
     private Datastore getDatastoreFor(Destination destination, String key, String projectId) {
         return datastoreCache.computeIfAbsent(key, k ->
-                DatastoreOptions.newBuilder()
-                    .setRetrySettings(RETRY_SETTINGS)
-                    .setTransportOptions(TRANSPORT_OPTIONS)
-                    .setProjectId(projectId)
-                    .setNamespace(destination.getNamespace().getName())
-                    .build()
-                    .getService());
+            DatastoreOptions.newBuilder()
+                .setRetrySettings(RETRY_SETTINGS)
+                .setTransportOptions(TRANSPORT_OPTIONS)
+                .setProjectId(projectId)
+                .setNamespace(destination.getNamespace().getName())
+                .build()
+                .getService());
     }
 
     @Override
