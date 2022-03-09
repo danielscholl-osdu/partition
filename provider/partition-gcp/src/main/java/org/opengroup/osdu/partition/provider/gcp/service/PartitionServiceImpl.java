@@ -17,11 +17,17 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
-import org.opengroup.osdu.core.common.provider.interfaces.IKmsClient;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
@@ -31,9 +37,6 @@ import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
-import java.util.*;
-
 @Service
 @RequiredArgsConstructor
 public class PartitionServiceImpl implements IPartitionService {
@@ -42,8 +45,6 @@ public class PartitionServiceImpl implements IPartitionService {
   static final String PARTITION_LIST_KEY = "getAllPartitions";
 
   private final OsmPartitionPropertyRepository partitionPropertyEntityRepository;
-
-  private final IKmsClient kmsClient;
 
   private final AuditLogger auditLogger;
 
@@ -65,7 +66,6 @@ public class PartitionServiceImpl implements IPartitionService {
     for (Map.Entry<String, Property> entry : partitionInfo.getProperties().entrySet()) {
       PartitionPropertyEntity entity = new PartitionPropertyEntity(partitionId,
               entry.getKey(), entry.getValue());
-      encryptPartitionPropertyEntityIfNeeded(entity);
       partitionProperties.add(entity);
     }
     this.partitionPropertyEntityRepository.saveAll(partitionProperties);
@@ -76,18 +76,6 @@ public class PartitionServiceImpl implements IPartitionService {
     }
 
     return pi;
-  }
-
-  private void encryptPartitionPropertyEntityIfNeeded(PartitionPropertyEntity entity) {
-    if (entity.isSensitive()) {
-      String propertyValue = entity.getValue().toString();
-      try {
-        entity.setValue(this.kmsClient.encryptString(propertyValue));
-      } catch (IOException e) {
-        throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
-            e.getMessage());
-      }
-    }
   }
 
   @Override
@@ -114,7 +102,6 @@ public class PartitionServiceImpl implements IPartitionService {
       } else {
         entity = new PartitionPropertyEntity(partitionId, entry.getKey(), entry.getValue());
       }
-      encryptPartitionPropertyEntityIfNeeded(entity);
       partitionProperties.add(entity);
     }
     this.partitionPropertyEntityRepository.saveAll(partitionProperties);
@@ -131,9 +118,6 @@ public class PartitionServiceImpl implements IPartitionService {
 
     if (Objects.isNull(pi)) {
       pi = getEncryptedPartition(partitionId);
-      for (Property property : pi.getProperties().values()) {
-        decryptPartitionPropertyIfNeeded(property);
-      }
 
       if (Objects.nonNull(pi)) {
         partitionServiceCache.put(partitionId, pi);
@@ -161,18 +145,6 @@ public class PartitionServiceImpl implements IPartitionService {
     partitionInfo.setProperties(partitionInfoProperties);
 
     return partitionInfo;
-  }
-
-  private void decryptPartitionPropertyIfNeeded(Property property) {
-    if (property.isSensitive()) {
-      String propertyValue = property.getValue().toString();
-      try {
-        property.setValue(this.kmsClient.decryptString(propertyValue));
-      } catch (IOException e) {
-        throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, UNKNOWN_ERROR_REASON,
-            e.getMessage());
-      }
-    }
   }
 
   @Override

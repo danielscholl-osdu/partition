@@ -33,106 +33,6 @@ Pre-requisites
 * Lombok 1.16 or later
 * Maven
 
-## Mapper tuning mechanisms
-
-This service uses specific implementations of DestinationResolvers. A total of 2 resolvers have been implemented, which are divided into two groups:
-
-### for universal technologies:
-
-- for Postgres: osm/config/resolver/OsmPostgresDestinationResolver.java
-
-#### Their algorithms are as follows:
-
-- incoming Destination carries data-partition-id
-- resolver accesses the Partition service and gets PartitionInfo
-- from PartitionInfo resolver retrieves properties for the connection: URL, username, password etc.
-- resolver creates a data source, connects to the resource, remembers the datasource
-- resolver gives the datasource to the mapper in the Resolution object
-
-### for native Google Cloud technologies:
-
-- for Datastore: osm/config/resolver/OsmDatastoreDestinationResolver.java
-
-#### Their algorithms are similar,
-
-Except that they do not receive special properties from the Partition service for connection, because the location of
-the resources is unambiguously known - they are in the GCP project. And credentials are also not needed - access to data
-is made on behalf of the Google Identity SA under which the service itself is launched. Therefore, resolver takes only
-the value of the **projectId** property from PartitionInfo and uses it to connect to a resource in the corresponding GCP
-project.
-
-### Installation
-In order to run the service locally or remotely, you will need to have the following environment variables defined.
-
-| name | value | description | sensitive? | source |
-| ---  | ---   | ---         | ---        | ---    |
-| `LOG_PREFIX` | `service` | Logging prefix | no | - |
-| `SERVER_SERVLET_CONTEXPATH` | `/api/partition/v1` | Servlet context path | no | - |
-| `AUTHORIZE_API` | ex `https://entitlements.com/entitlements/v1` | Entitlements API endpoint | no | output of infrastructure deployment |
-| `GOOGLE_CLOUD_PROJECT` | ex `osdu-cicd-epam` | Google Cloud Project Id| no | output of infrastructure deployment |
-| `GOOGLE_AUDIENCES` | ex `*****.apps.googleusercontent.com` | Client ID for getting access to cloud resources | yes | https://console.cloud.google.com/apis/credentials |
-| `PARTITION_ADMIN_ACCOUNTS` | ex `admin@domen.iam.gserviceaccount.com,osdu-gcp-sa,workload-identity` | List of partition admin account emails, could be in full form like `admin@domen.iam.gserviceaccount.com` or in `starts with` pattern like `osdu-gcp-sa`| no | - |
-| `GOOGLE_APPLICATION_CREDENTIALS` | ex `/path/to/directory/service-key.json` | Service account credentials, you only need this if running locally | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
-| `KEY_RING` | ex `csqp` | A key ring holds keys in a specific Google Cloud location and permit us to manage access control on groups of keys | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
-| `KMS_KEY` | ex `partitionService` | A key exists on one key ring linked to a specific location. | yes | https://cloud.google.com/kms/docs/resource-hierarchy#key_rings |
-| `PARTITION_PROPERTY_KIND` | ex `PartitionProperty` | Kind name to store the properties. | no | - |
-| `PARTITION_NAMESPACE` | ex `partition` | Namespace for database. | no | - |
-| `osmDriver` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
-| `osm.postgres.url` | ex `jdbc:postgresql://127.0.0.1:5432/postgres` | Postgres server URL | no | - |
-| `osm.postgres.username` | ex `postgres` | Postgres admin username | no | - |
-| `osm.postgres.password` | ex `postgres` | Postgres admin password | yes | - |
-| `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
-| `SERVICE_ACCOUNT_TAIL` | `****` |By default Partition service while authenticating the request, verifies that the email in provided token belongs to a service account from a specific project by email tail `<GOOGLE_CLOUD_PROJECT> + .iam.gserviceaccount.com`, this behavior can be changed with this variable, you may specify which email tail exactly expected.| no | - |
-
-## Configuring mappers' Datasources
-
-When using non-Google-Cloud-native technologies, property sets must be defined on the Partition service as part of
-PartitionInfo for each Tenant.
-
-They are specific to each storage technology:
-
-#### for OSM - Postgres:
-
-**database structure**
-OSM works with data logically organized as "partition"->"namespace"->"kind"->"record"->"columns". The above sequence
-describes how it is named in Google Datastore, where "partition" maps to "GCP project".
-
-This is how **Postgres** OSM driver does. Notice, the above hierarchy has been kept, but Postgres uses alternative entities
-for it.
-
-| Datastore hierarchy level |     | Postgres alternative used  |
-|---------------------------|-----|----------------------------|
-| partition (GCP project)   | ==  | Postgres server URL        |
-| namespace                 | ==  | Schema                     |
-| kind                      | ==  | Table                      |
-| record                    | ==  | '<multiple table records>' |
-| columns                   | ==  | id, data (jsonb)           |
-
-As we can see in the above table, Postgres uses different approach in storing business data in records. Not like
-Datastore, which segments data into multiple physical columns, Postgres organises them into the single JSONB "data"
-column. It allows provisioning new data registers easily not taking care about specifics of certain registers structure.
-In the current OSM version (as on December'21) the Postgres OSM driver is not able to create new tables in runtime.
-
-So this is a responsibility of DevOps / CICD to provision all required SQL tables (for all required data kinds) when on new
-environment or tenant provisioning when using Postgres. Detailed instructions (with examples) for creating new tables is
-in the **OSM module Postgres driver README.md** `org/opengroup/osdu/core/gcp/osm/translate/postgresql/README.md`
-
-As a quick shortcut, this example snippet can be used by DevOps DBA:
-
-* `exampleschema` equals to `PARTITION_NAMESPACE` 
-* `ExampleKind` equals to `PARTITION_PROPERTY_KIND`
-
-```postgres-psql
---CREATE SCHEMA "<exampleschema>";
-CREATE TABLE <exampleschema>."<ExampleKind>"(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    data jsonb NOT NULL,
-    CONSTRAINT <ExampleKind>_id UNIQUE (id)
-);
-CREATE INDEX <ExampleKind>_datagin ON <exampleschema>."<ExampleKind>" USING GIN (data);
-```
-
 ### Run Locally
 Check that maven is installed:
 
@@ -245,26 +145,6 @@ Partition Service is compatible with App Engine Flexible Environment and Cloud R
 
 * To deploy into App Engine, please, use this documentation:
   https://cloud.google.com/appengine/docs/flexible/java/quickstart
-
-#### Cloud KMS Setup
-
-Enable cloud KMS on master project.
-
-Create king ring and key in the ***master project***
-
-```bash
-    gcloud services enable cloudkms.googleapis.com
-    export KEYRING_NAME="csqp"
-    export CRYPTOKEY_NAME="partionService"
-    gcloud kms keyrings create $KEYRING_NAME --location global
-    gcloud kms keys create $CRYPTOKEY_NAME --location global \
-    		--keyring $KEYRING_NAME \
-    		--purpose encryption
-```
-
-Add **Cloud KMS CryptoKey Encrypter/Decrypter** role to the used **service account** by Partition Service of the ***master project*** through IAM - Role tab.
-
-Add "Cloud KMS Encrypt/Decrypt" role to the used **service account** by Partition Service of the ***master project*** through IAM - Role tab.
 
 ## Licence
 Copyright © Google LLC

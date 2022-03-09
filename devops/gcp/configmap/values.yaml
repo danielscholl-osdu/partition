@@ -2,10 +2,9 @@ data:
   google_cloud_project: ""
   partition_admin_accounts: ""
   google_audiences: ""
-  key_ring: ""
-  kms_key: ""
   log_level: "INFO"
   service_account_tail: ".iam.gserviceaccount.com"
+  spring_profiles_active: "gcp"
   
 
 conf:

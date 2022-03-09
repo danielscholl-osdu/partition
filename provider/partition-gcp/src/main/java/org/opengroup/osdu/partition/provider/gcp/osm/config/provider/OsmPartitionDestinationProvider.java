@@ -22,18 +22,21 @@ import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.Kind;
 import org.opengroup.osdu.core.gcp.osm.model.Namespace;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+@Primary
 @Service
 @RequiredArgsConstructor
 public class OsmPartitionDestinationProvider {
+
     private final PropertiesConfiguration config;
 
     public Destination getDestination() {
-         return Destination.builder()
-                    .partitionId(config.getGoogleCloudProject())
-                    .namespace(new Namespace(config.getPartitionNamespace()))
-                    .kind(new Kind(config.getPartitionPropertyKind()))
-                .build();
+        return Destination.builder()
+            .partitionId(config.getGoogleCloudProject())
+            .namespace(new Namespace(config.getPartitionNamespace()))
+            .kind(new Kind(config.getPartitionPropertyKind()))
+            .build();
     }
 }
