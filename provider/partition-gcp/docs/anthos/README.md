@@ -22,7 +22,6 @@ Defined in default application property file but possible to override:
 | `SERVER_SERVLET_CONTEXPATH` | `/api/partition/v1` | Servlet context path | no | - |
 | `PARTITION_PROPERTY_KIND` | ex `PartitionProperty` | Kind name to store the properties. | no | - |
 | `PARTITION_NAMESPACE` | ex `partition` | Namespace for database. | no | - |
-| `SERVICE_ACCOUNT_TAIL` | `****` |By default Partition service while authenticating the request, verifies that the email in provided token belongs to a service account from a specific project by email tail `<GOOGLE_CLOUD_PROJECT> + .iam.gserviceaccount.com`, this behavior can be changed with this variable, you may specify which email tail exactly expected.| no | - |
 
 These variables define service behavior, and are used to switch between `anthos` or `gcp` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
