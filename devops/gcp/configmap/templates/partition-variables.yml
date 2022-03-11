@@ -6,9 +6,14 @@ metadata:
   name: "{{ .Values.conf.configmap }}"
   namespace: "{{ .Release.Namespace }}"
 data:
+  LOG_LEVEL: "{{ .Values.data.log_level }}"
+  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
+  {{- if .Values.conf.on_prem_enabled }}
+  PARTITION_PROPERTY_KIND: "{{ .Values.data.partition_property_kind }}"
+  PARTITION_NAMESPACE: "{{ .Values.data.partition_namespace }}"
+  {{- else }}
   GOOGLE_CLOUD_PROJECT: "{{ .Values.data.google_cloud_project }}"
   PARTITION_ADMIN_ACCOUNTS: "{{ .Values.data.partition_admin_accounts }}"
   GOOGLE_AUDIENCES: "{{ .Values.data.google_audiences }}"
-  LOG_LEVEL: "{{ .Values.data.log_level }}"
   SERVICE_ACCOUNT_TAIL: "{{ .Values.data.service_account_tail }}"
-  SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
+  {{- end }}
