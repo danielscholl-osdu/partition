@@ -284,6 +284,8 @@ The following software have components provided under the terms of this license:
 - AWS Java SDK for the AWS Simple Systems Management (SSM) Service (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for the Amazon EC2 Container Registry (from https://aws.amazon.com/sdkforjava)
 - AWS Java SDK for the Amazon EC2 Container Service (from https://aws.amazon.com/sdkforjava)
+- AWS SDK For Java (from https://aws.amazon.com/sdkforjava)
+- AWS SDK for Java - BOM (from https://aws.amazon.com/sdkforjava)
 - AWS SDK for Java - Core (from https://aws.amazon.com/sdkforjava)
 - AWS SDK for Java - Models (from https://aws.amazon.com/sdkforjava)
 - Adapter: RxJava (from https://repo1.maven.org/maven2/com/squareup/retrofit2/adapter-rxjava)
@@ -399,7 +401,7 @@ The following software have components provided under the terms of this license:
 - Jakarta Bean Validation API (from https://beanvalidation.org)
 - Jakarta Expression Language Implementation (from https://projects.eclipse.org/projects/ee4j.el)
 - Java Libraries for Amazon Simple WorkFlow (from https://aws.amazon.com/sdkforjava)
-- Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna)
+- Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna, https://repo1.maven.org/maven2/net/java/dev/jna/jna)
 - Java Native Access Platform (from https://github.com/java-native-access/jna)
 - Java UUID Generator (from http://wiki.fasterxml.com/JugHome)
 - Javassist (from http://www.javassist.org/)
@@ -449,6 +451,7 @@ The following software have components provided under the terms of this license:
 - Mojo's Maven plugin for Cobertura (from http://mojo.codehaus.org/cobertura-maven-plugin/)
 - MongoDB Driver (from http://www.mongodb.org)
 - MongoDB Java Driver (from http://mongodb.org/, http://www.mongodb.org)
+- Netty Reactive Streams Implementation (from https://repo1.maven.org/maven2/com/typesafe/netty/netty-reactive-streams)
 - Netty/Buffer (from https://repo1.maven.org/maven2/io/netty/netty-buffer)
 - Netty/Codec (from https://repo1.maven.org/maven2/io/netty/netty-codec)
 - Netty/Codec/DNS (from https://repo1.maven.org/maven2/io/netty/netty-codec-dns)
@@ -480,6 +483,7 @@ The following software have components provided under the terms of this license:
 - PWDB :: Database (from https://repo1.maven.org/maven2/org/linguafranca/pwdb/database)
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
 - Plexus Velocity Component (from https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-velocity)
+- PostgreSQL JDBC Driver
 - PowerMock (from http://www.powermock.org, https://repo1.maven.org/maven2/org/powermock/powermock-api-mockito)
 - Protocol Buffer extensions to the Google HTTP Client Library for Java. (from https://repo1.maven.org/maven2/com/google/http-client/google-http-client-protobuf)
 - Proton-J (from https://repo1.maven.org/maven2/org/apache/qpid/proton-j)
@@ -522,6 +526,7 @@ The following software have components provided under the terms of this license:
 - Spring JDBC (from https://github.com/SpringSource/spring-framework, https://github.com/spring-projects/spring-framework)
 - Spring JMS (from https://github.com/SpringSource/spring-framework, https://github.com/spring-projects/spring-framework, https://repo1.maven.org/maven2/org/springframework/spring-jms)
 - Spring Messaging (from https://github.com/spring-projects/spring-framework)
+- Spring Plugin - Core (from https://repo1.maven.org/maven2/org/springframework/plugin/spring-plugin-core)
 - Spring Plugin - Metadata Extension (from https://repo1.maven.org/maven2/org/springframework/plugin/spring-plugin-metadata)
 - Spring Plugin Core (from https://repo1.maven.org/maven2/org/springframework/plugin/spring-plugin-core)
 - Spring Security - Core (from http://spring.io/spring-security, https://repo1.maven.org/maven2/org/springframework/security/spring-security-core, https://spring.io/projects/spring-security, https://spring.io/spring-security)
@@ -541,6 +546,8 @@ The following software have components provided under the terms of this license:
 - Zipkin v2 (from https://repo1.maven.org/maven2/io/zipkin/zipkin2/zipkin)
 - aalto-xml (from https://github.com/FasterXML/aalto-xml, https://repo1.maven.org/maven2/com/fasterxml/aalto-xml)
 - aws-encryption-sdk-java (from https://github.com/aws/aws-encryption-sdk-java)
+- com.google.api.grpc:grpc-google-cloud-pubsub-v1 (from https://github.com/googleapis/googleapis)
+- commons-beanutils (from https://repo1.maven.org/maven2/commons-beanutils/commons-beanutils)
 - datastore-v1-proto-client (from https://repo1.maven.org/maven2/com/google/cloud/datastore/datastore-v1-proto-client)
 - error-prone annotations (from https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations)
 - grpc-google-cloud-pubsub-v1 (from https://repo1.maven.org/maven2/com/google/api/grpc/grpc-google-cloud-pubsub-v1)
@@ -619,6 +626,7 @@ The following software have components provided under the terms of this license:
 - Hamcrest Core (from https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
+- PostgreSQL JDBC Driver
 - Reflections (from http://code.google.com/p/reflections/, http://github.com/ronmamo/reflections)
 - Stax2 API (from http://github.com/FasterXML/stax2-api)
 - ThreeTen backport (from https://github.com/ThreeTen/threetenbp, https://www.threeten.org/threetenbp)
@@ -634,7 +642,7 @@ The following software have components provided under the terms of this license:
 - ASM Analysis (from http://asm.ow2.io/, http://asm.ow2.org/)
 - ASM Commons (from http://asm.ow2.io/, http://asm.ow2.org/, https://repo1.maven.org/maven2/org/ow2/asm/asm-commons)
 - ASM Core (from http://asm.ow2.io/, http://asm.ow2.org/)
-- ASM Tree (from http://asm.ow2.io/, http://asm.ow2.org/)
+- ASM Tree (from http://asm.ow2.io/, http://asm.ow2.org/, https://repo1.maven.org/maven2/org/ow2/asm/asm-tree)
 - ASM Util (from http://asm.ow2.io/, https://repo1.maven.org/maven2/org/ow2/asm/asm-util)
 - Apache Commons Codec (from https://commons.apache.org/proper/commons-codec/)
 - AspectJ Weaver (from http://www.aspectj.org, https://www.eclipse.org/aspectj/)
@@ -646,6 +654,7 @@ The following software have components provided under the terms of this license:
 - Hamcrest Core (from https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - JSch (from http://www.jcraft.com/jsch/)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
 - Microsoft Application Insights Java SDK Core (from https://github.com/Microsoft/ApplicationInsights-Java)
@@ -655,6 +664,7 @@ The following software have components provided under the terms of this license:
 - Netty/Codec/HTTP (from https://repo1.maven.org/maven2/io/netty/netty-codec-http)
 - Netty/Transport/Classes/KQueue (from https://repo1.maven.org/maven2/io/netty/netty-transport-classes-kqueue)
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
+- PostgreSQL JDBC Driver
 - Protocol Buffer Java API (from http://code.google.com/p/protobuf, https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java)
 - Protocol Buffers [Util] (from https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util)
 - Reflections (from http://code.google.com/p/reflections/, http://github.com/ronmamo/reflections)
@@ -676,8 +686,6 @@ The following software have components provided under the terms of this license:
 ========================================================================
 CC-BY-4.0
 ========================================================================
-The following software have components provided under the terms of this license:
-
 - Microsoft Application Insights Java SDK Spring Boot starter (from https://github.com/Microsoft/ApplicationInsights-Java)
 - Microsoft Application Insights Java SDK Web Module (from https://github.com/Microsoft/ApplicationInsights-Java)
 - Microsoft Application Insights Log4j 2 Appender (from https://github.com/Microsoft/ApplicationInsights-Java)
@@ -736,6 +744,8 @@ The following software have components provided under the terms of this license:
 - Microsoft Application Insights Java SDK Web Module (from https://github.com/Microsoft/ApplicationInsights-Java)
 - Microsoft Application Insights Log4j 2 Appender (from https://github.com/Microsoft/ApplicationInsights-Java)
 - SnakeYAML (from http://code.google.com/p/snakeyaml/, http://www.snakeyaml.org)
+- org.junit.jupiter:junit-jupiter-api (from http://junit.org/junit5/)
+- org.junit.platform:junit-platform-commons (from http://junit.org/junit5/)
 
 ========================================================================
 EPL-2.0
@@ -750,6 +760,8 @@ The following software have components provided under the terms of this license:
 - JUnit Platform Engine API (from http://junit.org/junit5/, https://junit.org/junit5/)
 - Jakarta Annotations API (from https://projects.eclipse.org/projects/ee4j.ca)
 - Jakarta Expression Language Implementation (from https://projects.eclipse.org/projects/ee4j.el)
+- org.junit.jupiter:junit-jupiter-api (from http://junit.org/junit5/)
+- org.junit.platform:junit-platform-commons (from http://junit.org/junit5/)
 
 ========================================================================
 GPL-2.0-only
@@ -806,7 +818,7 @@ LGPL-2.1-only
 The following software have components provided under the terms of this license:
 
 - Cobertura (from http://cobertura.sourceforge.net)
-- Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna)
+- Java Native Access (from https://github.com/java-native-access/jna, https://github.com/twall/jna, https://repo1.maven.org/maven2/net/java/dev/jna/jna)
 - Java Native Access Platform (from https://github.com/java-native-access/jna)
 - Javassist (from http://www.javassist.org/)
 - Lang (from https://repo1.maven.org/maven2/commons-lang/commons-lang)
@@ -830,8 +842,6 @@ The following software have components provided under the terms of this license:
 ========================================================================
 LGPL-3.0-only
 ========================================================================
-The following software have components provided under the terms of this license:
-
 - Apache Log4j API (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api)
 - Apache Log4j Core (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core)
 
@@ -913,14 +923,13 @@ PHP-3.01
 ========================================================================
 The following software have components provided under the terms of this license:
 
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
 
 ========================================================================
 Public-Domain
 ========================================================================
-The following software have components provided under the terms of this license:
-
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
 - Spongy Castle (from http://rtyley.github.io/spongycastle/)
 
@@ -972,6 +981,7 @@ The following software have components provided under the terms of this license:
 - Microsoft Azure SDK for EventGrid Management (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure SDK for SQL API of Azure Cosmos DB Service (from https://github.com/Azure/azure-sdk-for-java)
 - Microsoft Azure client library for Blob Storage (from https://github.com/Azure/azure-sdk-for-java)
+- PostgreSQL JDBC Driver
 - Project Lombok (from http://projectlombok.org, https://projectlombok.org)
 - Spring Web (from http://www.springframework.org, https://github.com/spring-projects/spring-framework, https://repo1.maven.org/maven2/org/springframework/spring-web)
 - azure-documentdb (from http://azure.microsoft.com/en-us/services/documentdb/, https://azure.microsoft.com/en-us/services/cosmos-db/)
@@ -996,7 +1006,10 @@ The following software have components provided under the terms of this license:
 - JUnit Jupiter Params (from http://junit.org/junit5/, https://junit.org/junit5/)
 - JUnit Platform Commons (from http://junit.org/junit5/, https://junit.org/junit5/)
 - JUnit Platform Engine API (from http://junit.org/junit5/, https://junit.org/junit5/)
+- Jakarta Activation API (from https://github.com/eclipse-ee4j/jaf)
 - Jakarta Activation API jar (from https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api)
 - Jakarta XML Binding API (from https://repo1.maven.org/maven2/jakarta/xml/bind/jakarta.xml.bind-api, https://repo1.maven.org/maven2/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.3_spec)
 - Spongy Castle (from http://rtyley.github.io/spongycastle/)
+- org.junit.jupiter:junit-jupiter-api (from http://junit.org/junit5/)
+- org.junit.platform:junit-platform-commons (from http://junit.org/junit5/)
 - xml-apis
