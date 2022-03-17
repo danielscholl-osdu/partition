@@ -14,62 +14,18 @@
 
 package org.opengroup.osdu.partition.provider.aws.util;
 
-import com.mongodb.ConnectionString;
+import org.opengroup.osdu.core.aws.mongodb.MongoDBSimpleFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoClientFactoryBean;
-
-import javax.inject.Inject;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
 public class MongoConfig {
 
-    @Inject
-    MongoProperties props;
 
-    public String getMongoURI() {
-
-        Boolean useSrvEndpoint = Boolean.parseBoolean(props.getUseSrvEndpointStr());
-
-        if (useSrvEndpoint) {
-
-            String srvUriFormat = "mongodb+srv://%s:%s@%s/%s?ssl=%s&retryWrites=%s&w=%s";
-
-            String srvUri = String.format(
-                    srvUriFormat,
-                    props.getUsername(),
-                    props.getPassword(),
-                    props.getEndpoint(),
-                    props.getAuthDatabase(),
-                    props.getEnableTLS(),
-                    props.getRetryWrites(),
-                    props.getWriteMode());
-
-            return srvUri;
-        }
-        else {
-            String uriFormat = "mongodb+srv://%s:%s@%s/%s?retryWrites=%s&w=%s";
-
-            String uri = String.format(
-                    uriFormat,
-                    props.getUsername(),
-                    props.getPassword(),
-                    props.getEndpoint(),
-                    props.getAuthDatabase(),
-//                    props.getEnableTLS(),
-                    props.getRetryWrites(),
-                    props.getWriteMode());
-
-            return uri;
-        }
-    }
-
-    public @Bean MongoClientFactoryBean mongo() {
-        ConnectionString connectionString = new ConnectionString(this.getMongoURI());
-
-        MongoClientFactoryBean mongo = new MongoClientFactoryBean();
-        mongo.setConnectionString(connectionString);
-
-        return mongo;
+    @Autowired
+    public @Bean MongoTemplate mongoTemplate(MongoDBSimpleFactory mongoDBFactory, MongoPropertiesReader propertiesReader) {
+        return mongoDBFactory.mongoTemplate(propertiesReader.getProperties());
     }
 }
