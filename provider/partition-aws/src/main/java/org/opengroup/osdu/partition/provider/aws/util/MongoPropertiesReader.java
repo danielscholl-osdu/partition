@@ -15,22 +15,18 @@
 
 package org.opengroup.osdu.partition.provider.aws.util;
 
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
+import org.opengroup.osdu.core.aws.mongodb.config.MongoProperties;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
 import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
+import javax.annotation.PostConstruct;
+import java.util.Map;
 
-@Data
 @Component
-public class MongoProperties {
+public class MongoPropertiesReader {
 
     @Value("${osdu.mongodb.username}")
     private String username;
@@ -50,6 +46,12 @@ public class MongoProperties {
     private String useSrvEndpointStr;
     @Value("${osdu.mongodb.enableTLS}")
     private String enableTLS;
+    @Value("${spring.data.mongodb.database}")
+    private String databaseName;
+    @Value("${osdu.mongodb.maxPoolSize}")
+    private String maxPoolSize;
+    @Value("${osdu.mongodb.readPreference}")
+    private String readPreference;
 
     @PostConstruct
     private void init() throws K8sParameterNotFoundException, JsonProcessingException {
@@ -57,7 +59,7 @@ public class MongoProperties {
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
 
         if (!provider.getLocalMode()) {
-            Map<String,String> credentials = provider.getCredentialsAsMap("mongodb_credentials");
+            Map<String, String> credentials = provider.getCredentialsAsMap("mongodb_credentials");
 
             if (credentials != null) {
                 username = credentials.get("username");
@@ -71,6 +73,20 @@ public class MongoProperties {
         }
     }
 
-    
-    
+    public MongoProperties getProperties() {
+        return MongoProperties.builder()
+                .username(username)
+                .password(password)
+                .endpoint(endpoint)
+                .authDatabase(authDatabase)
+                .port(port)
+                .retryWrites(retryWrites)
+                .writeMode(writeMode)
+                .useSrvEndpointStr(useSrvEndpointStr)
+                .enableTLS(enableTLS)
+                .databaseName(databaseName)
+                .maxPoolSize(maxPoolSize)
+                .readPreference(readPreference)
+                .build();
+    }
 }
