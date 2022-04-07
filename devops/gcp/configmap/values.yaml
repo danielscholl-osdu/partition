@@ -8,13 +8,7 @@ data:
   partition_namespace: ""
   spring_profiles_active: "gcp"
 
-secret:
-  osm_postgres_password: ""
-  osm_postgres_url: ""
-  osm_postgres_username: ""
-
 conf:
   configmap: "partition-config"
-  secret: "partition-secret"
   app_name: "partition"
   on_prem_enabled: false
