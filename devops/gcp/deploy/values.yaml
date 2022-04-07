@@ -13,7 +13,7 @@ data:
 
 conf:
   configmap: "partition-config"
-  secret: "partition-secret"
+  secret: "partition-postgres-secret"
   app_name: "partition"
   on_prem_enabled: false
 
