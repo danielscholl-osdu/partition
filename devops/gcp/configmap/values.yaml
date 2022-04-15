@@ -8,6 +8,7 @@ data:
   partition_namespace: ""
   spring_profiles_active: "gcp"
   # bootstrap common
+  partition_name: "partition.default.svc.cluster.local"
   data_partition_id: ""
   datafier_sa: "datafier"
   # bootstrap variables onprem
