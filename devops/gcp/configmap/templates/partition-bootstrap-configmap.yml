@@ -6,7 +6,7 @@ metadata:
   name: "{{ .Values.conf.bootstrap_configmap }}"
   namespace: "{{ .Values.conf.bootstrap_namespace }}"
 data:
-  PARTITION_NAME: "{{ .Values.conf.app_name }}"
+  PARTITION_NAME: "{{ .Values.data.partition_name }}"
   PROJECT_ID: "{{ .Values.data.project_id }}"
   DATA_PARTITION_ID: "{{ .Values.data.data_partition_id }}"
   {{- if .Values.conf.on_prem_enabled }}
