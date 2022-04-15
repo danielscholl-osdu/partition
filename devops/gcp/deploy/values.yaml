@@ -10,11 +10,22 @@ data:
   serviceAccountName: ""
   imagePullPolicy: "IfNotPresent"
   image: ""
+  # bootstrap common
+  bootstrap_requests_cpu: "0.03"
+  bootstrap_requests_memory: "120M"
+  bootstrap_limits_cpu: "0.1"
+  bootstrap_limits_memory: "200M"
+  bootstrap_image: ""
+  bootstrapServiceAccountName: "partition-bootstrap"
 
 conf:
   configmap: "partition-config"
   secret: "partition-postgres-secret"
   app_name: "partition"
+  # bootstrap common
+  bootstrap_name: "partition-bootstrap"
+  bootstrap_configmap: "partition-bootstrap-configmap"
+  bootstrap_namespace: "default"
   on_prem_enabled: false
 
 namespacePolicy:

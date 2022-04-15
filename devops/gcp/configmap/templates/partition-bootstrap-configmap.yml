@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: "{{ .Values.conf.bootstrap_name }}"
+  name: "{{ .Values.conf.bootstrap_configmap }}"
+  namespace: "{{ .Values.conf.bootstrap_namespace }}"
+data:
+  PARTITION_NAME: "{{ .Values.conf.app_name }}"
+  PROJECT_ID: "{{ .Values.data.project_id }}"
+  DATA_PARTITION_ID: "{{ .Values.data.data_partition_id }}"
+  {{- if .Values.conf.on_prem_enabled }}
+  DOMAIN: "{{ .Values.data.domain }}"
+  ENVIRONMENT: "{{ .Values.data.environment }}"
+  CLIENT_ID: "{{ .Values.data.client_id }}"
+  {{- else }}
+  AUDIENCES: "{{ .Values.data.google_audiences }}"
+  DATAFIER_SA: "{{ .Values.data.datafier_sa }}"
+  {{- end }}
