@@ -10,7 +10,7 @@ data:
   bootstrap_limits_cpu: "0.1"
   bootstrap_limits_memory: "200M"
   bootstrap_image: ""
-  bootstrapServiceAccountName: "partition-bootstrap"
+  bootstrapServiceAccountName: ""
 conf:
   configmap: "partition-config"
   secret: "partition-postgres-secret"
