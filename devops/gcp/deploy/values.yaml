@@ -1,23 +1,16 @@
-# Default values for partition-deploy.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 data:
   requests_cpu: "0.1"
-  requests_memory: "256M"
+  requests_memory: "260M"
   limits_cpu: "1"
   limits_memory: "1G"
-  serviceAccountName: ""
+  serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
   image: ""
   # bootstrap common
-  bootstrap_requests_cpu: "0.03"
-  bootstrap_requests_memory: "120M"
-  bootstrap_limits_cpu: "0.1"
-  bootstrap_limits_memory: "200M"
+  bootstrap_limits_cpu: "0.05"
+  bootstrap_limits_memory: "50M"
   bootstrap_image: ""
   bootstrapServiceAccountName: "partition-bootstrap"
-
 conf:
   configmap: "partition-config"
   secret: "partition-postgres-secret"
@@ -27,13 +20,11 @@ conf:
   bootstrap_configmap: "partition-bootstrap-configmap"
   bootstrap_namespace: "default"
   on_prem_enabled: false
-
 namespacePolicy:
   mtlsMode: STRICT
-
 authorizations:
   partitionPolicy:
     matchLabels:
       app: partition
     rules:
-    - bootstrap_namespace: config
+      - bootstrap_namespace: config
