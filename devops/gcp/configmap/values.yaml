@@ -15,7 +15,6 @@ data:
   domain: ""
   environment: ""
   client_id: ""
-
 conf:
   configmap: "partition-config"
   app_name: "partition"
