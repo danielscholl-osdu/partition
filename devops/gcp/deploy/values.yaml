@@ -7,8 +7,8 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: ""
   # bootstrap common
-  bootstrap_limits_cpu: "0.05"
-  bootstrap_limits_memory: "50M"
+  bootstrap_limits_cpu: "0.1"
+  bootstrap_limits_memory: "200M"
   bootstrap_image: ""
   bootstrapServiceAccountName: "partition-bootstrap"
 conf:
