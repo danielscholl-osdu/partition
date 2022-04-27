@@ -21,5 +21,4 @@ conf:
   # bootstrap common
   bootstrap_name: "partition-bootstrap"
   bootstrap_configmap: "partition-bootstrap-configmap"
-  bootstrap_namespace: "default"
   on_prem_enabled: false
