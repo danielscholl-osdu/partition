@@ -14,22 +14,27 @@ spec:
 {{- toYaml $spec.matchLabels | nindent 6 }}
   action: ALLOW
   rules:
-  {{- range $rule := $spec.rules }}
   - from:
     - source:
-        principals: 
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/entitlements-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/search-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/storage-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/register-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/notification-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-queue-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/schema-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/file-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/dataset-k8s
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal-k8s
+        principals:
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/crs-catalog
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/crs-conversion
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/dataset
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/entitlements
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/file
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-queue
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/notification
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/register
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/schema
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/search
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/seismic-store
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/storage
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/unit
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/well-delivery
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/wks
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/workflow
     to:
     - operation:
         methods:
@@ -39,14 +44,15 @@ spec:
   - from:
     - source:
         principals: 
-         - cluster.local/ns/{{ $rule.bootstrap_namespace }}/sa/workload-gke-bootstrap-sa
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/bootstrap-sa
     to:
     - operation:
         methods:
         - POST
+        - PUT
         - PATCH
+        - GET
         paths:
         - /api/partition/v1/*
-{{- end }}
 {{- end }}
 {{- end }}
