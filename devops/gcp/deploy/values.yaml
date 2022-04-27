@@ -25,5 +25,3 @@ authorizations:
   partitionPolicy:
     matchLabels:
       app: partition
-    rules:
-      - bootstrap_namespace: config
