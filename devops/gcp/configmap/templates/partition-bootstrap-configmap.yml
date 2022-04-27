@@ -4,7 +4,7 @@ metadata:
   labels:
     app: "{{ .Values.conf.bootstrap_name }}"
   name: "{{ .Values.conf.bootstrap_configmap }}"
-  namespace: "{{ .Values.conf.bootstrap_namespace }}"
+  namespace: "{{ .Release.Namespace }}"
 data:
   PARTITION_NAME: "{{ .Values.data.partition_name }}.{{ .Release.Namespace }}.svc.cluster.local"
   PROJECT_ID: "{{ .Values.data.project_id }}"
