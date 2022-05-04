@@ -190,3 +190,5 @@ then
     exit 1
   fi
 fi
+
+touch /tmp/bootstrap_ready
