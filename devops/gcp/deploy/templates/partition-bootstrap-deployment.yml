@@ -18,6 +18,11 @@ spec:
       containers:
         - image: "{{ .Values.data.bootstrap_image }}"
           name: "{{ .Values.conf.bootstrap_name }}"
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/bootstrap_ready
           envFrom:
             - configMapRef:
                 name: "{{ .Values.conf.bootstrap_configmap }}"
