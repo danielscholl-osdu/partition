@@ -1,5 +1,5 @@
 data:
-  google_cloud_project: ""
+  project_id: ""
   partition_admin_accounts: ""
   google_audiences: ""
   log_level: "INFO"
@@ -7,8 +7,18 @@ data:
   partition_property_kind: ""
   partition_namespace: ""
   spring_profiles_active: "gcp"
-
+  # bootstrap common
+  partition_name: "partition"
+  data_partition_id: ""
+  datafier_sa: "datafier"
+  # bootstrap variables onprem
+  domain: ""
+  environment: ""
+  client_id: ""
 conf:
   configmap: "partition-config"
   app_name: "partition"
+  # bootstrap common
+  bootstrap_name: "partition-bootstrap"
+  bootstrap_configmap: "partition-bootstrap-configmap"
   on_prem_enabled: false
