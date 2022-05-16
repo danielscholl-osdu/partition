@@ -6,7 +6,7 @@ data:
   serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
   image: ""
-  # bootstrap common
+  # bootstrap
   bootstrap_limits_cpu: "0.1"
   bootstrap_limits_memory: "200M"
   bootstrap_image: ""
@@ -15,9 +15,6 @@ conf:
   configmap: "partition-config"
   secret: "partition-postgres-secret"
   app_name: "partition"
-  # bootstrap common
-  bootstrap_name: "partition-bootstrap"
-  bootstrap_configmap: "partition-bootstrap-configmap"
   on_prem_enabled: false
 namespacePolicy:
   mtlsMode: STRICT
