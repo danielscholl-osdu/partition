@@ -9,7 +9,6 @@ data:
   LOG_LEVEL: "{{ .Values.data.log_level }}"
   SPRING_PROFILES_ACTIVE: "{{ .Values.data.spring_profiles_active }}"
   {{- if .Values.conf.on_prem_enabled }}
-  PARTITION_PROPERTY_KIND: "{{ .Values.data.partition_property_kind }}"
   PARTITION_NAMESPACE: "{{ .Values.data.partition_namespace }}"
   {{- else }}
   GOOGLE_CLOUD_PROJECT: "{{ .Values.data.project_id }}"
