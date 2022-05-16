@@ -79,7 +79,7 @@ osdu-gcp-deploy-deployment:
   after_script:
     - echo ----- Verify Bootstrap -----
     - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_BOOTSTRAP_SERVICE | tail -1 | awk '{print $1}')
+    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
     - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
     - echo $STATUS
     - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
@@ -94,7 +94,7 @@ osdu-gcp-dev2-deploy-deployment:
   after_script:
     - echo ----- Verify Bootstrap -----
     - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_BOOTSTRAP_SERVICE | tail -1 | awk '{print $1}')
+    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
     - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
     - echo $STATUS
     - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
