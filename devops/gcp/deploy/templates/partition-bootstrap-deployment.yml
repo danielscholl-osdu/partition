@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Values.conf.bootstrap_name }}"
+  name: "{{ .Values.conf.app_name }}-bootstrap"
   namespace: "{{ .Release.Namespace }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Values.conf.bootstrap_name }}"
+      app: "{{ .Values.conf.app_name }}-bootstrap"
   template:
     metadata:
       labels:
-        app: "{{ .Values.conf.bootstrap_name }}"
+        app: "{{ .Values.conf.app_name }}-bootstrap"
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
     spec:
       containers:
         - image: "{{ .Values.data.bootstrap_image }}"
-          name: "{{ .Values.conf.bootstrap_name }}"
+          name: "{{ .Values.conf.app_name }}-bootstrap"
           readinessProbe:
             exec:
               command:
@@ -25,7 +25,7 @@ spec:
               - /tmp/bootstrap_ready
           envFrom:
             - configMapRef:
-                name: "{{ .Values.conf.bootstrap_configmap }}"
+                name: "{{ .Values.conf.configmap }}-bootstrap"
           resources:
             limits:
               cpu: "{{ .Values.data.bootstrap_limits_cpu }}"

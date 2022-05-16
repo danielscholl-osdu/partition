@@ -4,7 +4,7 @@ data:
   google_audiences: ""
   log_level: "INFO"
   service_account_tail: ".iam.gserviceaccount.com"
-  partition_property_kind: ""
+  # FIXME GONRG-4910
   partition_namespace: ""
   spring_profiles_active: "gcp"
   # bootstrap common
@@ -14,11 +14,8 @@ data:
   # bootstrap variables onprem
   domain: ""
   environment: ""
-  client_id: ""
+  client_id: "datafier"
 conf:
   configmap: "partition-config"
   app_name: "partition"
-  # bootstrap common
-  bootstrap_name: "partition-bootstrap"
-  bootstrap_configmap: "partition-bootstrap-configmap"
   on_prem_enabled: false
