@@ -17,25 +17,25 @@ variables:
   OSDU_GCP_SERVICE: partition
   OSDU_GCP_VENDOR: gcp
   OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
-    --set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS
-    --set data.project_id=$OSDU_GCP_PROJECT
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.log_level=INFO
-    --set data.data_partition_id=$OSDU_GCP_TENANT
+    --set data.partitionAdminAccounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS
+    --set data.projectId=$OSDU_GCP_PROJECT
+    --set data.googleAudiences=$GOOGLE_AUDIENCE
+    --set data.logLevel=INFO
+    --set data.dataPartitionId=$OSDU_GCP_TENANT
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
     --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
     --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
     --set data.bootstrapServiceAccountName=$OSDU_GCP_SERVICE-k8s
   OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
-    --set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS_DEV2
-    --set data.project_id=$OSDU_GCP_PROJECT
-    --set data.google_audiences=$GOOGLE_AUDIENCE
-    --set data.log_level=INFO
-    --set data.data_partition_id=$OSDU_GCP_TENANT
+    --set data.partitionAdminAccounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS_DEV2
+    --set data.projectId=$OSDU_GCP_PROJECT
+    --set data.googleAudiences=$GOOGLE_AUDIENCE
+    --set data.logLevel=INFO
+    --set data.dataPartitionId=$OSDU_GCP_TENANT
   # FIXME add value below to DEV2 pipeline
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: >
-    --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
     --set data.bootstrapServiceAccountName=$OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT
   OSDU_GCP_HELM_CONFIG_SERVICE: partition-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: partition-deploy

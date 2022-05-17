@@ -2,18 +2,18 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    app: "{{ .Values.conf.app_name }}-bootstrap"
+    app: "{{ .Values.conf.appName }}-bootstrap"
   name: "{{ .Values.conf.configmap }}-bootstrap"
   namespace: "{{ .Release.Namespace }}"
 data:
-  PARTITION_NAME: "{{ .Values.data.partition_name }}.{{ .Release.Namespace }}.svc.cluster.local"
-  PROJECT_ID: "{{ .Values.data.project_id }}"
-  DATA_PARTITION_ID: "{{ .Values.data.data_partition_id }}"
-  {{- if .Values.conf.on_prem_enabled }}
+  PARTITION_NAME: "{{ .Values.data.partitionName }}.{{ .Release.Namespace }}.svc.cluster.local"
+  PROJECT_ID: "{{ .Values.data.projectId }}"
+  DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
+  {{- if .Values.conf.onPremEnabled }}
   DOMAIN: "{{ .Values.data.domain }}"
   ENVIRONMENT: "{{ .Values.data.environment }}"
-  CLIENT_ID: "{{ .Values.data.client_id }}"
+  CLIENT_ID: "{{ .Values.data.clientId }}"
   {{- else }}
-  AUDIENCES: "{{ .Values.data.google_audiences }}"
-  DATAFIER_SA: "{{ .Values.data.datafier_sa }}"
+  AUDIENCES: "{{ .Values.data.googleAudiences }}"
+  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
   {{- end }}
