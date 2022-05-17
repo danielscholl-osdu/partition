@@ -1,21 +1,21 @@
 data:
-  project_id: ""
-  partition_admin_accounts: ""
-  google_audiences: ""
-  log_level: "INFO"
-  service_account_tail: ".iam.gserviceaccount.com"
+  projectId: ""
+  partitionAdminAccounts: ""
+  googleAudiences: ""
+  logLevel: "INFO"
+  serviceAccountTail: ".iam.gserviceaccount.com"
   # FIXME GONRG-4910
-  partition_namespace: ""
-  spring_profiles_active: "gcp"
+  partitionNamespace: ""
+  springProfilesActive: "gcp"
   # bootstrap common
-  partition_name: "partition"
-  data_partition_id: ""
-  datafier_sa: "datafier"
+  partitionName: "partition"
+  dataPartitionId: ""
+  datafierSa: "datafier"
   # bootstrap variables onprem
   domain: ""
   environment: ""
-  client_id: "datafier"
+  clientId: "datafier"
 conf:
   configmap: "partition-config"
-  app_name: "partition"
-  on_prem_enabled: false
+  appName: "partition"
+  onPremEnabled: false
