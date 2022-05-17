@@ -16,6 +16,7 @@ conf:
   secret: "partition-postgres-secret"
   appName: "partition"
   onPremEnabled: false
+  domain: ""
 namespacePolicy:
   mtlsMode: STRICT
 authorizations:
