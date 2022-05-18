@@ -13,20 +13,30 @@ variables:
   IBM_BUILD_SUBDIR: provider/partition-ibm
   IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
 
-  # --- osdu gcp specific variables ---
   OSDU_GCP_ENABLE_BOOTSTRAP: "true"
   OSDU_GCP_SERVICE: partition
   OSDU_GCP_VENDOR: gcp
-  OSDU_GCP_APPLICATION_NAME: os-partition
-  MAVEN_PROJECTS: "-pl partition-core,provider/partition-gcp"
-  OSDU_GCP_TEST_SUBDIR: testing/$OSDU_GCP_SERVICE-test-$OSDU_GCP_VENDOR
-  OSDU_GCP_HELM_PACKAGE_CHARTS: "devops/gcp/deploy devops/gcp/configmap"
-  OSDU_GCP_HELM_NAMESPACE: default
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: "--set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS --set data.project_id=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY --set data.data_partition_id=$OSDU_GCP_TENANT"
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: "--set data.partition_admin_accounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS_DEV2 --set data.project_id=$OSDU_GCP_PROJECT --set data.google_audiences=$GOOGLE_AUDIENCE --set data.log_level=INFO --set data.key_ring=$OSDU_GCP_PARTITION_KEY_RING --set data.kms_key=$OSDU_GCP_PARTITION_KMS_KEY --set data.data_partition_id=$OSDU_GCP_TENANT"
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: "--set data.image=$CI_REGISTRY_IMAGE/osdu-gcp:$CI_COMMIT_SHORT_SHA --set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-partition:$CI_COMMIT_SHORT_SHA --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s --set data.bootstrapServiceAccountName=$OSDU_GCP_SERVICE-k8s"
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
+    --set data.partitionAdminAccounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS
+    --set data.projectId=$OSDU_GCP_PROJECT
+    --set data.googleAudiences=$GOOGLE_AUDIENCE
+    --set data.logLevel=INFO
+    --set data.dataPartitionId=$OSDU_GCP_TENANT
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
+    --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
+    --set data.bootstrapServiceAccountName=$OSDU_GCP_SERVICE-k8s
+  OSDU_GCP_HELM_CONFIG_SERVICE_VARS_DEV2: >
+    --set data.partitionAdminAccounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS_DEV2
+    --set data.projectId=$OSDU_GCP_PROJECT
+    --set data.googleAudiences=$GOOGLE_AUDIENCE
+    --set data.logLevel=INFO
+    --set data.dataPartitionId=$OSDU_GCP_TENANT
   # FIXME add value below to DEV2 pipeline
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: "--set data.bootstrap_image=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-partition:$CI_COMMIT_SHORT_SHA --set data.bootstrapServiceAccountName=$OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT"
+  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS_DEV2: >
+    --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
+    --set data.bootstrapServiceAccountName=$OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT
   OSDU_GCP_HELM_CONFIG_SERVICE: partition-config
   OSDU_GCP_HELM_DEPLOYMENT_SERVICE: partition-deploy
 
@@ -62,30 +72,38 @@ include:
     file: "publishing/pages.yml"
 
 osdu-gcp-deploy-deployment:
-  variables:
-    OSDU_GCP_BOOTSTRAP_SERVICE: partition-bootstrap
-  needs: ["osdu-gcp-containerize-gitlab", "osdu-gcp-containerize-bootstrap-gitlab", "osdu-gcp-deploy-configmap"]
+  needs:
+    - osdu-gcp-containerize-gitlab
+    - osdu-gcp-containerize-bootstrap-gitlab
+    - osdu-gcp-deploy-configmap
   after_script:
     - echo ----- Verify Bootstrap -----
-    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_BOOTSTRAP_SERVICE -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_BOOTSTRAP_SERVICE | tail -1 | awk '{print $1}')
+    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
+    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
     - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
     - echo $STATUS
     - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
 osdu-gcp-dev2-deploy-deployment:
   variables:
-    OSDU_GCP_BOOTSTRAP_SERVICE: partition-bootstrap
     OSDU_GCP_BOOTSTRAP_SERVICE_ACCOUNT: workload-gke-bootstrap-sa
-  needs: ["osdu-gcp-containerize-gitlab", "osdu-gcp-containerize-bootstrap-gitlab", "osdu-gcp-dev2-deploy-configmap"]
+  needs:
+    - osdu-gcp-containerize-gitlab
+    - osdu-gcp-containerize-bootstrap-gitlab
+    - osdu-gcp-dev2-deploy-configmap
   after_script:
     - echo ----- Verify Bootstrap -----
-    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_BOOTSTRAP_SERVICE -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_BOOTSTRAP_SERVICE | tail -1 | awk '{print $1}')
+    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
+    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
     - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
     - echo $STATUS
     - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
+osdu-gcp-anthos-deploy-deployment:
+  needs:
+    - osdu-gcp-containerize-gitlab
+    - osdu-gcp-containerize-bootstrap-gitlab
+    - osdu-gcp-anthos-deploy-configmap
 
 osdu-gcp-test:
   variables:

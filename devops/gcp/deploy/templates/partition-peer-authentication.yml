@@ -1,4 +1,4 @@
-{{- if .Values.conf.on_prem_enabled }}
+{{- if .Values.conf.onPremEnabled }}
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:

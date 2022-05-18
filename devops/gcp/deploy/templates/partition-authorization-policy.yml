@@ -1,4 +1,4 @@
-{{- if .Values.conf.on_prem_enabled }}
+{{- if .Values.conf.onPremEnabled }}
 {{- range $key, $spec := .Values.authorizations }}
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy

@@ -1,24 +1,22 @@
 data:
-  project_id: ""
-  partition_admin_accounts: ""
-  google_audiences: ""
-  log_level: "INFO"
-  service_account_tail: ".iam.gserviceaccount.com"
-  partition_property_kind: ""
-  partition_namespace: ""
-  spring_profiles_active: "gcp"
+  projectId: ""
+  partitionAdminAccounts: ""
+  googleAudiences: ""
+  logLevel: "INFO"
+  serviceAccountTail: ".iam.gserviceaccount.com"
+  # FIXME GONRG-4910
+  partitionNamespace: ""
+  springProfilesActive: "gcp"
   # bootstrap common
-  partition_name: "partition"
-  data_partition_id: ""
-  datafier_sa: "datafier"
+  partitionName: "partition"
+  dataPartitionId: ""
+  datafierSa: "datafier"
   # bootstrap variables onprem
   domain: ""
+  istioNamespace: "istio-ingress"
   environment: ""
-  client_id: ""
+  clientId: "datafier"
 conf:
   configmap: "partition-config"
-  app_name: "partition"
-  # bootstrap common
-  bootstrap_name: "partition-bootstrap"
-  bootstrap_configmap: "partition-bootstrap-configmap"
-  on_prem_enabled: false
+  appName: "partition"
+  onPremEnabled: false
