@@ -4,42 +4,41 @@ set -ex
 
 DATA_PARTITION_ID_UPPER=${DATA_PARTITION_ID^^}
 
-generate_post_data()
-{
+generate_post_data() {
   cat <<EOF
 {
   "properties": {
     "projectId": {
-        "sensitive": false,
-        "value": "${PROJECT_ID}"
+      "sensitive": false,
+      "value": "${PROJECT_ID}"
     },
     "serviceAccount": {
-        "sensitive": false,
-        "value": "${SERVICEACCOUNT}"
+      "sensitive": false,
+      "value": "${SERVICEACCOUNT}"
     },
     "complianceRuleSet": {
-        "sensitive": false,
-        "value": "shared"
+      "sensitive": false,
+      "value": "shared"
     },
     "dataPartitionId": {
-        "sensitive": false,
-        "value": "${DATA_PARTITION_ID}"
+      "sensitive": false,
+      "value": "${DATA_PARTITION_ID}"
     },
     "name": {
-        "sensitive": false,
-        "value": "${DATA_PARTITION_ID}"
+      "sensitive": false,
+      "value": "${DATA_PARTITION_ID}"
     },
     "policy-service-enabled": {
-        "sensitive": false,
-        "value": "false"
+      "sensitive": false,
+      "value": "false"
     },
     "bucket": {
-        "sensitive": false,
-        "value": "${PROJECT_ID}-records"
+      "sensitive": false,
+      "value": "${PROJECT_ID}-records"
     },
     "crmAccountID": {
-        "sensitive": false,
-        "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
+      "sensitive": false,
+      "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
     },
     "osm.postgres.datasource.url": {
       "sensitive": true,
@@ -89,12 +88,11 @@ generate_post_data()
       "sensitive": true,
       "value": "RABBITMQ_ADMIN_PASSWORD"
     },
-
-     "oqm.rabbitmq.admin.schema": {
+    "oqm.rabbitmq.admin.schema": {
       "sensitive": false,
       "value": "http"
     },
-     "oqm.rabbitmq.admin.host": {
+    "oqm.rabbitmq.admin.host": {
       "sensitive": false,
       "value": "rabbitmq"
     },
@@ -135,9 +133,6 @@ generate_post_data()
 EOF
 }
 
-echo "sleep to prevent 500 response from the partition service, due to timeout of creation for Workload Identity"
-sleep 20
-
 if [ "$ENVIRONMENT" == "anthos" ]
 then
 
@@ -150,20 +145,24 @@ then
 
   if [ "$status_code" == 201 ]
   then
-    echo "partition bootstrap was OK!"
+    echo "Partition bootstrap finished successfully!"
   elif [ "$status_code" == 409 ]
   then
     curl -X PATCH \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
     --data-raw "$(generate_post_data)"
-    echo "partition was patched because datastore has already had some entities!"
+    echo "Partition was patched because Postgres Database had already had entities!"
   else
     exit 1
   fi
 
+# FIXME "$ENVIRONMENT" == "gcp" or use another variable
 elif [ "$ENVIRONMENT" == "" ]
 then
+
+  echo "sleep to prevent 500 response from the Partition service, due to timeout of creation for Workload Identity"
+  sleep 20
 
   IDENTITY_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
 
@@ -177,7 +176,7 @@ then
 
   if [ "$status_code" == 201 ]
   then
-    echo "partition bootstrap was OK!"
+    echo "Partition bootstrap finished successfully!"
   elif [ "$status_code" == 409 ]
   then
     curl -X PATCH \
@@ -185,7 +184,7 @@ then
     -H "Authorization: Bearer ${IDENTITY_TOKEN}" \
     -H "Content-Type: application/json" \
     --data-raw "$(generate_post_data)"
-    echo "partition was patched because datastore has already had some entities!"
+    echo "Partition was patched because Datastore had already had entities!"
   else
     exit 1
   fi
