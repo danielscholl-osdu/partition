@@ -10,7 +10,7 @@ data:
   PROJECT_ID: "{{ .Values.data.projectId }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
   {{- if .Values.conf.onPremEnabled }}
-  DOMAIN: "{{- default (printf "%s.%s" ((index (lookup "v1" "Service" .Values.data.istioNamespace "istio-ingressgateway").status.loadBalancer.ingress 0).ip) "nip.io") .Values.data.domain -}}"
+  DOMAIN: "{{ .Values.data.domain }}"
   ENVIRONMENT: "{{ .Values.data.environment }}"
   CLIENT_ID: "{{ .Values.data.clientId }}"
   {{- else }}
