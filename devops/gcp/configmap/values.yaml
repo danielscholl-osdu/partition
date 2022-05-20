@@ -13,7 +13,6 @@ data:
   datafierSa: "datafier"
   # bootstrap variables onprem
   domain: ""
-  istioNamespace: "istio-ingress"
   environment: ""
   clientId: "datafier"
 conf:
