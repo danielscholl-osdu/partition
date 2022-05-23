@@ -32,6 +32,7 @@ spec:
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/seismic-store
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/storage
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/unit
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/wellbore
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/well-delivery
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/wks
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/workflow
@@ -43,7 +44,7 @@ spec:
         - /api/partition/v1/*
   - from:
     - source:
-        principals: 
+        principals:
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/bootstrap-sa
     to:
     - operation:
