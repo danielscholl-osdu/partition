@@ -12,14 +12,13 @@ data:
   bootstrapImage: ""
   bootstrapServiceAccountName: ""
 conf:
-  configmap: "partition-config"
-  secret: "partition-postgres-secret"
   appName: "partition"
-  onPremEnabled: false
+  cicdEnabled: false
+  configmap: "partition-config"
   domain: ""
+  onPremEnabled: false
+  secret: "partition-postgres-secret"
 namespacePolicy:
-  mtlsMode: STRICT
-authorizations:
-  partitionPolicy:
-    matchLabels:
-      app: partition
+    mtlsMode: STRICT
+auth:
+    realm: "osdu"
