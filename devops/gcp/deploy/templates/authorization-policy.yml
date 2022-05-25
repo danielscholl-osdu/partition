@@ -1,17 +1,13 @@
 {{- if .Values.conf.onPremEnabled }}
-{{- range $key, $spec := .Values.authorizations }}
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ (print $key "-default") | lower | quote }}
-  labels:
-    app.kubernetes.io/name: {{ $key | quote }}
-    app.kubernetes.io/managed-by: {{ $.Release.Service | quote }}
-  namespace: {{ $.Release.Namespace | quote }}
+  name: "{{ .Values.conf.appName }}-jwt-policy"
+  namespace: "{{ .Release.Namespace }}"
 spec:
   selector:
     matchLabels:
-{{- toYaml $spec.matchLabels | nindent 6 }}
+      app: "{{ .Values.conf.appName }}"
   action: ALLOW
   rules:
   - from:
@@ -55,5 +51,28 @@ spec:
         - GET
         paths:
         - /api/partition/v1/*
-{{- end }}
+  {{- if .Values.conf.cicdEnabled }}
+  - from:
+    - source:
+       requestPrincipals: ["*"]
+    to:
+    - operation:
+        methods:
+        - POST
+        - PATCH
+        - GET
+        - DELETE
+        - OPTIONS
+        paths:
+        - /api/partition/v1/*
+    when:
+    - key: request.auth.claims[iss]
+      values:
+      - "https://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
+      - "http://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
+      - "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}"
+    - key: request.auth.claims[email]
+      values:
+      - "integration-tester@service.local"
+  {{- end }}
 {{- end }}
