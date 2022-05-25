@@ -136,7 +136,7 @@ EOF
 if [ "$ENVIRONMENT" == "anthos" ]
 then
 
-  SERVICEACCOUNT=$CLIENT_ID@service.local
+  SERVICEACCOUNT=$DATAFIER_SA@service.local
 
   status_code=$(curl -X POST \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
@@ -157,8 +157,7 @@ then
     exit 1
   fi
 
-# FIXME "$ENVIRONMENT" == "gcp" or use another variable
-elif [ "$ENVIRONMENT" == "" ]
+elif [ "$ENVIRONMENT" == "gcp" ]
 then
 
   echo "sleep to prevent 500 response from the Partition service, due to timeout of creation for Workload Identity"

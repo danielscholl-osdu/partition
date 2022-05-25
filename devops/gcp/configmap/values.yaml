@@ -1,20 +1,18 @@
 data:
+  # common
+  logLevel: "INFO"
+  springProfilesActive: "gcp"
+  # gcp
   projectId: ""
   partitionAdminAccounts: ""
   googleAudiences: ""
-  logLevel: "INFO"
   serviceAccountTail: ".iam.gserviceaccount.com"
-  # FIXME GONRG-4910
-  partitionNamespace: ""
-  springProfilesActive: "gcp"
   # bootstrap common
   partitionName: "partition"
   dataPartitionId: ""
   datafierSa: "datafier"
   # bootstrap variables onprem
   domain: ""
-  environment: ""
-  clientId: "datafier"
 conf:
   configmap: "partition-config"
   appName: "partition"
