@@ -8,9 +8,7 @@ metadata:
 data:
   LOG_LEVEL: "{{ .Values.data.logLevel }}"
   SPRING_PROFILES_ACTIVE: "{{ .Values.data.springProfilesActive }}"
-  {{- if .Values.conf.onPremEnabled }}
-  PARTITION_NAMESPACE: "{{ .Values.data.partitionNamespace }}"
-  {{- else }}
+  {{- if not .Values.conf.onPremEnabled }}
   GOOGLE_CLOUD_PROJECT: "{{ .Values.data.projectId }}"
   PARTITION_ADMIN_ACCOUNTS: "{{ .Values.data.partitionAdminAccounts }}"
   GOOGLE_AUDIENCES: "{{ .Values.data.googleAudiences }}"

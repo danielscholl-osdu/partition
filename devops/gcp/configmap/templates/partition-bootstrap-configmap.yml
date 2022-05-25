@@ -9,11 +9,10 @@ data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}.{{ .Release.Namespace }}.svc.cluster.local"
   PROJECT_ID: "{{ .Values.data.projectId }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
+  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
+  ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
   {{- if .Values.conf.onPremEnabled }}
   DOMAIN: "{{ .Values.data.domain }}"
-  ENVIRONMENT: "{{ .Values.data.environment }}"
-  CLIENT_ID: "{{ .Values.data.clientId }}"
   {{- else }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
-  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
   {{- end }}
