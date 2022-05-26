@@ -52,13 +52,21 @@ generate_post_data() {
       "sensitive": true,
       "value": "POSTGRES_DB_PASSWORD_${DATA_PARTITION_ID_UPPER}"
     },
-    "obm.minio.endpoint": {
-      "sensitive": false,
-      "value": "http://minio:9000"
-    },
     "file.minio.endpoint": {
       "sensitive": false,
       "value": "https://s3.${DOMAIN}"
+    },
+    "file.minio.accessKey": {
+      "sensitive": true,
+      "value": "MINIO_ACCESS_KEY"
+    },
+    "file.minio.secretKey": {
+      "sensitive": true,
+      "value": "MINIO_SECRET_KEY"
+    },
+    "obm.minio.endpoint": {
+      "sensitive": false,
+      "value": "http://minio:9000"
     },
     "obm.minio.accessKey": {
       "sensitive": true,
@@ -136,7 +144,7 @@ EOF
 if [ "$ENVIRONMENT" == "anthos" ]
 then
 
-  SERVICEACCOUNT=$CLIENT_ID@service.local
+  SERVICEACCOUNT=$DATAFIER_SA@service.local
 
   status_code=$(curl -X POST \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
@@ -157,8 +165,7 @@ then
     exit 1
   fi
 
-# FIXME "$ENVIRONMENT" == "gcp" or use another variable
-elif [ "$ENVIRONMENT" == "" ]
+elif [ "$ENVIRONMENT" == "gcp" ]
 then
 
   echo "sleep to prevent 500 response from the Partition service, due to timeout of creation for Workload Identity"

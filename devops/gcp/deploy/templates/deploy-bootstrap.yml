@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - image: "{{ .Values.data.bootstrapImage }}"
+          imagePullPolicy: "{{ .Values.data.imagePullPolicy }}"
           name: "{{ .Values.conf.appName }}-bootstrap"
           readinessProbe:
             exec:
