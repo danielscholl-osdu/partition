@@ -52,13 +52,21 @@ generate_post_data() {
       "sensitive": true,
       "value": "POSTGRES_DB_PASSWORD_${DATA_PARTITION_ID_UPPER}"
     },
-    "obm.minio.endpoint": {
-      "sensitive": false,
-      "value": "http://minio:9000"
-    },
     "file.minio.endpoint": {
       "sensitive": false,
       "value": "https://s3.${DOMAIN}"
+    },
+    "file.minio.accessKey": {
+      "sensitive": true,
+      "value": "MINIO_ACCESS_KEY"
+    },
+    "file.minio.secretKey": {
+      "sensitive": true,
+      "value": "MINIO_SECRET_KEY"
+    },
+    "obm.minio.endpoint": {
+      "sensitive": false,
+      "value": "http://minio:9000"
     },
     "obm.minio.accessKey": {
       "sensitive": true,
