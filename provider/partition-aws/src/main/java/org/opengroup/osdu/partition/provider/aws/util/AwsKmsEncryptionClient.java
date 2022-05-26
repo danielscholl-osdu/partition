@@ -48,7 +48,7 @@ public class AwsKmsEncryptionClient {
     @Value("${aws.kms.keyArn}")
     private String keyArn;
 
-    @Value("${spring.data.mongodb.database}")
+    @Value("${osdu.mongodb.database}")
     private String authDatabase;
 
     private AWSCredentialsProvider amazonAWSCredentials;

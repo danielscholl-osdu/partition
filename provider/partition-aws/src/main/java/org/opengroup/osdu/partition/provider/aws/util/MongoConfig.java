@@ -15,6 +15,7 @@
 package org.opengroup.osdu.partition.provider.aws.util;
 
 import org.opengroup.osdu.core.aws.mongodb.MongoDBSimpleFactory;
+import org.opengroup.osdu.core.aws.mongodb.config.MongoPropertiesDefaultReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +24,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoConfig {
 
-
     @Autowired
-    public @Bean MongoTemplate mongoTemplate(MongoDBSimpleFactory mongoDBFactory, MongoPropertiesReader propertiesReader) {
+    public @Bean MongoTemplate mongoTemplate(MongoDBSimpleFactory mongoDBFactory, MongoPropertiesDefaultReader propertiesReader) {
         return mongoDBFactory.mongoTemplate(propertiesReader.getProperties());
     }
 }
