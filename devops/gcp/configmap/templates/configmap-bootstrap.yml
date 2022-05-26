@@ -9,11 +9,10 @@ data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}.{{ .Release.Namespace }}.svc.cluster.local"
   PROJECT_ID: "{{ .Values.data.projectId }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
+  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
+  ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
   {{- if .Values.conf.onPremEnabled }}
-  DOMAIN: "{{- default (printf "%s.%s" ((index (lookup "v1" "Service" .Values.data.istioNamespace "istio-ingressgateway").status.loadBalancer.ingress 0).ip) "nip.io") .Values.data.domain -}}"
-  ENVIRONMENT: "{{ .Values.data.environment }}"
-  CLIENT_ID: "{{ .Values.data.clientId }}"
+  DOMAIN: "{{ .Values.data.domain }}"
   {{- else }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
-  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
   {{- end }}

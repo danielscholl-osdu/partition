@@ -1,0 +1,21 @@
+{{- if .Values.conf.onPremEnabled }}
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: "{{ .Values.conf.appName }}-jwt-policy"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: "{{ .Values.conf.appName }}"
+  jwtRules:
+  - issuer: "https://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+    forwardOriginalToken: true
+  - issuer: "http://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+    forwardOriginalToken: true
+  - issuer: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+    forwardOriginalToken: true
+{{- end }}
