@@ -36,3 +36,25 @@ TBD
 | Required roles |
 | ---    |
 | - |
+
+### Running E2E Tests
+
+You will need to have the following environment variables defined.
+
+| name | value | description | sensitive? | source |
+| ---  | ---   | ---         | ---        | ---    |
+| `ENVIRONMENT` | ex `dev` |  | no |  |
+| `PARTITION_BASE_URL` | ex `http://localhost:8080/` | service base URL | yes |  |
+| `CLIENT_TENANT` | ex `opendes` | name of the client partition | yes |  |
+| `MY_TENANT` | ex `opendes` | name of the OSDU partition | yes |  |
+| `INTEGRATION_TESTER` | `********` | Service account for API calls. Note: this user must be `PARTITION_ADMIN_ACCOUNT` | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
+| `NO_DATA_ACCESS_TESTER` | `********` | Service account base64 encoded string without data access | yes | https://console.cloud.google.com/iam-admin/serviceaccounts |
+| `INTEGRATION_TEST_AUDIENCE` | `********` | client application ID | yes | https://console.cloud.google.com/apis/credentials |
+
+Execute following command to build code and run all the integration tests:
+
+```bash
+# Note: this assumes that the environment variables for integration tests as outlined
+#       above are already exported in your environment.
+$ (cd testing/partition-test-gcp/ && mvn clean test)
+```
