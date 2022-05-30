@@ -44,3 +44,27 @@ CONSTRAINT PartitionProperty_id UNIQUE (id)
 CREATE INDEX PartitionProperty_dataGin ON partition."PartitionProperty" USING GIN (data);
 
 ```
+
+### Running E2E Tests
+
+You will need to have the following environment variables defined.
+
+| name | value | description | sensitive? | source |
+| ---  | ---   | ---         | ---        | ---    |
+| `ENVIRONMENT` | ex `dev` |  | no |  |
+| `PARTITION_BASE_URL` | ex `http://localhost:8080/` | service base URL | yes |  |
+| `CLIENT_TENANT` | ex `opendes` | name of the client partition | yes |  |
+| `MY_TENANT` | ex `opendes` | name of the OSDU partition | yes |  |
+| `TEST_OPENID_PROVIDER_CLIENT_ID` | `********` | Client Id for `$INTEGRATION_TESTER` | yes | -- |
+| `TEST_OPENID_PROVIDER_CLIENT_SECRET` | `********` |  | Client secret for `$INTEGRATION_TESTER` | -- |
+| `TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID` | `********` | Client Id for `$NO_ACCESS_INTEGRATION_TESTER` | yes | -- |
+| `TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET` | `********` |  | Client secret for `$NO_ACCESS_INTEGRATION_TESTER` | -- |
+| `TEST_OPENID_PROVIDER_URL` | `https://keycloak.com/auth/realms/osdu` | OpenID provider url | yes | -- |
+
+Execute following command to build code and run all the integration tests:
+
+```bash
+# Note: this assumes that the environment variables for integration tests as outlined
+#       above are already exported in your environment.
+$ (cd testing/partition-test-anthos/ && mvn clean test)
+```
