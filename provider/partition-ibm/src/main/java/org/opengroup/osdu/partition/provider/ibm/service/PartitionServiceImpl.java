@@ -99,15 +99,11 @@ public class PartitionServiceImpl implements IPartitionService {
 		PartitionInfo pi;
 		PartitionDoc partitionDoc = new PartitionDoc(partitionId, partitionInfo);
 		try {
-			HttpResponse response = runPipeline(partitionId);
-			if(response.getResponseCode() != HttpStatus.SC_ACCEPTED || response.getResponseCode() != HttpStatus.SC_CREATED) {
-				log.error("Response Recieved : "+response.getResponseCode()+"Error occured while triggering pipeline for record-changed-topic-listener [tenant-specific] deployment");
-			}
 			db.save(partitionDoc);
 			pi = partitionInfo;
 		} catch (DocumentConflictException e) {
-			log.error("Partition already exists");
-			throw new AppException(e.getStatusCode(), "Conflict", "partition already exists", e);
+			log.error("{} Partition already exists", partitionId);
+			throw new AppException(e.getStatusCode(), "Conflict", "partition already exists");
 		} catch (Exception e) {
 			log.info("Partition creation failed ");
 			e.printStackTrace();
@@ -117,6 +113,15 @@ public class PartitionServiceImpl implements IPartitionService {
 		if (pi != null) {
 			partitionServiceCache.put(partitionId, pi);
 			partitionListCache.clearAll();
+		}
+		
+		if(partitionId.startsWith("integrationtest") || partitionId.startsWith("common")) {
+			log.info("this partiton is created through integration test, skipping pipeline trigger");
+			return pi;
+		}
+		HttpResponse response = runPipeline(partitionId);
+		if(response.getResponseCode() != HttpStatus.SC_ACCEPTED || response.getResponseCode() != HttpStatus.SC_CREATED) {
+			log.error("Response Recieved : "+response.getResponseCode()+"Error occured while triggering pipeline for record-changed-topic-listener [tenant-specific] deployment");
 		}
 
 		return pi;
