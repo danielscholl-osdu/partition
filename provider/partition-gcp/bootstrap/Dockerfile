@@ -6,4 +6,4 @@ ENV PREFIX=$(pwd)
 
 RUN chmod 775 /opt/bootstrap_partition.sh
 
-CMD ["/bin/bash", "-c", "source /opt/bootstrap_partition.sh && sleep 365d"]
+CMD ["/bin/bash", "-c", "/opt/bootstrap_partition.sh && sleep 365d"]

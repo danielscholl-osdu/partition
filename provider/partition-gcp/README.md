@@ -33,6 +33,12 @@ Pre-requisites
 * Lombok 1.16 or later
 * Maven
 
+### Anthos Service Configuration:
+[Anthos service configuration ](docs/anthos/README.md)
+### GCP Service Configuration:
+[Gcp service configuration ](docs/gcp/README.md)
+
+
 ### Run Locally
 Check that maven is installed:
 

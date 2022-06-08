@@ -3,13 +3,20 @@
 
 package org.opengroup.osdu.partition.provider.ibm.service;
 
-import com.cloudant.client.api.Database;
-import com.cloudant.client.api.model.Response;
-import com.cloudant.client.org.lightcouch.DocumentConflictException;
-import com.cloudant.client.org.lightcouch.NoDocumentException;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.cache.ICache;
+import org.opengroup.osdu.core.common.http.HttpClient;
+import org.opengroup.osdu.core.common.http.HttpRequest;
+import org.opengroup.osdu.core.common.http.HttpResponse;
+import org.opengroup.osdu.core.common.http.IHttpClient;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.ibm.auth.ServiceCredentials;
@@ -22,10 +29,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.List;
+import com.cloudant.client.api.Database;
+import com.cloudant.client.api.model.Response;
+import com.cloudant.client.org.lightcouch.DocumentConflictException;
+import com.cloudant.client.org.lightcouch.NoDocumentException;
+import com.google.gson.JsonObject;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -44,6 +54,11 @@ public class PartitionServiceImpl implements IPartitionService {
 	@Autowired
 	@Qualifier("partitionListCache")
 	private ICache<String, List<String>> partitionListCache;
+	
+	@Value("${pipline.trigger.url}")
+	String pipelineURL;
+	
+	private final IHttpClient httpClient = new HttpClient();
 
 	Database db;
 
@@ -87,8 +102,8 @@ public class PartitionServiceImpl implements IPartitionService {
 			db.save(partitionDoc);
 			pi = partitionInfo;
 		} catch (DocumentConflictException e) {
-			log.error("Partition already exists");
-			throw new AppException(e.getStatusCode(), "Conflict", "partition already exists", e);
+			log.error("{} Partition already exists", partitionId);
+			throw new AppException(e.getStatusCode(), "Conflict", "partition already exists");
 		} catch (Exception e) {
 			log.info("Partition creation failed ");
 			e.printStackTrace();
@@ -99,8 +114,40 @@ public class PartitionServiceImpl implements IPartitionService {
 			partitionServiceCache.put(partitionId, pi);
 			partitionListCache.clearAll();
 		}
+		
+		if(partitionId.startsWith("integrationtest") || partitionId.startsWith("common")) {
+			log.info("this partiton is created through integration test, skipping pipeline trigger");
+			return pi;
+		}
+		HttpResponse response = runPipeline(partitionId);
+		if(response.getResponseCode() != HttpStatus.SC_ACCEPTED || response.getResponseCode() != HttpStatus.SC_CREATED) {
+			log.error("Response Recieved : "+response.getResponseCode()+"Error occured while triggering pipeline for record-changed-topic-listener [tenant-specific] deployment");
+		}
 
 		return pi;
+	}
+
+	private HttpResponse runPipeline(String partitionID) {
+		JsonObject buildPostJsonData = buildPostJsonData(partitionID);
+		Map<String, String> httpHeaders = new HashMap<>();
+		httpHeaders.put("X-GitHub-Event", "push");
+		httpHeaders.put("Content-Type", "application/json");
+		//System.out.println("buildPostJsonData.getAsString() "+buildPostJsonData.getAsString());
+		HttpResponse result = this.httpClient.send(
+		            HttpRequest.post(buildPostJsonData).url(pipelineURL).headers(httpHeaders).build());
+		    //this.getResult(result, Members.class);
+		log.info("Pipeline trigger Response {}, Response Body : {}", result.getResponseCode(), result.getBody());
+		return result;
+	}
+	
+	private JsonObject buildPostJsonData(String partitionId) {
+		JsonObject repositoryJson = new JsonObject();
+		repositoryJson.addProperty("url", "https://unused-url-parameter-but-mandatory");
+		repositoryJson.addProperty("name", partitionId);
+		JsonObject postData = new JsonObject();
+		postData.add("repository", repositoryJson);
+		
+		return postData;
 	}
 
 	@Override
