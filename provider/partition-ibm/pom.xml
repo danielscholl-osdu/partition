@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
- 
+
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -21,6 +21,16 @@
     <properties>
         <version.keycloak>9.0.2</version.keycloak>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.2.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Internal packages -->
@@ -113,8 +123,8 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        
-        
+
+
          <!-- Keycloak  -->
       <!--   <dependency>
             <groupId>org.keycloak</groupId>
@@ -136,8 +146,8 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>${version.keycloak}</version>
         </dependency> -->
-        
-        
+
+
     </dependencies>
 
     <build>
