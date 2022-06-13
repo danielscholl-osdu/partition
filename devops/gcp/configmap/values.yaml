@@ -4,6 +4,7 @@ data:
   springProfilesActive: "gcp"
   # gcp
   projectId: ""
+  dataProjectId: ""
   partitionAdminAccounts: ""
   googleAudiences: ""
   serviceAccountTail: ".iam.gserviceaccount.com"
