@@ -14,7 +14,7 @@ generate_post_data() {
     },
     "serviceAccount": {
       "sensitive": false,
-      "value": "${SERVICEACCOUNT}"
+      "value": "${SERVICE_ACCOUNT}"
     },
     "complianceRuleSet": {
       "sensitive": false,
@@ -144,8 +144,6 @@ EOF
 if [ "$ENVIRONMENT" == "anthos" ]
 then
 
-  SERVICEACCOUNT=$DATAFIER_SA@service.local
-
   status_code=$(curl -X POST \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
@@ -172,8 +170,6 @@ then
   sleep 20
 
   IDENTITY_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
-
-  SERVICEACCOUNT=${DATAFIER_SA}@${PROJECT_ID}.iam.gserviceaccount.com
 
   status_code=$(curl -X POST \
      --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \

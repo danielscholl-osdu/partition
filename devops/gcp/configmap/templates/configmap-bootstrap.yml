@@ -7,11 +7,16 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}.{{ .Release.Namespace }}.svc.cluster.local"
-  PROJECT_ID: "{{ .Values.data.projectId }}"
+  SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
-  DATAFIER_SA: "{{ .Values.data.datafierSa }}"
   ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
+  {{- if .Values.data.dataProjectId }}
+  PROJECT_ID: "{{ .Values.data.dataProjectId }}"
+  {{- else }}
+  PROJECT_ID: "{{ .Values.data.projectId }}"
+  {{- end }}
   {{- if .Values.conf.onPremEnabled }}
+  SERVICE_ACCOUNT: {{ print "%s@service.local" .Values.data.datafierSa | quote }}
   DOMAIN: "{{ .Values.data.domain }}"
   {{- else }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
