@@ -2,30 +2,6 @@ variables:
   OSDU_GCP_ENABLE_BOOTSTRAP: "true"
   OSDU_GCP_SERVICE: partition
   OSDU_GCP_VENDOR: gcp
-  # FIXME move variables below to common pipeline
-  OSDU_GCP_HELM_CONFIG_SERVICE_VARS: >
-    --set data.partitionAdminAccounts=$OSDU_GCP_PARTITION_ADMIN_ACCOUNTS
-    --set data.projectId=$OSDU_GCP_PROJECT
-    --set data.googleAudiences=$GOOGLE_AUDIENCE
-    --set data.logLevel=INFO
-    --set data.dataPartitionId=$OSDU_GCP_TENANT
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE_VARS: >
-    --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-    --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
-    --set data.bootstrapServiceAccountName=$OSDU_GCP_SERVICE-k8s
-  OSDU_GCP_HELM_CONFIG_SERVICE: partition-config
-  OSDU_GCP_HELM_DEPLOYMENT_SERVICE: partition-deploy
-
-# FIXME refactor using reference
-osdu-gcp-deploy-deployment:
-  after_script:
-    - echo ----- Verify Bootstrap -----
-    - kubectl rollout status deployment.v1.apps/$OSDU_GCP_SERVICE-bootstrap -n $OSDU_GCP_HELM_NAMESPACE --timeout=900s
-    - POD=$(kubectl get pod --sort-by=.metadata.creationTimestamp -n $OSDU_GCP_HELM_NAMESPACE | grep $OSDU_GCP_SERVICE-bootstrap | tail -1 | awk '{print $1}')
-    - STATUS=$(kubectl wait -n $OSDU_GCP_HELM_NAMESPACE --for=condition=Ready pod/$POD --timeout=300s)
-    - echo $STATUS
-    - if [[ "$STATUS" != *"met"* ]]; then echo "POD didn't start correctly" ; exit 1 ; fi
 
 osdu-gcp-test:
   variables:
@@ -34,3 +10,7 @@ osdu-gcp-test:
 osdu-gcp-dev2-test:
   variables:
     CLIENT_TENANT: devtwo
+
+osdu-gcp-anthos-test:
+  variables:
+    OSDU_GCP_VENDOR: anthos
