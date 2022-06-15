@@ -16,7 +16,7 @@ data:
   PROJECT_ID: "{{ .Values.data.projectId }}"
   {{- end }}
   {{- if .Values.conf.onPremEnabled }}
-  SERVICE_ACCOUNT: {{ print "%s@service.local" .Values.data.datafierSa | quote }}
+  SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
   DOMAIN: "{{ .Values.data.domain }}"
   {{- else }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
