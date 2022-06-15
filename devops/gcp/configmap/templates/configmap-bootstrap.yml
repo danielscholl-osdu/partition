@@ -6,7 +6,7 @@ metadata:
   name: "{{ .Values.conf.configmap }}-bootstrap"
   namespace: "{{ .Release.Namespace }}"
 data:
-  PARTITION_NAME: "{{ .Values.data.partitionName }}.{{ .Release.Namespace }}.svc.cluster.local"
+  PARTITION_NAME: "{{ .Values.data.partitionName }}"
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
   ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"

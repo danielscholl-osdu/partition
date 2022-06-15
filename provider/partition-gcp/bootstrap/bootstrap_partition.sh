@@ -34,7 +34,7 @@ generate_post_data() {
     },
     "bucket": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-records"
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-records"
     },
     "crmAccountID": {
       "sensitive": false,
