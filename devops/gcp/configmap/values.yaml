@@ -12,6 +12,7 @@ data:
   partitionName: "partition"
   dataPartitionId: ""
   datafierSa: "datafier"
+  partitionCleanUpEnabled: "false"
   # bootstrap variables onprem
   domain: ""
 conf:

@@ -23,29 +23,26 @@ import lombok.NoArgsConstructor;
 import org.opengroup.osdu.partition.model.Property;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class PartitionPropertyEntity {
 
-  private String id;
+    private String id;
 
-  private String partitionId;
+    private String partitionId;
 
-  private String name;
+    private String name;
 
-  private Boolean sensitive;
+    private Boolean sensitive;
 
-  private Object value;
+    private Object value;
 
 
-  public PartitionPropertyEntity(String partitionId, String name, Property property) {
-    this.partitionId = partitionId;
-    this.name = name;
-    this.sensitive = property.isSensitive();
-    this.value = property.getValue();
-  }
-
-  public boolean isSensitive() {
-    return this.sensitive;
-  }
+    public PartitionPropertyEntity(String partitionId, String name, Property property) {
+        this.id = name + "-" + partitionId;
+        this.partitionId = partitionId;
+        this.name = name;
+        this.sensitive = property.isSensitive();
+        this.value = property.getValue();
+    }
 }
