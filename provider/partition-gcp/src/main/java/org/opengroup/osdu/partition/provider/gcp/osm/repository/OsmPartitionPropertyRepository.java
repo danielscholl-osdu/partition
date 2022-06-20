@@ -21,7 +21,6 @@ package org.opengroup.osdu.partition.provider.gcp.osm.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.gcp.osm.model.Destination;
 import org.opengroup.osdu.core.gcp.osm.model.query.GetQuery;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.opengroup.osdu.core.gcp.osm.model.where.condition.And.and;
 import static org.opengroup.osdu.core.gcp.osm.model.where.predicate.Eq.eq;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -50,7 +48,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 public class OsmPartitionPropertyRepository {
 
     public static final String PARTITION_ID_FILED = "partition_id";
-    private static final String NAME_FILED = "name";
+    public static final String PROPERTY_ID = "id";
     private final OsmPartitionDestinationProvider osmPartitionDestinationProvider;
     private final Context context;
 
@@ -64,13 +62,7 @@ public class OsmPartitionPropertyRepository {
     }
 
     public PartitionPropertyEntity findByPartitionIdAndName(String partitionId, String key) {
-        List<PartitionPropertyEntity> propertyEntities = context
-                .getResultsAsList(buildPartitionEntityQueryBy(and(
-                            eq(PARTITION_ID_FILED, partitionId),
-                            eq(NAME_FILED, key))
-                        )
-                );
-        return propertyEntities.stream().findFirst().orElse(null);
+        return context.getOne(buildPartitionEntityQueryBy(eq(PROPERTY_ID, partitionId + "-" + key)));
     }
 
     public List<String> getAllPartitions() {
@@ -114,9 +106,6 @@ public class OsmPartitionPropertyRepository {
         try{
             tx = context.beginTransaction(destination);
             for (PartitionPropertyEntity entity : partitionProperties){
-                if (ObjectUtils.isEmpty(entity.getId())) {
-                    generateAvailableIdFor(entity);
-                }
                 context.upsert(entity, destination);
             }
             tx.commitIfActive();
@@ -125,16 +114,6 @@ public class OsmPartitionPropertyRepository {
             if (ObjectUtils.isNotEmpty(tx)){
                 tx.rollbackIfActive();
             }
-        }
-    }
-
-    private void generateAvailableIdFor(PartitionPropertyEntity entity) {
-        //TODO Should be removed when GONRG-4077 will be ready
-        Long id = RandomUtils.nextLong();
-        if (ObjectUtils.isNotEmpty(context.getOne(buildPartitionEntityQueryBy(eq("id", id))))){
-            generateAvailableIdFor(entity);
-        } else {
-            entity.setId(id.toString());
         }
     }
 

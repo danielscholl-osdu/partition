@@ -144,6 +144,24 @@ EOF
 if [ "$ENVIRONMENT" == "anthos" ]
 then
 
+  if [ "$PARTITION_CLEAN_UP_ENABLED" == "true" ]
+  then
+    echo "Partition cleanup enabled, will delete partition ${DATA_PARTITION_ID}"
+    delete_status_code=$(curl -X DELETE \
+        --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
+        -H "Content-Type: application/json")
+
+      if [ "$delete_status_code" == 204 ] || [ "$delete_status_code" == 404 ]
+      then
+        echo "Partition deletion was successful, with status code : ${delete_status_code}"
+      else
+        echo "Not able to delete partition, response status code is : ${delete_status_code}"
+        exit 1
+      fi
+  else
+    echo "Partition cleanup not enabled, skipping deletion"
+  fi
+
   status_code=$(curl -X POST \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
@@ -170,6 +188,24 @@ then
   sleep 20
 
   IDENTITY_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
+
+  if [ "$PARTITION_CLEAN_UP_ENABLED" == "true" ]
+  then
+      echo "Partition cleanup enabled, will delete partition ${DATA_PARTITION_ID}"
+      delete_status_code=$(curl -X DELETE \
+        --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
+        -H "Authorization: Bearer ${IDENTITY_TOKEN}")
+
+      if [ "$delete_status_code" == 204 ] || [ "$delete_status_code" == 404 ]
+      then
+        echo "Partition deletion was successful, with status code : ${delete_status_code}"
+      else
+        echo "Not able to delete partition, response status code is : ${delete_status_code}"
+        exit 1
+      fi
+  else
+    echo "Partition cleanup not enabled, skipping deletion"
+  fi
 
   status_code=$(curl -X POST \
      --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
