@@ -4,6 +4,7 @@ data:
   springProfilesActive: "gcp"
   # gcp
   projectId: ""
+  dataProjectId: ""
   partitionAdminAccounts: ""
   googleAudiences: ""
   serviceAccountTail: ".iam.gserviceaccount.com"
@@ -11,6 +12,7 @@ data:
   partitionName: "partition"
   dataPartitionId: ""
   datafierSa: "datafier"
+  partitionCleanUpEnabled: "false"
   # bootstrap variables onprem
   domain: ""
 conf:
