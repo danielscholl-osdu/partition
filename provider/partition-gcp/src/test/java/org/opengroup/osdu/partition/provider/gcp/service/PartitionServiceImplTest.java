@@ -87,11 +87,7 @@ public class PartitionServiceImplTest {
 
         expectedPartitionInfo.setProperties(properties);
 
-        partitionPropertyEntity = new PartitionPropertyEntity();
-        partitionPropertyEntity.setPartitionId(PARTITION_ID);
-        partitionPropertyEntity.setName(NAME);
-        partitionPropertyEntity.setSensitive(SENSITIVE);
-        partitionPropertyEntity.setValue(VALUE);
+        partitionPropertyEntity = new PartitionPropertyEntity(PARTITION_ID, NAME, property);
 
         List<PartitionPropertyEntity> entities = new ArrayList<>();
         entities.add(partitionPropertyEntity);

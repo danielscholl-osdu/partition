@@ -19,9 +19,6 @@ spec:
         - image: "{{ .Values.data.image }}"
           imagePullPolicy: "{{ .Values.data.imagePullPolicy }}"
           name: "{{ .Values.conf.appName }}"
-          env:
-            - name: "ACCEPT_HTTP"
-              value: "true"
           envFrom:
           - configMapRef:
               name: "{{ .Values.conf.configmap }}"
