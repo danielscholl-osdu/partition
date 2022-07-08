@@ -127,6 +127,7 @@ cat ~/.config/gcloud/application_default_credentials.json | grep client_id
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **domain** | your domain | string | - | yes
+**minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap| string | - | no
 
 ### Config variables
 
