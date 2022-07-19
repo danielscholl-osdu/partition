@@ -52,7 +52,7 @@ generate_post_data_anthos() {
     },
     "file.minio.endpoint": {
       "sensitive": false,
-      "value": "https://s3.${DOMAIN}"
+      "value": "${FILE_MINIO_ENDPOINT}"
     },
     "file.minio.accessKey": {
       "sensitive": true,
@@ -64,7 +64,7 @@ generate_post_data_anthos() {
     },
     "obm.minio.endpoint": {
       "sensitive": false,
-      "value": "http://minio:9000"
+      "value": "${MINIO_ENDPOINT}"
     },
     "obm.minio.accessKey": {
       "sensitive": true,
