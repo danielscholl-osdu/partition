@@ -129,7 +129,6 @@
     <module>provider/partition-aws</module>
     <module>provider/partition-ibm</module>
     <module>provider/partition-gcp</module>
-    <module>provider/partition-reference</module>
   </modules>
 
   <profiles>
