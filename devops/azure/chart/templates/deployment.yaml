@@ -46,6 +46,10 @@ spec:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image.repository }}/{{ .Chart.Name }}-{{ .Values.image.branch }}:{{ .Values.image.tag | default .Chart.AppVersion }}
         imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep","90"]
         ports:
         - containerPort: 80
         {{- if has .Values.env .Values.featureFlag.resourceLimits.enabledEnvs }}
@@ -108,3 +112,4 @@ spec:
           value: "false"
         - name: azure_istioauth_enabled
           value: "true"
+      terminationGracePeriodSeconds: 101  
