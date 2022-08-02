@@ -122,6 +122,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **cicdEnabled** | whether CI/CD is enabled | boolean | false | yes
 **configmap** | configmap to be used | string | partition-config | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+**publicAvailable** | public access to /api/partition | boolean | false | yes
 **secret** | secret for postgres | string | partition-postgres-secret | yes
 
 ### Install the helm chart
