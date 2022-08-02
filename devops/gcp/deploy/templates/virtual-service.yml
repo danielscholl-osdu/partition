@@ -13,9 +13,15 @@ spec:
   gateways:
     - service-gateway
   http:
+    {{- if .Values.conf.publicAvailable }}
     - match:
         - uri:
             prefix: "/api/partition"
+    {{- else }}
+    - match:
+        - uri:
+            exact: "/api/partition/v1/info"
+    {{- end }}
       route:
         - destination:
             port:
