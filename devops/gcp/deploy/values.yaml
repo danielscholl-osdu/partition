@@ -17,6 +17,7 @@ conf:
   configmap: "partition-config"
   domain: ""
   onPremEnabled: false
+  publicAvailable: false
   secret: "partition-postgres-secret"
 namespacePolicy:
     mtlsMode: STRICT
