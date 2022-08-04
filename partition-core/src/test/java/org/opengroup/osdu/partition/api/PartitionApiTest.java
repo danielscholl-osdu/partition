@@ -82,6 +82,9 @@ public class PartitionApiTest {
     public void should_return204_when_givenUpdatingValidPartitionId() {
         String partitionId = "partition1";
         this.sut.patch(partitionId, partitionInfo);
+
+        ResponseEntity<Map<String, Property>> result = this.sut.get(partitionId);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
