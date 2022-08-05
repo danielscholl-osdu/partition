@@ -74,5 +74,9 @@ spec:
     - key: request.auth.claims[email]
       values:
       - "integration-tester@service.local"
+      - "storage@service.local"
+      - "datafier@service.local"
+      - "register@service.local"
+      - "notification@service.local"
   {{- end }}
 {{- end }}
