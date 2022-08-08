@@ -32,7 +32,3 @@ analyze:
     type: mvn
     target: provider/partition-gcp/pom.xml
     path: .
-  - name: partition-reference
-    type: mvn
-    target: provider/partition-reference/pom.xml
-    path: .
