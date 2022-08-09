@@ -18,6 +18,7 @@
     <junit.version>4.12</junit.version>
     <mockito.version>2.25.0</mockito.version>
     <powermock.version>2.0.2</powermock.version>
+    <spring-webmvc.version>5.3.22</spring-webmvc.version>
   </properties>
 
   <dependencyManagement>
@@ -74,6 +75,11 @@
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-azure</artifactId>
       <version>${osdu.corelibazure.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring-webmvc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
