@@ -9,13 +9,13 @@ spec:
     matchLabels:
       app: "{{ .Values.conf.appName }}"
   jwtRules:
-  - issuer: "https://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
-    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+  - issuer: "https://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
     forwardOriginalToken: true
-  - issuer: "http://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
-    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+  - issuer: "http://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
     forwardOriginalToken: true
-  - issuer: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}"
-    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
+  - issuer: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}"
+    jwksUri: "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}/protocol/openid-connect/certs"
     forwardOriginalToken: true
 {{- end }}

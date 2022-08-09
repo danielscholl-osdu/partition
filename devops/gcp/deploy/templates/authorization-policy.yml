@@ -68,11 +68,15 @@ spec:
     when:
     - key: request.auth.claims[iss]
       values:
-      - "https://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
-      - "http://keycloak.{{ .Values.conf.domain }}/auth/realms/{{ .Values.auth.realm }}"
-      - "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/auth/realms/{{ .Values.auth.realm }}"
+      - "https://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
+      - "http://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
+      - "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}"
     - key: request.auth.claims[email]
       values:
       - "integration-tester@service.local"
+      - "storage@service.local"
+      - "datafier@service.local"
+      - "register@service.local"
+      - "notification@service.local"
   {{- end }}
 {{- end }}
