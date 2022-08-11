@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-core-lib-ibm</artifactId>
-            <version>0.16.0-rc1</version>
+            <version>0.16.0</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
