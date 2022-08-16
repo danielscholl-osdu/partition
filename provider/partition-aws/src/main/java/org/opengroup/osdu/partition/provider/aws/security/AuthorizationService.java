@@ -79,19 +79,13 @@ public class AuthorizationService implements IAuthorizationService {
 
 
             memberEmail = headers.getUserId();
-            if(memberEmail != null)
-            {
-                if(memberEmail.equals(spu_email)){
-                    return true;
-                }
-                else{
-                    throw  AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
-                }
-            }
             if(memberEmail == null){
                 throw  AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
+            } else if(memberEmail.equals(spu_email)){
+                return true;
+            } else{
+                throw  AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
             }
-
         }
         catch (AppException appE) {
             throw appE;
@@ -99,11 +93,7 @@ public class AuthorizationService implements IAuthorizationService {
         catch (Exception e) {
             throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Authentication Failure", e.getMessage(), e);
         }
-        return false;
     }
-
-
-
 
 }
 
