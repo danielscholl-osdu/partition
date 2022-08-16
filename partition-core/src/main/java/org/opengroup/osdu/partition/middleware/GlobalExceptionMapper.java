@@ -28,8 +28,6 @@ import com.google.gson.Gson;
 import javassist.NotFoundException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +53,7 @@ public class GlobalExceptionMapper extends ResponseEntityExceptionHandler {
     private static final Gson gson = new Gson();
 
     @Autowired
-    private JaxRsDpsLog logger;
+    private JaxRsDpsLog jaxRsDpsLogger;
 
     @ExceptionHandler(AppException.class)
     protected ResponseEntity<Object> handleAppException(AppException e) {
@@ -94,7 +92,7 @@ public class GlobalExceptionMapper extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintValidationException(ConstraintViolationException e) {
-        logger.error("Validation exception", e);
+        jaxRsDpsLogger.error("Validation exception", e);
 
         List<String> msgs = new ArrayList<>();
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
@@ -134,9 +132,9 @@ public class GlobalExceptionMapper extends ResponseEntityExceptionHandler {
         String exceptionMsg = e.getError().getMessage();
 
         if (e.getError().getCode() > 499) {
-            this.logger.error(exceptionMsg, e);
+            this.jaxRsDpsLogger.error(exceptionMsg, e);
         } else {
-            this.logger.warning(exceptionMsg, e);
+            this.jaxRsDpsLogger.warning(exceptionMsg, e);
         }
 
         return new ResponseEntity<>(gson.toJson(exceptionMsg), HttpStatus.resolve(e.getError().getCode()));
