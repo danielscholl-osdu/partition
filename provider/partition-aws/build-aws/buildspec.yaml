@@ -68,6 +68,15 @@ phases:
       - echo "Building integration testing assemblies and gathering artifacts..."
       - ./testing/partition-test-aws/build-aws/prepare-dist.sh
 
+      # Push Helm charts to repo
+      # - cd devops/charts
+      # - for dir in */ ; do chart=$(echo ${dir} | sed 's:/*$::'); helm s3 init ${HELM_REPO}/${BRANCH_NAME}/${chart}; helm repo add --force-update ${chart} ${HELM_REPO}/${BRANCH_NAME}/${chart}; helm package ./${chart}; helm s3 push --force $(find . -name ${chart}'-*.tgz' -print | head -n 1) ${chart}; done
+      # - cd ../..
+
+      - echo "--Copying Helm Charts to ${OUTPUT_DIR:-dist}--"
+      - rsync -r devops/aws/* "${OUTPUT_DIR:-dist}"
+
+
       - echo "Logging into Docker Hub..."
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
