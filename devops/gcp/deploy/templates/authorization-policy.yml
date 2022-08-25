@@ -30,7 +30,6 @@ spec:
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/unit
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/wellbore
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/well-delivery
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/wks
         - cluster.local/ns/{{ $.Release.Namespace }}/sa/workflow
     to:
     - operation:
