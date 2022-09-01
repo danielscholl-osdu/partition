@@ -110,8 +110,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **bootstrapImage** | name of the bootstrap image | string | - | yes
 **bootstrapServiceAccountName** | name of the bootstrap SA | string | - | yes
-**bootstrapLimitsCpu** | bootstrap CPU limit | string | 0.1 | yes
-**bootstrapLimitsMemory** | bootstrap memory limit | string | 200M | yes
 
 ### Config variables
 
