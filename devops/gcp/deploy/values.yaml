@@ -7,8 +7,6 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: ""
   # bootstrap
-  bootstrapLimitsCpu: "0.1"
-  bootstrapLimitsMemory: "200M"
   bootstrapImage: ""
   bootstrapServiceAccountName: ""
 conf:
