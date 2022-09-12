@@ -1,6 +1,6 @@
 /*
- * Copyright 2021 Google LLC
- * Copyright 2021 EPAM Systems, Inc
+ * Copyright 2020-2022 Google LLC
+ * Copyright 2020-2022 EPAM Systems, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ public class IDTokenVerifierConfiguration {
         return new GoogleIdTokenVerifier.Builder(
             GoogleNetHttpTransport.newTrustedTransport(),
             JacksonFactory.getDefaultInstance())
-            .setAudience(Collections.singleton(configuration.getGoogleAudiences()))
             .build();
     }
 }
