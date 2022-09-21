@@ -118,6 +118,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **domain** | your domain | string | - | yes
 **appName** | name of the app | string | partition | yes
 **cicdEnabled** | whether CI/CD is enabled | boolean | false | yes
+**istioEnabled** | whether to enable istio resources | boolean | true | yes
 **configmap** | configmap to be used | string | partition-config | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **publicAvailable** | public access to /api/partition | boolean | false | yes
