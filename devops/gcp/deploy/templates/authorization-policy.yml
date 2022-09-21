@@ -51,6 +51,12 @@ spec:
         - GET
         paths:
         - /api/partition/v1/*
+  - to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /api/partition/v1/info
   {{- if .Values.conf.cicdEnabled }}
   - from:
     - source:
