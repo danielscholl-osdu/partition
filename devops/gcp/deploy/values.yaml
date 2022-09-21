@@ -12,6 +12,7 @@ data:
 conf:
   appName: "partition"
   cicdEnabled: false
+  istioEnabled: true
   configmap: "partition-config"
   domain: ""
   onPremEnabled: false
