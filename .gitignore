@@ -49,3 +49,4 @@ load-tests/*.pyc
 .DS_STORE
 
 dist/
+devops/ibm/ibm-partition-config/values-donotcommit.yaml
