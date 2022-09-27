@@ -12,6 +12,8 @@ variables:
 
   IBM_BUILD_SUBDIR: provider/partition-ibm
   IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
+  IBM_HELM_CONFIG_PATH: devops/ibm/ibm-partition-config
+  IBM_HELM_DEPLOY_PATH: devops/ibm/ibm-partition-deploy
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
@@ -37,6 +39,7 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
+    ref: ibm-helm-charts
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/osdu-gcp-global.yml"
