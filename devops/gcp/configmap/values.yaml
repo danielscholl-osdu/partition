@@ -1,6 +1,6 @@
 data:
   # common
-  logLevel: "INFO"
+  logLevel: "ERROR"
   springProfilesActive: "gcp"
   # gcp
   projectId: ""
