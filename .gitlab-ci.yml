@@ -5,7 +5,7 @@ variables:
   AWS_SERVICE: partition
   AWS_SERVICE_GATEWAY: osdu-gateway
   AWS_ENVIRONMENT: dev
-  AWS_DEPLOY_TARGET: EKS
+  AWS_DEPLOY_TARGET: HELM
   AWS_EKS_DEPLOYMENT_NAME: os-partition
 
   AZURE_SERVICE: partition
@@ -41,7 +41,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm.yml"
-    ref: ibm-helm-charts
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/osdu-gcp-global.yml"
