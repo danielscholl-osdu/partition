@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-DATA_PARTITION_ID_UPPER=${DATA_PARTITION_ID^^}
-
 generate_post_data_gcp() {
   cat <<EOF
 {
