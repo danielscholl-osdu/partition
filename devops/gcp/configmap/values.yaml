@@ -11,12 +11,14 @@ data:
   # bootstrap common
   partitionName: "partition"
   dataPartitionId: ""
+  dataPartitionIdList: []
   datafierSa: "datafier"
   partitionCleanUpEnabled: "false"
-  # bootstrap variables onprem
+  # bootstrap onprem
   domain: ""
   minioExternalEndpoint: "" # use only if external minio is configured
 conf:
   configmap: "partition-config"
   appName: "partition"
   onPremEnabled: false
+  multiPartitionEnabled: false
