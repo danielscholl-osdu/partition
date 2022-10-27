@@ -101,11 +101,11 @@ bootstrap_gcp() {
   fi
 }
 
-if [[ "${ENVIRONMENT}" == "anthos" && "${MULTI_PARTITON_ENABLED}" == "false" ]]; then
+if [[ "${ENVIRONMENT}" == "anthos" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
   bootstrap_anthos "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
-elif [[ "${ENVIRONMENT}" == "gcp" && "${MULTI_PARTITON_ENABLED}" == "false" ]]; then
+elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
   bootstrap_gcp "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
-elif [[ "${ENVIRONMENT}" == "gcp" && "${MULTI_PARTITON_ENABLED}" == "true" ]]; then
+elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
 
   IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
   PARTITIONS=("${DATA_PARTITION_ID}" "${PARTITIONS[@]}")

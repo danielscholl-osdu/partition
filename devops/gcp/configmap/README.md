@@ -120,7 +120,7 @@ cat ~/.config/gcloud/application_default_credentials.json | grep client_id
 |------|-------------|------|---------|---------|
 **partitionName** | name of the partition | string | partition | yes
 **dataPartitionId** | ID of data partition | string | - | yes
-**dataPartitionIdList** | List of data partitions | array of strings | [] | no
+**dataPartitionIdList** | List of data partitions - if not empty multipartition is enabled | array of strings | [] | no
 **datafierSa** | datafier service account | string | datafier | yes
 
 ### Bootstrap on-prem variables
@@ -137,7 +137,6 @@ cat ~/.config/gcloud/application_default_credentials.json | grep client_id
 **configmap** | configmap to be used | string | partition-config | yes
 **appName** | name of the app | string | partition | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**multiPartitionEnabled** | whether multipartition is enabled | boolean | false | yes
 
 ### Install the helm chart
 
