@@ -24,9 +24,4 @@ data:
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
   {{- end }}
-  {{- if .Values.conf.multiPartitionEnabled }}
   DATA_PARTITION_ID_LIST: {{ join "," .Values.data.dataPartitionIdList | quote }}
-  MULTI_PARTITON_ENABLED: "{{ .Values.conf.multiPartitionEnabled }}"
-  {{- else }}
-  MULTI_PARTITON_ENABLED: "{{ .Values.conf.multiPartitionEnabled }}"
-  {{- end }}
