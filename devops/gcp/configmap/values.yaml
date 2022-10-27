@@ -21,4 +21,3 @@ conf:
   configmap: "partition-config"
   appName: "partition"
   onPremEnabled: false
-  multiPartitionEnabled: false
