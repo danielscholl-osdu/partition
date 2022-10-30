@@ -17,9 +17,9 @@ data:
   {{- end }}
   {{- if .Values.conf.onPremEnabled }}
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
-  DOMAIN: "{{ .Values.data.domain }}"
+  DOMAIN: "{{ .Values.conf.domain }}"
   MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.data.domain) .Values.data.minioExternalEndpoint | quote }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- else }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   AUDIENCES: "{{ .Values.data.googleAudiences }}"
