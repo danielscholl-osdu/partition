@@ -1,4 +1,18 @@
 data:
+  # configmaps
+  logLevel: "ERROR"
+  springProfilesActive: "gcp"
+  projectId: ""
+  googleAudiences: ""
+  dataProjectId: ""
+  dataPartitionId: ""
+  dataPartitionIdList: []
+  partitionAdminAccounts: ""
+  partitionName: "partition"
+  datafierSa: "datafier"
+  partitionCleanUpEnabled: "false"
+  minioExternalEndpoint: "" # use only if external minio is configured
+  # deployments
   requestsCpu: "0.1"
   requestsMemory: "260M"
   limitsCpu: "1"
@@ -6,19 +20,19 @@ data:
   serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
   image: ""
-  # bootstrap
   bootstrapImage: ""
   bootstrapServiceAccountName: ""
+  # bootstrap onprem
 conf:
   appName: "partition"
   cicdEnabled: false
-  istioEnabled: true
   configmap: "partition-config"
   domain: ""
+  istioEnabled: true
   onPremEnabled: false
   publicAvailable: false
   secret: "partition-postgres-secret"
 namespacePolicy:
-    mtlsMode: STRICT
+  mtlsMode: STRICT
 auth:
-    realm: "osdu"
+  realm: "osdu"

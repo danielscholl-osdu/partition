@@ -92,37 +92,56 @@ Packages are only needed for installation from a local computer.
 
 First you need to set variables in **values.yaml** file using any code editor. Some of the values are prefilled, but you need to specify some values as well. You can find more information about them below.
 
-### Common variables
+### Configmap variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**image** | your image name | string | - | yes
+**logLevel** | logging level | string | INFO | yes
+**springProfilesActive** | active spring profile | string | gcp | yes
+**projectId** | your GCP project id | string | - | yes
+**dataProjectId** | data GCP project id (for pipelines) | string | - | no
+**partitionAdminAccounts** | admin accounts validated by partition service | string | - | yes
+**googleAudiences** | your GCP client id | string | - | yes
+**serviceAccountTail** | ending of GCP service account | string | .iam.gserviceaccount.com | yes
+**partitionName** | partition host | string | partition | yes
+**dataPartitionId** | data partition id | string | - | yes
+**datafierSa** | datafier service account | string | datafier | yes
+**minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
+
+> googleAudiences: If you are logged in to GCP console with `gcloud auth application-default login --no-browser` from your terminal, you can get your client_id using the command:
+
+```console
+cat ~/.config/gcloud/application_default_credentials.json | grep client_id
+```
+
+### Deployment variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
 **requestsCpu** | amount of requests CPU | string | 0.1 | yes
-**requestsMemory** | amount of requests memory| string | 260M | yes
+**requestsMemory** | amount of requests memory | string | 260M | yes
 **limitsCpu** | CPU limit | string | 1 | yes
 **limitsMemory** | memory limit | string | 1G | yes
 **serviceAccountName** | name of your service account | string | partition | yes
-**imagePullPolicy** | when to pull image | string | IfNotPresent | yes
-
-### Bootstrap variables
-
-| Name | Description | Type | Default |Required |
-|------|-------------|------|---------|---------|
+**image** | path to the image in a registry | string | - | yes
+**imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
 **bootstrapImage** | name of the bootstrap image | string | - | yes
-**bootstrapServiceAccountName** | name of the bootstrap SA | string | - | yes
+**bootstrapServiceAccountName** | name of the bootstrap service account | string | - | yes
 
-### Config variables
+### Configuration variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**domain** | your domain | string | - | yes
 **appName** | name of the app | string | partition | yes
 **cicdEnabled** | whether CI/CD is enabled | boolean | false | yes
-**istioEnabled** | whether to enable istio resources | boolean | true | yes
 **configmap** | configmap to be used | string | partition-config | yes
+**domain** | your domain | string | - | yes
+**istioEnabled** | whether to enable istio resources | boolean | true | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **publicAvailable** | public access to /api/partition | boolean | false | yes
 **secret** | secret for postgres | string | partition-postgres-secret | yes
+**mtlsMode** | MTLS mode | string | STRICT | yes
+**realm** | realm in keycloak | string | osdu | yes
 
 ### Install the helm chart
 
