@@ -58,7 +58,7 @@ bootstrap_gcp() {
 
   DATA_PARTITION_ID=$1
   DATA_PARTITION_ID_UPPER=$2
-  IDENTITY_TOKEN=$(gcloud auth print-identity-token --audiences="${AUDIENCES}")
+  IDENTITY_TOKEN=$(gcloud auth print-identity-token)
 
   if [[ "${PARTITION_CLEAN_UP_ENABLED}" == "true" ]]; then
     echo "Partition cleanup enabled, will delete partition ${DATA_PARTITION_ID}"
