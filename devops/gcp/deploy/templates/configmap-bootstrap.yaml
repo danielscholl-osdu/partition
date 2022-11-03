@@ -22,6 +22,5 @@ data:
   FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- else }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
-  AUDIENCES: "{{ .Values.data.googleAudiences }}"
   {{- end }}
   DATA_PARTITION_ID_LIST: {{ join "," .Values.data.dataPartitionIdList | quote }}
