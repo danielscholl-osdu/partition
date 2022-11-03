@@ -101,18 +101,11 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **projectId** | your Google Cloud project id | string | - | yes
 **dataProjectId** | data Google Cloud project id (for pipelines) | string | - | no
 **partitionAdminAccounts** | admin accounts validated by partition service | string | - | yes
-**googleAudiences** | your Google Cloud client id | string | - | yes
 **serviceAccountTail** | ending of Google Cloud service account | string | .iam.gserviceaccount.com | yes
 **partitionName** | partition host | string | partition | yes
 **dataPartitionId** | data partition id | string | - | yes
 **datafierSa** | datafier service account | string | datafier | yes
 **minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
-
-> googleAudiences: If you are logged in to Google Cloud console with `gcloud auth application-default login --no-browser` from your terminal, you can get your client_id using the command:
-
-```console
-cat ~/.config/gcloud/application_default_credentials.json | grep client_id
-```
 
 ### Deployment variables
 
