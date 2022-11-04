@@ -99,7 +99,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **logLevel** | logging level | string | INFO | yes
 **springProfilesActive** | active spring profile | string | gcp | yes
 **projectId** | your Google Cloud project id | string | - | yes
-**dataProjectId** | data Google Cloud project id (for pipelines) | string | - | no
+**dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
 **partitionAdminAccounts** | admin accounts validated by partition service | string | - | yes
 **serviceAccountTail** | ending of Google Cloud service account | string | .iam.gserviceaccount.com | yes
 **partitionName** | partition host | string | partition | yes
