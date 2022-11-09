@@ -1,4 +1,4 @@
-## Service Configuration for GCP
+## Service Configuration for Google Cloud
 
 ## Environment variables:
 
@@ -8,7 +8,7 @@ Must have:
 
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
-| `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for GCP environment | false | - |
+| `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for Google Cloud environment | false | - |
 | `PARTITION_ADMIN_ACCOUNTS` | ex `user` | Elasticsearch user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service | yes | - |
 | `GOOGLE_CLOUD_PROJECT` | ex `password` | Elasticsearch password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service | false | - |
 
@@ -29,7 +29,7 @@ Usage of spring profiles is preferred.
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
 
-## Google cloud service account configuration :
+## Google Cloud service account configuration :
 TBD
 
 | Required roles |

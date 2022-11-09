@@ -35,8 +35,8 @@ Pre-requisites
 
 ### Anthos Service Configuration:
 [Anthos service configuration ](docs/anthos/README.md)
-### GCP Service Configuration:
-[Gcp service configuration ](docs/gcp/README.md)
+### Google Cloud Service Configuration:
+[Google Cloud service configuration ](docs/gcp/README.md)
 
 
 ### Run Locally
@@ -125,8 +125,8 @@ This section describes how to run cloud OSDU E2E tests.
 
 ### Anthos test configuration:
 [Anthos service configuration ](docs/anthos/README.md)
-### GCP test configuration:
-[Gcp service configuration ](docs/gcp/README.md)
+### Google Cloud test configuration:
+[Google Cloud service configuration ](docs/gcp/README.md)
 
 ## Deployment
 Partition Service is compatible with App Engine Flexible Environment and Cloud Run.
