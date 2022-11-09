@@ -39,3 +39,4 @@ data:
   partition.keycloak.user: "{{ .Values.data.kcUser }}"
   tenantCache.exp.time.in.second: "{{ .Values.data.tenantCacheExpiryInSec }}"
   osdu.airflow.url: "http://{{ .Release.Name }}-web:8080"
+  pipline.trigger.url: "http://{{ .Release.Name }}-ibm-indexer-queue-deploy:8080"
