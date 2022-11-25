@@ -11,4 +11,5 @@ data:
   {{- if not .Values.conf.onPremEnabled }}
   GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
   PARTITION_ADMIN_ACCOUNTS: {{ .Values.data.partitionAdminAccounts | quote }}
+  PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
   {{- end }}
