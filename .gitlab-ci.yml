@@ -52,3 +52,18 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "publishing/pages.yml"
+
+stages:
+  - review
+  - build
+  - coverage
+  - containerize
+  - scan
+  - deploy
+  - bootstrap
+  - integration
+  - cleanup
+  - verified-deploy
+  - performance-testing
+  - publish
+  - deploy_preship

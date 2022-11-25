@@ -8,6 +8,7 @@ data:
   dataPartitionIdList: []
   partitionAdminAccounts: ""
   partitionName: "partition"
+  partitionNamespace: "partition"
   datafierSa: "datafier"
   partitionCleanUpEnabled: "false"
   minioExternalEndpoint: "" # use only if external minio is configured
