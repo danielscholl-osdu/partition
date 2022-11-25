@@ -1,0 +1,27 @@
+postgresql:
+  enabled: true
+  fullnameOverride: "postgresql-db"
+  global:
+    postgresql:
+      auth:
+        postgresPassword: ""
+        database: "postgres"
+  primary:
+    persistence:
+      enabled: false
+
+bootstrap:
+  infra:
+    secret:
+      dataPartitionId: test
+  postgres:
+    serviceAccount: datafier
+    image: ""
+    external: false
+    partition:
+      port: "5432"
+      name: "partition"
+      user: "partition"
+    secret:
+      postgresqlUser: "postgres"
+      postgresqlPort: "5432"
