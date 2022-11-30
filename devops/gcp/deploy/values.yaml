@@ -10,6 +10,7 @@ data:
   partitionName: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
+  bucketPrefix: ""
   partitionCleanUpEnabled: "false"
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
