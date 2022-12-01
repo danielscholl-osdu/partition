@@ -8,8 +8,9 @@ data:
   dataPartitionIdList: []
   partitionAdminAccounts: ""
   partitionName: "partition"
+  partitionNamespace: "partition"
   datafierSa: "datafier"
-  partitionCleanUpEnabled: "false"
+  bucketPrefix: ""
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
   requestsCpu: "0.1"

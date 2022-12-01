@@ -6,7 +6,7 @@ generate_post_data_anthos() {
   "properties": {
     "projectId": {
       "sensitive": false,
-      "value": "${PROJECT_ID}"
+      "value": "${BUCKET_PREFIX}"
     },
     "serviceAccount": {
       "sensitive": false,
@@ -30,7 +30,7 @@ generate_post_data_anthos() {
     },
     "bucket": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-records"
+      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID}-records"
     },
     "crmAccountID": {
       "sensitive": false,
