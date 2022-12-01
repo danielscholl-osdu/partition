@@ -8,19 +8,19 @@ metadata:
 data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
-  PARTITION_CLEAN_UP_ENABLED: "{{ .Values.data.partitionCleanUpEnabled }}"
   ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
+  {{- if .Values.conf.onPremEnabled }}
+  SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
+  DOMAIN: "{{ .Values.conf.domain }}"
+  BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
+  MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
+  {{- else }}
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
   {{- else }}
   PROJECT_ID: "{{ .Values.data.projectId }}"
   {{- end }}
-  {{- if .Values.conf.onPremEnabled }}
-  SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
-  DOMAIN: "{{ .Values.conf.domain }}"
-  MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
-  {{- else }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   {{- end }}
   DATA_PARTITION_ID_LIST: {{ join "," .Values.data.dataPartitionIdList | quote }}

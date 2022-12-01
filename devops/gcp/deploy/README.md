@@ -98,13 +98,15 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **logLevel** | logging level | string | INFO | yes
 **springProfilesActive** | active spring profile | string | gcp | yes
-**projectId** | your Google Cloud project id | string | - | yes
+**projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
 **dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
 **partitionAdminAccounts** | admin accounts validated by partition service | string | - | yes
 **serviceAccountTail** | ending of Google Cloud service account | string | .iam.gserviceaccount.com | yes
 **partitionName** | partition host | string | partition | yes
+**partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
 **dataPartitionId** | data partition id | string | - | yes
 **datafierSa** | datafier service account | string | datafier | yes
+**bucketPrefix** | minio bucket name prefix | string | - | only in case of Reference installation
 **minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
 
 ### Deployment variables
@@ -126,12 +128,10 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **appName** | name of the app | string | partition | yes
-**cicdEnabled** | whether CI/CD is enabled | boolean | false | yes
 **configmap** | configmap to be used | string | partition-config | yes
 **domain** | your domain | string | - | yes
 **istioEnabled** | whether to enable istio resources | boolean | true | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**publicAvailable** | public access to /api/partition | boolean | false | yes
 **secret** | secret for postgres | string | partition-postgres-secret | yes
 **mtlsMode** | MTLS mode | string | STRICT | yes
 **realm** | realm in keycloak | string | osdu | yes
