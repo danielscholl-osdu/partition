@@ -51,6 +51,10 @@ generate_post_data_gcp() {
     "elasticsearch.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS_${DATA_PARTITION_ID_UPPER}"
+    },
+    "kubernetes-secret-name": {
+      "sensitive": false,
+      "value": "eds-${DATA_PARTITION_ID}"
     }
   }
 }
