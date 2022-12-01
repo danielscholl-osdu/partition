@@ -266,6 +266,7 @@ osdu-gcp-dev2-deploy: # verified deploy after tests
     - gcloud auth activate-service-account --key-file $OSDU_GCP_DEV2_DEPLOY_FILE
     - !reference [.common_config, script]
     - !reference [.define_version, script]
+    - !reference [.set_image_name,script]
     - helm repo add $OSDU_GCP_SERVICE ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable
     - >
       helm upgrade $OSDU_GCP_SERVICE-deploy $OSDU_GCP_SERVICE/gcp-$OSDU_GCP_SERVICE-deploy
