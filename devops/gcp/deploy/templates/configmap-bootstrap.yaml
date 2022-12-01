@@ -8,7 +8,6 @@ metadata:
 data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
-  PARTITION_CLEAN_UP_ENABLED: "{{ .Values.data.partitionCleanUpEnabled }}"
   ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
   {{- if .Values.conf.onPremEnabled }}
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
