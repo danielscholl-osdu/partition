@@ -278,7 +278,7 @@ osdu-gcp-dev2-deploy: # verified deploy after tests
       --set data.imagePullPolicy=Always
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
       --set data.bootstrapServiceAccountName=datafier-k8s
-      --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+      --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
       --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
       --set data.projectId=osdu-dev2
       --set data.partitionAdminAccounts=$OSDU_GCP_DEV2_PARTITION_ADMIN_ACCOUNTS
