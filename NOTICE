@@ -1099,6 +1099,7 @@ The following software have components provided under the terms of this license:
 - JBoss Logging 3 (from http://www.jboss.org)
 - JSON in Java (from https://github.com/douglascrockford/JSON-java)
 - LatencyUtils (from http://latencyutils.github.io/LatencyUtils/)
+- Microsoft Azure client library for Blob Storage (from https://github.com/Azure/azure-sdk-for-java)
 - PostgreSQL JDBC Driver
 
 ========================================================================
