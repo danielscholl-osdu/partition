@@ -137,7 +137,7 @@ Partition Service is compatible with App Engine Flexible Environment and Cloud R
 * To deploy into App Engine, please, use this documentation:
   https://cloud.google.com/appengine/docs/flexible/java/quickstart
 
-## Licence
+## License
 Copyright © Google LLC
 Copyright © EPAM Systems
 
