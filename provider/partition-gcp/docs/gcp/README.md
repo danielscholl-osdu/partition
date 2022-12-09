@@ -9,8 +9,7 @@ Must have:
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
 | `SPRING_PROFILES_ACTIVE` | ex `gcp` | Spring profile that activate default configuration for Google Cloud environment | false | - |
-| `PARTITION_ADMIN_ACCOUNTS` | ex `user` | Elasticsearch user, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service | yes | - |
-| `GOOGLE_CLOUD_PROJECT` | ex `password` | Elasticsearch password, name of that variable not defined at the service level, the name will be received through partition service. Each tenant can have it's own ENV name value, and it must be present in ENV of Indexer service | false | - |
+| `GOOGLE_CLOUD_PROJECT` | ex `google`  | Google Cloud Project Id| false | https://console.cloud.google.com/ |
 
 Defined in default application property file but possible to override:
 
@@ -21,20 +20,12 @@ Defined in default application property file but possible to override:
 | `SERVER_SERVLET_CONTEXPATH` | `/api/partition/v1` | Servlet context path | no | - |
 | `PARTITION_PROPERTY_KIND` | ex `PartitionProperty` | Kind name to store the properties. | no | - |
 | `PARTITION_NAMESPACE` | ex `partition` | Namespace for database. | no | - |
-| `SERVICE_ACCOUNT_TAIL` | `****` |By default Partition service while authenticating the request, verifies that the email in provided token belongs to a service account from a specific project by email tail `<GOOGLE_CLOUD_PROJECT> + .iam.gserviceaccount.com`, this behavior can be changed with this variable, you may specify which email tail exactly expected.| no | - |
 
 These variables define service behavior, and are used to switch between `anthos` or `gcp` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
 
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
-
-## Google Cloud service account configuration :
-TBD
-
-| Required roles |
-| ---    |
-| - |
 
 ### Running E2E Tests
 
@@ -57,3 +48,26 @@ Execute following command to build code and run all the integration tests:
 #       above are already exported in your environment.
 $ (cd testing/partition-test-gcp/ && mvn clean test)
 ```
+
+## Google Cloud service account configuration :
+TBD
+
+| Required roles |
+| ---    |
+| - |
+
+## License
+Copyright © Google LLC
+Copyright © EPAM Systems
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
