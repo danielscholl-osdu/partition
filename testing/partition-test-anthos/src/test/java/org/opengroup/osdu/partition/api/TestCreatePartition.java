@@ -56,16 +56,19 @@ public class TestCreatePartition extends CreatePartitionTest {
     }
 
     @Override
+    @Test
     public void should_return401_when_noAccessToken() throws Exception {
         authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
     }
 
     @Override
+    @Test
     public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
         authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
     }
 
     @Override
+    @Test
     public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
         authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
     }

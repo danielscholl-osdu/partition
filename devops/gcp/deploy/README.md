@@ -45,7 +45,7 @@ This example describes installation in **Development mode**:
      `kubectl get namespace <namespace> -o jsonpath={.metadata.labels}`
 
     The output shows that there are no any labels related to Istio:
-  
+
     ```console
     {"kubernetes.io/metadata.name":"default"}
     ```
@@ -121,7 +121,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **image** | path to the image in a registry | string | - | yes
 **imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
 **bootstrapImage** | name of the bootstrap image | string | - | yes
-**bootstrapServiceAccountName** | name of the bootstrap service account | string | - | yes
 
 ### Configuration variables
 
@@ -130,7 +129,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **appName** | name of the app | string | partition | yes
 **configmap** | configmap to be used | string | partition-config | yes
 **domain** | your domain | string | - | yes
-**istioEnabled** | whether to enable istio resources | boolean | true | yes
 **onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **secret** | secret for postgres | string | partition-postgres-secret | yes
 **mtlsMode** | MTLS mode | string | STRICT | yes
