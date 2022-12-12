@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import com.sun.jersey.api.client.ClientResponse;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.util.AnthosAuthorizationTestUtil;
 import org.opengroup.osdu.partition.util.AnthosTestUtils;
@@ -53,16 +54,19 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     }
 
     @Override
+    @Test
     public void should_return401_when_noAccessToken() throws Exception {
         authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
     }
 
     @Override
+    @Test
     public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
         authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
     }
 
     @Override
+    @Test
     public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
         authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
     }
