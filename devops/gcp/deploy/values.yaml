@@ -21,14 +21,12 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: ""
   bootstrapImage: ""
-  bootstrapServiceAccountName: ""
   # bootstrap onprem
 conf:
   appName: "partition"
   cicdEnabled: false
   configmap: "partition-config"
   domain: ""
-  istioEnabled: true
   onPremEnabled: false
   publicAvailable: false
   secret: "partition-postgres-secret"

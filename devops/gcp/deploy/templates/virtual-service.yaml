@@ -1,4 +1,3 @@
-{{- if .Values.conf.istioEnabled }}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -16,18 +15,11 @@ spec:
   gateways:
     - service-gateway
   http:
-    {{- if .Values.conf.publicAvailable }}
     - match:
         - uri:
             prefix: "/api/partition"
-    {{- else }}
-    - match:
-        - uri:
-            exact: "/api/partition/v1/info"
-    {{- end }}
       route:
         - destination:
             port:
               number: 80
             host: {{ printf "%s.%s.svc.cluster.local" .Values.conf.appName .Release.Namespace | quote }}
-{{- end }}

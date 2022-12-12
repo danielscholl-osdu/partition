@@ -1,4 +1,3 @@
-{{- if .Values.conf.istioEnabled }}
 {{- if .Values.conf.onPremEnabled }}
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
@@ -8,5 +7,4 @@ metadata:
 spec:
   mtls:
     mode: {{ .Values.namespacePolicy.mtlsMode | quote }}
-{{- end }}
 {{- end }}

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>partition</artifactId>
     <groupId>org.opengroup.osdu</groupId>
-    <version>0.18.0-SNAPSHOT</version>
+    <version>0.19.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <osdu.corelibazure.version>0.16.0</osdu.corelibazure.version>
+    <osdu.corelibazure.version>0.18.0</osdu.corelibazure.version>
     <junit.version>4.12</junit.version>
     <mockito.version>2.25.0</mockito.version>
     <powermock.version>2.0.2</powermock.version>
@@ -59,7 +59,7 @@
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-          <version>2.13.2.2</version>
+          <version>2.13.4</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -113,7 +113,7 @@
     <dependency>
       <groupId>com.microsoft.azure</groupId>
       <artifactId>azure-storage</artifactId>
-      <version>8.6.5</version>
+      <version>8.6.6</version>
     </dependency>
     <dependency>
       <groupId>com.azure.spring</groupId>

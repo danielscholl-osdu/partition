@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.opengroup.osdu</groupId>
 		<artifactId>partition</artifactId>
-		<version>0.18.0-SNAPSHOT</version>
+		<version>0.19.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -31,7 +31,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
-		<springfox-version>3.0.0</springfox-version>
+		<openapi.version>1.6.9</openapi.version>
 		<powermock.version>2.0.6</powermock.version>
 		<mockito.core.version>3.3.3</mockito.core.version>
 		<assertj_core_version>3.16.1</assertj_core_version>
@@ -39,7 +39,7 @@
 		<cobertura_maven_plugin_version>2.7</cobertura_maven_plugin_version>
 		<maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
 		<maven_failsafe_plugin_version>3.0.0-M4</maven_failsafe_plugin_version>
-        <jackson-databind.version>2.13.2.2</jackson-databind.version>
+		<jackson-databind.version>2.13.4</jackson-databind.version>
 		<spring-webmvc.version>5.3.22</spring-webmvc.version>
 	</properties>
 
@@ -162,9 +162,9 @@
 
 		<!-- swagger dependencies -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>${springfox-version}</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>${openapi.version}</version>
 		</dependency>
 
 	</dependencies>

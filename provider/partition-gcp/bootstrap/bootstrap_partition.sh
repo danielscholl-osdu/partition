@@ -41,11 +41,9 @@ bootstrap_gcp() {
 
   DATA_PARTITION_ID=$1
   DATA_PARTITION_ID_UPPER=$2
-  IDENTITY_TOKEN=$(gcloud auth print-identity-token)
 
   status_code=$(curl -X POST \
      --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
-     -H "Authorization: Bearer ${IDENTITY_TOKEN}" \
      -H "Content-Type: application/json" \
      --data-raw "$(generate_post_data_gcp)")
 
@@ -56,7 +54,6 @@ bootstrap_gcp() {
 
     patch_status_code=$(curl -X PATCH \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
-    -H "Authorization: Bearer ${IDENTITY_TOKEN}" \
     -H "Content-Type: application/json" \
     --data-raw "$(generate_post_data_gcp)")
 

@@ -1,6 +1,6 @@
-## Service Configuration for Anthos
+# Service Configuration for Anthos
 
-## Environment variables:
+## Environment variables
 
 Define the following environment variables.
 
@@ -29,12 +29,11 @@ Usage of spring profiles is preferred.
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
 
+### for OSM - Postgres
 
-#### for OSM - Postgres:
+### Schema configuration
 
-### Schema configuration:
-
-```
+```sql
 CREATE TABLE partition."PartitionProperty"(
 id text COLLATE pg_catalog."default" NOT NULL,
 pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -68,3 +67,20 @@ Execute following command to build code and run all the integration tests:
 #       above are already exported in your environment.
 $ (cd testing/partition-test-anthos/ && mvn clean test)
 ```
+
+## License
+
+Copyright © Google LLC
+Copyright © EPAM Systems
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

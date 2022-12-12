@@ -1,9 +1,25 @@
-{{- if .Values.conf.istioEnabled }}
-{{- if .Values.conf.onPremEnabled }}
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ printf "%s-jwt-policy" .Values.conf.appName | quote }}
+  name: {{ printf "%s-get-policy" .Values.conf.appName | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.conf.appName | quote }}
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /api/partition/v1/*
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ printf "%s-post-policy" .Values.conf.appName | quote }}
   namespace: {{ .Release.Namespace | quote }}
 spec:
   selector:
@@ -14,76 +30,8 @@ spec:
   - from:
     - source:
         principals:
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/crs-catalog
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/crs-conversion
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/dataset
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/entitlements
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/file
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/indexer-queue
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/legal
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/notification
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/register
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/schema
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/search
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/seismic-store
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/storage
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/unit
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/wellbore
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/well-delivery
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/workflow
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/{{ printf "%s-bootstrap" .Values.data.serviceAccountName }}
     to:
     - operation:
-        methods:
-        - GET
         paths:
         - /api/partition/v1/*
-  - from:
-    - source:
-        principals:
-        - cluster.local/ns/{{ $.Release.Namespace }}/sa/bootstrap-sa
-    to:
-    - operation:
-        methods:
-        - POST
-        - PUT
-        - PATCH
-        - GET
-        paths:
-        - /api/partition/v1/*
-  - to:
-    - operation:
-        methods:
-        - GET
-        paths:
-        - /api/partition/v1/info
-  {{- if .Values.conf.cicdEnabled }}
-  - from:
-    - source:
-       requestPrincipals: ["*"]
-    to:
-    - operation:
-        methods:
-        - POST
-        - PATCH
-        - GET
-        - DELETE
-        - OPTIONS
-        paths:
-        - /api/partition/v1/*
-    when:
-    - key: request.auth.claims[iss]
-      values:
-      - "https://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
-      - "http://keycloak.{{ .Values.conf.domain }}/realms/{{ .Values.auth.realm }}"
-      - "http://keycloak.{{ .Release.Namespace }}.svc.cluster.local/realms/{{ .Values.auth.realm }}"
-    - key: request.auth.claims[email]
-      values:
-      - "integration-tester@service.local"
-      - "storage@service.local"
-      - "datafier@service.local"
-      - "register@service.local"
-      - "notification@service.local"
-  {{- end }}
-{{- end }}
-{{- end }}
