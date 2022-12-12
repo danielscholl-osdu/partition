@@ -1,6 +1,6 @@
-## Service Configuration for Anthos
+# Service Configuration for Anthos
 
-## Environment variables:
+## Environment variables
 
 Define the following environment variables.
 
@@ -29,12 +29,11 @@ Usage of spring profiles is preferred.
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
 
+### for OSM - Postgres
 
-#### for OSM - Postgres:
+### Schema configuration
 
-### Schema configuration:
-
-```
+```sql
 CREATE TABLE partition."PartitionProperty"(
 id text COLLATE pg_catalog."default" NOT NULL,
 pk bigint NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -70,6 +69,7 @@ $ (cd testing/partition-test-anthos/ && mvn clean test)
 ```
 
 ## License
+
 Copyright © Google LLC
 Copyright © EPAM Systems
 

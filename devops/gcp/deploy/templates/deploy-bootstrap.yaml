@@ -28,4 +28,4 @@ spec:
             - configMapRef:
                 name: {{ printf "%s-bootstrap" .Values.conf.configmap | quote }}
       restartPolicy: Always
-      serviceAccountName: {{ .Values.data.bootstrapServiceAccountName | quote }}
+      serviceAccountName: {{ printf "%s-bootstrap" .Values.data.serviceAccountName | quote }}
