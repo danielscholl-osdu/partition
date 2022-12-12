@@ -1,57 +1,38 @@
 /*
-  Copyright 2002-2021 Google LLC
-  Copyright 2002-2021 EPAM Systems, Inc
+ Copyright 2002-2022 Google LLC
+ Copyright 2002-2022 EPAM Systems, Inc
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
- */
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
 
 package org.opengroup.osdu.partition.provider.gcp.config;
 
-import java.util.List;
-import java.util.Objects;
-import javax.annotation.PostConstruct;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties
-@Getter
-@Setter
+@Data
 public class PropertiesConfiguration {
 
-    private String googleAudiences;
+  private String googleCloudProject;
 
-    private List<String> partitionAdminAccounts;
+  private int cacheExpiration;
 
-    private String googleCloudProject;
+  private int cacheMaxSize;
 
-    private int cacheExpiration;
+  private String partitionPropertyKind;
 
-    private int cacheMaxSize;
-
-    private String serviceAccountTail;
-
-    private String partitionPropertyKind;
-
-    private String partitionNamespace;
-
-    @PostConstruct
-    public void setUp() {
-        if (Objects.isNull(serviceAccountTail) || serviceAccountTail.isEmpty()) {
-            this.serviceAccountTail = googleCloudProject + ".iam.gserviceaccount.com";
-        }
-    }
-
+  private String partitionNamespace;
 }
