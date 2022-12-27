@@ -124,7 +124,6 @@ osdu-gcp-anthos-deploy: # verified deploy after tests
       --wait
       --history-max=3
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.bootstrapServiceAccountName=$OSDU_GCP_BOOTSTRAP_SA
       --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
       --set data.serviceAccountName=$OSDU_GCP_SERVICE
       --set data.bucketPrefix=osdu-anthos
@@ -202,7 +201,6 @@ osdu-gcp-deploy: # verified deploy after tests
       --wait
       --history-max=3
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.bootstrapServiceAccountName=$BOOTSTRAP_SA
       --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:$CI_COMMIT_SHORT_SHA
       --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
       --set data.projectId=$OSDU_GCP_PROJECT
@@ -266,6 +264,7 @@ osdu-gcp-dev2-deploy: # verified deploy after tests
     - gcloud auth activate-service-account --key-file $OSDU_GCP_DEV2_DEPLOY_FILE
     - !reference [.common_config, script]
     - !reference [.define_version, script]
+    - !reference [.set_image_name,script]
     - helm repo add $OSDU_GCP_SERVICE ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable
     - >
       helm upgrade $OSDU_GCP_SERVICE-deploy $OSDU_GCP_SERVICE/gcp-$OSDU_GCP_SERVICE-deploy
@@ -277,8 +276,7 @@ osdu-gcp-dev2-deploy: # verified deploy after tests
       --history-max=3
       --set data.imagePullPolicy=Always
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/osdu-gcp-bootstrap-$OSDU_GCP_SERVICE:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-      --set data.bootstrapServiceAccountName=datafier-k8s
-      --set data.image=$CI_REGISTRY_IMAGE/osdu-gcp-$OSDU_GCP_SERVICE:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+      --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
       --set data.serviceAccountName=$OSDU_GCP_SERVICE-k8s
       --set data.projectId=osdu-dev2
       --set data.partitionAdminAccounts=$OSDU_GCP_DEV2_PARTITION_ADMIN_ACCOUNTS
