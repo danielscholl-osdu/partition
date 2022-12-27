@@ -10,7 +10,7 @@ data:
   partitionName: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
-  bucketPrefix: ""
+  bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
   requestsCpu: "0.1"
