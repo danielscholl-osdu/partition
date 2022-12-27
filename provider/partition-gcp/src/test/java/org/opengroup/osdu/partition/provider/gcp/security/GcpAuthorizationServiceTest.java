@@ -1,6 +1,6 @@
 /*
- * Copyright 2021 Google LLC
- * Copyright 2021 EPAM Systems, Inc
+ * Copyright 2020-2022 Google LLC
+ * Copyright 2020-2022 EPAM Systems, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 
@@ -92,8 +91,6 @@ public class GcpAuthorizationServiceTest {
     @Before
     public void setUp() throws GeneralSecurityException, IOException {
         MockitoAnnotations.initMocks(this);
-        when(configuration.getPartitionAdminAccounts()).thenReturn(partitionAdminAccounts);
-        when(configuration.getServiceAccountTail()).thenReturn(serviceAccountTail);
         when(headers.getAuthorization()).thenReturn(token);
         when(verifier.verify(token)).thenReturn(googleIdToken);
         when(googleIdToken.getPayload()).thenReturn(payload);
@@ -106,22 +103,15 @@ public class GcpAuthorizationServiceTest {
         assertTrue(gcpAuthorizationService.isDomainAdminServiceAccount());
     }
 
-    @Test(expected = AppException.class)
-    public void testNotProvidedInConfigAdminAccountShouldThrowException() {
-        payload.setEmail("user@google.com");
-        gcpAuthorizationService.isDomainAdminServiceAccount();
-    }
-
     @Theory
     public void testProvidedInConfigPatternShouldReturnTrue(@FromDataPoints("VALID_ACCOUNTS") String account) {
         payload.setEmail(account);
         assertTrue(gcpAuthorizationService.isDomainAdminServiceAccount());
     }
 
-    @Theory
-    public void testNotProvidedInConfigPatternShouldReturnTrue(@FromDataPoints("NOT_VALID_ACCOUNTS") String account) {
-        exceptionRule.expect(AppException.class);
-        payload.setEmail(account);
-        gcpAuthorizationService.isDomainAdminServiceAccount();
+    @Test
+    public void testProvidedOtherUserShouldReturnTrue() {
+        payload.setEmail("userTest@other-project-id.iam.gserviceaccount.com");
+        assertTrue(gcpAuthorizationService.isDomainAdminServiceAccount());
     }
 }
