@@ -106,7 +106,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
 **dataPartitionId** | data partition id | string | - | yes
 **datafierSa** | datafier service account | string | datafier | yes
-**bucketPrefix** | minio bucket name prefix | string | - | only in case of Reference installation
+**bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
 **minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
 
 ### Deployment variables
