@@ -10,7 +10,7 @@ data:
   partitionName: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
-  bucketPrefix: ""
+  bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
   requestsCpu: "0.1"
@@ -19,8 +19,8 @@ data:
   limitsMemory: "1G"
   serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
-  image: ""
-  bootstrapImage: ""
+  image: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-partition:latest"
+  bootstrapImage: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-bootstrap-partition:latest"
   # bootstrap onprem
 conf:
   appName: "partition"
@@ -34,3 +34,10 @@ namespacePolicy:
   mtlsMode: STRICT
 auth:
   realm: "osdu"
+istio:
+  proxyCPU: "50m"
+  proxyCPULimit: "500m"
+  proxyMemory: "64Mi"
+  proxyMemoryLimit: "512Mi"
+  bootstrapProxyCPU: "10m"
+  bootstrapProxyCPULimit: "100m"
