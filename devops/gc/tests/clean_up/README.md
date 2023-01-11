@@ -65,20 +65,20 @@ $ pip install -r requirements.txt
 
 **Cluster cleanup:**
 
-* Define variable _OSDU_GCP_HELM_NAMESPACE_ and start the script with _--cluster_ key:
+* Define variable _GC_HELM_NAMESPACE_ and start the script with _--cluster_ key:
 
 ```sh
-export OSDU_GCP_HELM_NAMESPACE=<test-namespace> # k8s namespace where test resources deployed
+export GC_HELM_NAMESPACE=<test-namespace> # k8s namespace where test resources deployed
 ./clean_up.sh --cluster
 
 ```
 
 **Datastore cleanup:**
 
-* Define variables _OSDU_GCP_PROJECT_ and _PARTITION_NAMESPACE_, and start the script with _--datastore_ key:
+* Define variables _GC_PROJECT_ and _PARTITION_NAMESPACE_, and start the script with _--datastore_ key:
 
 ```sh
-export OSDU_GCP_PROJECT=<project-id> # Google project id where Datastore used
+export GC_PROJECT=<project-id> # Google project id where Datastore used
 export PARTITION_NAMESPACE=<test namespace in Datastore> # test namespace in Datastore
 ./clean_up.sh --datastore
 
@@ -89,8 +89,8 @@ export PARTITION_NAMESPACE=<test namespace in Datastore> # test namespace in Dat
 * Define variables for both cases and start script with _--all_ key:
 
 ```sh
-export OSDU_GCP_HELM_NAMESPACE=<test-namespace>
-export OSDU_GCP_PROJECT=<project-id>
+export GC_HELM_NAMESPACE=<test-namespace>
+export GC_PROJECT=<project-id>
 export PARTITION_NAMESPACE=<test namespace in Datastore>
 ./clean_up.sh --all
 
