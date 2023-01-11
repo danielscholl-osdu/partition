@@ -71,8 +71,9 @@ osdu-gcp-anthos-deploy-deployment: # reuse common deploy job for test deployment
   needs: ["osdu-gcp-anthos-deploy-test-env", "osdu-gcp-containerize-gitlab"]
   variables:
     OSDU_GCP_HELM_NAMESPACE: partition-int-test
-    ISTIO_ENABLED: "false"
     OSDU_GCP_TENANT: test
+    GC_HELM_SETS: >-
+      --set istio.sidecarInject=false
 
 osdu-gcp-anthos-test:
   variables:
@@ -148,8 +149,10 @@ osdu-gcp-anthos-deploy: # verified deploy after tests
 osdu-gcp-deploy-deployment: # reuse common deploy job for test deployment
   variables:
     OSDU_GCP_HELM_NAMESPACE: partition-int-test
-    DATA_PARTITION_ID: test
-    OSDU_GCP_PARTITION_NAMESPACE: partition-test
+    GC_HELM_SETS: >-
+      --set data.dataPartitionId=test
+      --set data.partitionNamespace=partition-test
+      --set istio.sidecarInject=false
 
 osdu-gcp-test:
   variables:
@@ -222,8 +225,10 @@ osdu-gcp-deploy: # verified deploy after tests
 osdu-gcp-dev2-deploy-deployment: # reuse common deploy job for test deployment
   variables:
     OSDU_GCP_HELM_NAMESPACE: partition-int-test
-    DATA_PARTITION_ID: test
-    OSDU_GCP_PARTITION_NAMESPACE: partition-test
+    GC_HELM_SETS: >-
+      --set data.dataPartitionId=test
+      --set data.partitionNamespace=partition-test
+      --set istio.sidecarInject=false
 
 osdu-gcp-dev2-test:
   variables:
