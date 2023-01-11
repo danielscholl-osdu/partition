@@ -2,7 +2,7 @@ FROM alpine
 
 WORKDIR /opt
 
-COPY ./provider/partition-gcp/bootstrap/ /opt/
+COPY ./provider/partition-gc/bootstrap/ /opt/
 
 ENV PREFIX=$(pwd)
 

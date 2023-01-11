@@ -139,7 +139,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 Run this command from within this directory:
 
 ```console
-helm install gcp-partition-deploy .
+helm install gc-partition-deploy .
 ```
 
 ## Uninstalling the Chart
@@ -147,7 +147,7 @@ helm install gcp-partition-deploy .
 To uninstall the helm deployment:
 
 ```console
-helm uninstall gcp-partition-deploy
+helm uninstall gc-partition-deploy
 ```
 
 To delete secrets and PVCs:

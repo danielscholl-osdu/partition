@@ -9,8 +9,8 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>partition-gcp</artifactId>
-  <description>Partition service on GCP</description>
+  <artifactId>partition-gc</artifactId>
+  <description>Partition service on Google Cloud</description>
   <packaging>jar</packaging>
 
   <dependencies>
