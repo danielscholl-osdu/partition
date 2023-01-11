@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-generate_post_data_gcp() {
+generate_post_data_gc() {
   cat <<EOF
 {
   "properties": {

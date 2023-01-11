@@ -1,17 +1,20 @@
 # Partition Service
-os-partition-gcp is a [Spring Boot](https://spring.io/projects/spring-boot) service that is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not.
+
+partition-gc is a [Spring Boot](https://spring.io/projects/spring-boot) service that is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not.
 
 ## Features of implementation
+
 This is a universal solution created using EPAM OSM mapper technology. It allows you to work with various
 implementations of KV stores.
 
 ## Limitations of the current version
+
 In the current version, the mappers have been equipped with several drivers to the stores:
 
 OSM (mapper for KV-data): Google Datastore; Postgres
 
-
 ## Extensibility
+
 To use any other store or message broker, implement a driver for it. With an extensible set of drivers, the solution is
 unrestrictedly universal and portable without modification to the main code.
 Mappers support "multitenancy" with flexibility in how it is implemented. They switch between datasources of different
@@ -21,11 +24,12 @@ tenants due to the work of a bunch of classes that implement the following inter
 * DestinationResolver – accepts Destination, finds the resource, connects, and returns Resolution;
 * DestinationResolution – contains a ready-made connection, the mapper uses it to get the data.
 
-
 ## Getting Started
+
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
+
 Pre-requisites
 
 * GCloud SDK with java (latest version)
@@ -33,13 +37,16 @@ Pre-requisites
 * Lombok 1.16 or later
 * Maven
 
-### Anthos Service Configuration:
-[Anthos service configuration ](docs/anthos/README.md)
-### Google Cloud Service Configuration:
-[Google Cloud service configuration ](docs/gcp/README.md)
+### Anthos Service Configuration
 
+[Anthos service configuration](docs/anthos/README.md)
+
+### Google Cloud Service Configuration
+
+[Google Cloud service configuration](docs/gc/README.md)
 
 ### Run Locally
+
 Check that maven is installed:
 
 ```bash
@@ -75,11 +82,13 @@ $ cat ~/.m2/settings.xml
     </servers>
 </settings>
 ```
+
 * Update the Google cloud SDK to the latest version:
 
 ```bash
 gcloud components update
 ```
+
 * Set Google Project Id:
 
 ```bash
@@ -109,10 +118,11 @@ mvn clean install -DskipTests
 After configuring your environment as specified above, you can follow these steps to build and run the application. These steps should be invoked from the *repository root.*
 
 ```bash
-cd provider/partition-gcp/ && mvn spring-boot:run
+cd provider/partition-gc/ && mvn spring-boot:run
 ```
 
 ## Testing
+
 Navigate to partition service's root folder and run all the tests:
 
 ```bash
@@ -121,23 +131,29 @@ $ (cd testing/partition-test-core/ && mvn clean install)
 ```
 
 ### Running E2E Tests
+
 This section describes how to run cloud OSDU E2E tests.
 
-### Anthos test configuration:
-[Anthos service configuration ](docs/anthos/README.md)
-### Google Cloud test configuration:
-[Google Cloud service configuration ](docs/gcp/README.md)
+### Anthos test configuration
+
+[Anthos service configuration](docs/anthos/README.md)
+
+### Google Cloud test configuration
+
+[Google Cloud service configuration](docs/gc/README.md)
 
 ## Deployment
+
 Partition Service is compatible with App Engine Flexible Environment and Cloud Run.
 
 * To deploy into Cloud run, please, use this documentation:
-  https://cloud.google.com/run/docs/quickstarts/build-and-deploy
+  <https://cloud.google.com/run/docs/quickstarts/build-and-deploy>
 
 * To deploy into App Engine, please, use this documentation:
-  https://cloud.google.com/appengine/docs/flexible/java/quickstart
+  <https://cloud.google.com/appengine/docs/flexible/java/quickstart>
 
 ## License
+
 Copyright © Google LLC
 Copyright © EPAM Systems
 
