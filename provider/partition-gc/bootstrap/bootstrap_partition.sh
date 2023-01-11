@@ -3,7 +3,7 @@
 set -ex
 
 source ./data_anthos.sh
-source ./data_gcp.sh
+source ./data_gc.sh
 
 # Bootstrap Partition service on Anthos (on-prem)
 bootstrap_anthos() {
@@ -34,7 +34,7 @@ bootstrap_anthos() {
 }
 
 # Bootstrap Partition service on Google Cloud
-bootstrap_gcp() {
+bootstrap_gc() {
 
   echo "sleep to prevent 500 response from the Partition service, due to timeout of creation for Workload Identity"
   sleep 20
@@ -45,7 +45,7 @@ bootstrap_gcp() {
   status_code=$(curl -X POST \
      --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
      -H "Content-Type: application/json" \
-     --data-raw "$(generate_post_data_gcp)")
+     --data-raw "$(generate_post_data_gc)")
 
   # shellcheck disable=SC2002
   if [[ "${status_code}" == 201 ]]; then
@@ -55,7 +55,7 @@ bootstrap_gcp() {
     patch_status_code=$(curl -X PATCH \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
-    --data-raw "$(generate_post_data_gcp)")
+    --data-raw "$(generate_post_data_gc)")
 
     echo "Partition was patched because Datastore had already had entities! Status code: ${patch_status_code}"
   else
@@ -67,14 +67,14 @@ bootstrap_gcp() {
 if [[ "${ENVIRONMENT}" == "anthos" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
   bootstrap_anthos "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
 elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
-  bootstrap_gcp "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
+  bootstrap_gc "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
 elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
 
   IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
   PARTITIONS=("${DATA_PARTITION_ID}" "${PARTITIONS[@]}")
 
   for PARTITION in "${PARTITIONS[@]}"; do
-    bootstrap_gcp "${PARTITION}" "${PARTITION^^}"
+    bootstrap_gc "${PARTITION}" "${PARTITION^^}"
   done
 fi
 

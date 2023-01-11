@@ -2,13 +2,13 @@
 
 cluster_cleanup() {
   # check variable for namespace
-  if [[ "$OSDU_GCP_HELM_NAMESPACE" == *test ]]
+  if [[ "$GC_HELM_NAMESPACE" == *test ]]
   then
     # uninstall partition helm releases
-    LIST=$(helm -n $OSDU_GCP_HELM_NAMESPACE list -o json | jq -r .[].name)
+    LIST=$(helm -n $GC_HELM_NAMESPACE list -o json | jq -r .[].name)
     for RELEASE in $LIST
     do
-      helm -n $OSDU_GCP_HELM_NAMESPACE uninstall $RELEASE
+      helm -n $GC_HELM_NAMESPACE uninstall $RELEASE
     done
     echo "Cluster cleanup Finished"
   else
@@ -23,8 +23,8 @@ datastore_cleanup () {
   apk add py3-pip python3-dev libffi-dev
   pip install --upgrade pip
   pip install --upgrade setuptools
-  pip install -q -r devops/gcp/tests/clean_up/requirements.txt
-  python3 devops/gcp/tests/clean_up/datastore_clean_up.py -p "$OSDU_GCP_PROJECT" -n $PARTITION_NAMESPACE --delete-all
+  pip install -q -r devops/gc/tests/clean_up/requirements.txt
+  python3 devops/gc/tests/clean_up/datastore_clean_up.py -p "$GC_PROJECT" -n $PARTITION_NAMESPACE --delete-all
 
   echo "Datastore cleanup finished"
 }
