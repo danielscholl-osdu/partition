@@ -30,8 +30,6 @@ conf:
   onPremEnabled: false
   publicAvailable: false
   secret: "partition-postgres-secret"
-namespacePolicy:
-  mtlsMode: STRICT
 auth:
   realm: "osdu"
 istio:
@@ -41,3 +39,4 @@ istio:
   proxyMemoryLimit: "512Mi"
   bootstrapProxyCPU: "10m"
   bootstrapProxyCPULimit: "100m"
+  sidecarInject: "true"
