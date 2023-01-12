@@ -39,7 +39,6 @@ You will need to have the following environment variables defined.
 | `MY_TENANT` | ex `opendes` | name of the OSDU partition | yes |  |
 | `INTEGRATION_TESTER` | `********` | Service account for API calls. Note: this user must be `PARTITION_ADMIN_ACCOUNT` | yes | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
 | `NO_DATA_ACCESS_TESTER` | `********` | Service account base64 encoded string without data access | yes | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
-| `INTEGRATION_TEST_AUDIENCE` | `********` | client application ID | yes | <https://console.cloud.google.com/apis/credentials> |
 
 Execute following command to build code and run all the integration tests:
 
