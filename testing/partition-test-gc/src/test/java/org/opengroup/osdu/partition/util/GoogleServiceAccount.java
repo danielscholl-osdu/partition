@@ -58,7 +58,7 @@ public class GoogleServiceAccount {
     return this.serviceAccount.getClientEmail();
   }
 
-  public String getAuthToken(String audience) throws IOException {
+  public String getAuthToken() throws IOException {
     JwtBuilder jwtBuilder = Jwts.builder();
 
     Map<String, Object> header = new HashMap<>();
@@ -67,7 +67,7 @@ public class GoogleServiceAccount {
     jwtBuilder.setHeader(header);
 
     Map<String, Object> claims = new HashMap<>();
-    claims.put("target_audience", audience);
+    claims.put("target_audience", "osdu");
     claims.put("exp", System.currentTimeMillis() / 1000 + 3600);
     claims.put("iat", System.currentTimeMillis() / 1000);
     claims.put("iss", this.getEmail());
