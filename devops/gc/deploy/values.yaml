@@ -6,16 +6,15 @@ data:
   dataProjectId: ""
   dataPartitionId: ""
   dataPartitionIdList: []
-  partitionAdminAccounts: ""
   partitionName: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
-  requestsCpu: "0.1"
-  requestsMemory: "260M"
-  limitsCpu: "1"
+  requestsCpu: "40m"
+  requestsMemory: "256Mi"
+  limitsCpu: "500m"
   limitsMemory: "1G"
   serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
@@ -24,16 +23,14 @@ data:
   # bootstrap onprem
 conf:
   appName: "partition"
-  cicdEnabled: false
   configmap: "partition-config"
   domain: ""
   onPremEnabled: false
-  publicAvailable: false
   secret: "partition-postgres-secret"
 auth:
   realm: "osdu"
 istio:
-  proxyCPU: "50m"
+  proxyCPU: "10m"
   proxyCPULimit: "500m"
   proxyMemory: "64Mi"
   proxyMemoryLimit: "512Mi"
