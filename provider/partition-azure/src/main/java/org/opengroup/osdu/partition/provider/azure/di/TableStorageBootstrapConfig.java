@@ -14,11 +14,11 @@
 
 package org.opengroup.osdu.partition.provider.azure.di;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.RetryLinearRetry;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.table.CloudTable;
-import com.microsoft.azure.storage.table.CloudTableClient;
+import com.azure.core.http.policy.FixedDelayOptions;
+import com.azure.core.http.policy.RetryOptions;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
 import lombok.Setter;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.common.Validators;
@@ -29,23 +29,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 import javax.inject.Named;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
+import java.time.Duration;
 
 @Configuration
 @ConfigurationProperties(prefix = "azure.table-storage")
 @Setter
 public class TableStorageBootstrapConfig {
 
-    private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
-
     private int maximumExecutionTimeMs;
     private int retryDeltaBackoffMs;
     private int retryMaxAttempts;
 
+    private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
+
     @Bean
     @Lazy
-    public CloudTableClient getCloudTableClient(
+    public TableServiceClient getTableServiceClient(
             final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName,
             final @Named("TABLE_STORAGE_ACCOUNT_KEY") String storageAccountKey) {
         try {
@@ -53,30 +52,46 @@ public class TableStorageBootstrapConfig {
             Validators.checkNotNullAndNotEmpty(storageAccountKey, "storageAccountKey");
 
             final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
-            CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
-            CloudTableClient cloudTableClient = storageAccount.createCloudTableClient();
-            cloudTableClient.getDefaultRequestOptions().setRetryPolicyFactory(new RetryLinearRetry(retryDeltaBackoffMs, retryMaxAttempts));
-            cloudTableClient.getDefaultRequestOptions().setMaximumExecutionTimeInMs(maximumExecutionTimeMs);
-            return cloudTableClient;
-        } catch (URISyntaxException | InvalidKeyException e) {
+
+            //There was no substitute function available for setting the maximum execution time as in the previous
+            //version after my research, leaving that part for now. We would still like to know the replaceable code for below line:
+            //cloudTableClient.getDefaultRequestOptions().setMaximumExecutionTimeInMs(maximumExecutionTimeMs);
+            com.azure.core.http.policy.FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
+            RetryOptions retryOptions = new RetryOptions(fixedDelayOptions);
+            TableServiceClient serviceClient = new TableServiceClientBuilder()
+                    .connectionString(storageConnectionString)
+                    .retryOptions(retryOptions)
+                    .buildClient();
+
+            return serviceClient;
+        }
+        catch (Exception e){
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
         }
     }
 
     @Bean
     @Lazy
-    public CloudTable getCloudTable(
-            final CloudTableClient cloudTableClient,
-            final CloudTableConfiguration tblConfiguration) {
+    public TableClient getTableClient(
+            TableServiceClient tableServiceClient,
+            final DataTableConfiguration tblConfiguration) {
         try {
-            Validators.checkNotNull(cloudTableClient, "cloudTableClient");
+            Validators.checkNotNull(tableServiceClient, "tableServiceClient");
             Validators.checkNotNull(tblConfiguration, "tblConfiguration");
 
-            CloudTable cloudTable = cloudTableClient.getTableReference(tblConfiguration.getCloudTableName());
-            cloudTable.createIfNotExists();
-            return cloudTable;
-        } catch (URISyntaxException | StorageException e) {
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error querying cloud table: %s", tblConfiguration), e.getMessage(), e);
+            //Attempting to create the table first, since if the table is already existing we get a null tableClient.
+            //The behaviour of the API when a table is existing was not clearly documented here
+            //https://learn.microsoft.com/en-us/java/api/com.azure.data.tables.tableserviceclient?view=azure-java-stable#com-azure-data-tables-tableserviceclient-createtableifnotexists(java-lang-string).
+            TableClient tableClient = tableServiceClient.createTableIfNotExists(tblConfiguration.getCloudTableName());
+            if(tableClient == null){
+                //On the other hand, if we attempt to getTableClient for a non-existent table, it would not give us null
+                tableClient = tableServiceClient.getTableClient(tblConfiguration.getCloudTableName());
+            }
+            return tableClient;
         }
+        catch (Exception e){
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error creating a Table Client for table: %s", tblConfiguration), e.getMessage(), e);
+        }
+
     }
 }
