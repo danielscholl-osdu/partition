@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
-public class CloudTableConfiguration {
+public class DataTableConfiguration {
 
     @Value("${partition.cloud.table-name:PartitionInfo}")
     private String cloudTableName;

@@ -14,6 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.azure.persistence;
 
+import com.azure.data.tables.models.TableEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,7 +38,7 @@ public class PartitionTableStoreTest {
     private PartitionTableStore sut;
 
     @Mock
-    private CloudTableStore cloudTableStore;
+    private DataTableStore dataTableStore;
 
     private static final String PARTITION_ID = "partitionId";
     private static final String PARTITION_KEY = "PartitionKey";
@@ -50,10 +51,10 @@ public class PartitionTableStoreTest {
 
     @Test
     public void should_get_partitionInfo() {
-        Collection<PartitionEntity> list = new ArrayList<>();
-        PartitionEntity partitionEntity = new PartitionEntity(PARTITION_ID, "name");
-        list.add(partitionEntity);
-        when(cloudTableStore.queryByKey(PartitionEntity.class, PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
+        Collection<TableEntity> list = new ArrayList<>();
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        list.add(tableEntity);
+        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
 
         Map<String, Property> partition = sut.getPartition(PARTITION_ID);
         assertNotNull(partition);
@@ -68,13 +69,13 @@ public class PartitionTableStoreTest {
     }
 
     @Test
-    public void should_addPartiton_whenPartitionProvided() {
+    public void should_addPartition_whenPartitionProvided() {
         sut.addPartition(PARTITION_ID, new PartitionInfo());
     }
 
     @Test
     public void should_returnException_whenNoPartitionInfo() {
-        doThrow(new AppException(500, "Error", "error creating partition")).when(cloudTableStore).insertBatchEntities(any());
+        doThrow(new AppException(500, "Error", "error creating partition")).when(dataTableStore).insertBatchEntities(any());
         try {
             sut.addPartition(PARTITION_ID, new PartitionInfo());
             fail("Should not be here");
@@ -86,10 +87,10 @@ public class PartitionTableStoreTest {
 
     @Test
     public void should_getAll_partitions() {
-        Collection<PartitionEntity> list = new ArrayList<>();
-        PartitionEntity partitionEntity = new PartitionEntity(PARTITION_ID, "name");
-        list.add(partitionEntity);
-        when(cloudTableStore.queryByKey(PartitionEntity.class, "RowKey", "id")).thenReturn((Iterable) list);
+        Collection<TableEntity> list = new ArrayList<>();
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        list.add(tableEntity);
+        when(dataTableStore.queryByKey("RowKey", "id")).thenReturn((Iterable) list);
 
         List<String> partitions = sut.getAllPartitions();
         assertNotNull(partitions);
@@ -98,10 +99,10 @@ public class PartitionTableStoreTest {
 
     @Test
     public void delete_partition() {
-        Collection<PartitionEntity> list = new ArrayList<>();
-        PartitionEntity partitionEntity = new PartitionEntity(PARTITION_ID, "name");
-        list.add(partitionEntity);
-        when(cloudTableStore.queryByKey(PartitionEntity.class, PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
+        Collection<TableEntity> list = new ArrayList<>();
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        list.add(tableEntity);
+        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
         sut.deletePartition(PARTITION_ID);
     }
 }
