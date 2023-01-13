@@ -133,8 +133,6 @@ gc-anthos-deploy: # verified deploy after tests
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
-      --set conf.cicdEnabled=true
-      --set conf.publicAvailable=true
       --set conf.onPremEnabled=true
       --set conf.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
@@ -209,7 +207,6 @@ gc-deploy: # verified deploy after tests
       --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
       --set data.serviceAccountName=$GC_SERVICE-k8s
       --set data.projectId=$GC_PROJECT
-      --set data.partitionAdminAccounts=$GC_PARTITION_ADMIN_ACCOUNTS
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set conf.domain=$GC_DOMAIN
@@ -286,7 +283,6 @@ gc-dev2-deploy: # verified deploy after tests
       --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
       --set data.serviceAccountName=$GC_SERVICE-k8s
       --set data.projectId=osdu-dev2
-      --set data.partitionAdminAccounts=$GC_DEV2_PARTITION_ADMIN_ACCOUNTS
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set conf.domain=$GC_DOMAIN

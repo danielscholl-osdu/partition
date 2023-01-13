@@ -96,43 +96,52 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**logLevel** | logging level | string | INFO | yes
-**springProfilesActive** | active spring profile | string | gcp | yes
-**projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
-**dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
-**partitionAdminAccounts** | admin accounts validated by partition service | string | - | yes
-**serviceAccountTail** | ending of Google Cloud service account | string | .iam.gserviceaccount.com | yes
-**partitionName** | partition host | string | partition | yes
-**partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
-**dataPartitionId** | data partition id | string | - | yes
-**datafierSa** | datafier service account | string | datafier | yes
-**bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
-**minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
+**data.logLevel** | logging level | string | INFO | yes
+**data.springProfilesActive** | active spring profile | string | gcp | yes
+**data.projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
+**data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
+**data.partitionName** | partition host | string | partition | yes
+**data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
+**data.dataPartitionId** | data partition id | string | - | yes
+**data.datafierSa** | datafier service account | string | datafier | yes
+**data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
+**data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and FILE_MINIO_ENDPOINT in bootstrap configmap | string | - | no
 
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**requestsCpu** | amount of requests CPU | string | 0.1 | yes
-**requestsMemory** | amount of requests memory | string | 260M | yes
-**limitsCpu** | CPU limit | string | 1 | yes
-**limitsMemory** | memory limit | string | 1G | yes
-**serviceAccountName** | name of your service account | string | partition | yes
-**image** | path to the image in a registry | string | - | yes
-**imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
-**bootstrapImage** | name of the bootstrap image | string | - | yes
+**data.requestsCpu** | amount of requests CPU | string | 40m | yes
+**data.requestsMemory** | amount of requests memory | string | 256Mi | yes
+**data.limitsCpu** | CPU limit | string | 500m | yes
+**data.imitsMemory** | memory limit | string | 1G | yes
+**data.serviceAccountName** | name of your service account | string | partition | yes
+**data.image** | path to the image in a registry | string | - | yes
+**data.imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
+**data.bootstrapImage** | name of the bootstrap image | string | - | yes
 
 ### Configuration variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**appName** | name of the app | string | partition | yes
-**configmap** | configmap to be used | string | partition-config | yes
-**domain** | your domain | string | - | yes
-**onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**secret** | secret for postgres | string | partition-postgres-secret | yes
-**mtlsMode** | MTLS mode | string | STRICT | yes
-**realm** | realm in keycloak | string | osdu | yes
+**conf.appName** | name of the app | string | partition | yes
+**conf.configmap** | configmap to be used | string | partition-config | yes
+**conf.domain** | your domain | string | - | yes
+**conf.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+**conf.secret** | secret for postgres | string | partition-postgres-secret | yes
+**auth.realm** | realm in keycloak | string | osdu | yes
+
+### ISTIO variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**istio.proxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
+**istio.proxyCPULimit** | CPU limit for Envoy sidecars | string | 500m | yes
+**istio.proxyMemory** | memory request for Envoy sidecars | string | 32Mi | yes
+**istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | 512Mi | yes
+**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
+**istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | 100m | yes
+**istio.sidecarInject** | whether to inject sidecar | boolean | true | yes
 
 ### Install the helm chart
 
