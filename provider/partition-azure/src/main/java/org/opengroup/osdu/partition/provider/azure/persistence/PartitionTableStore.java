@@ -119,10 +119,7 @@ public class PartitionTableStore {
         List<TableEntity> out = new ArrayList<>();
         Iterable<TableEntity> results = (Iterable<TableEntity>)
                 this.dataTableStore.queryByKey(PARTITION_KEY, partitionId);
-        for (TableEntity tableEntity : results) {
-            TableEntity entity = new TableEntity(tableEntity.getPartitionKey(), tableEntity.getRowKey());
-            out.add(entity);
-        }
+        results.forEach(out::add);
         return out;
     }
 
