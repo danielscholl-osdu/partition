@@ -8,27 +8,27 @@ cli:
   project: Partition
 analyze:
   modules:
-  - name: partition
-    type: mvn
-    target: pom.xml
-    path: .
-  - name: partition-core
-    type: mvn
-    target: partition-core/pom.xml
-    path: .
-  - name: partition-azure
-    type: mvn
-    target: provider/partition-azure/pom.xml
-    path: .
-  - name: partition-aws
-    type: mvn
-    target: provider/partition-aws/pom.xml
-    path: .
-  - name: partition-ibm
-    type: mvn
-    target: provider/partition-ibm/pom.xml
-    path: .
-  - name: partition-gcp
-    type: mvn
-    target: provider/partition-gcp/pom.xml
-    path: .
+    - name: partition
+      type: mvn
+      target: pom.xml
+      path: .
+    - name: partition-core
+      type: mvn
+      target: partition-core/pom.xml
+      path: .
+    - name: partition-azure
+      type: mvn
+      target: provider/partition-azure/pom.xml
+      path: .
+    - name: partition-aws
+      type: mvn
+      target: provider/partition-aws/pom.xml
+      path: .
+    - name: partition-ibm
+      type: mvn
+      target: provider/partition-ibm/pom.xml
+      path: .
+    - name: partition-gcp
+      type: mvn
+      target: provider/partition-gc/pom.xml
+      path: .

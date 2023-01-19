@@ -14,8 +14,9 @@
 
 package org.opengroup.osdu.partition.provider.azure.persistence;
 
-import com.microsoft.azure.storage.table.EntityProperty;
-import com.microsoft.azure.storage.table.TableBatchOperation;
+import com.azure.data.tables.models.TableEntity;
+import com.azure.data.tables.models.TableTransactionAction;
+import com.azure.data.tables.models.TableTransactionActionType;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,54 +35,59 @@ public class PartitionTableStore {
     private final static String ROW_KEY = "RowKey";
 
     @Autowired
-    private CloudTableStore cloudTableStore;
+    private DataTableStore dataTableStore;
 
     public void addPartition(String partitionId, PartitionInfo partitionInfo) {
 
         Map<String, Property> requestProperties = partitionInfo.getProperties();
         requestProperties.put(ID, Property.builder().value(partitionId).build());
 
-        TableBatchOperation batchOperation = new TableBatchOperation();
+        //create a list of transactions required
+        List<TableTransactionAction> actionsList = new ArrayList<>();
         for (Map.Entry<String, Property> entry : requestProperties.entrySet()) {
             String key = entry.getKey();
             Property property = entry.getValue();
 
-            PartitionEntity partitionEntity = new PartitionEntity(partitionId, key);
-            HashMap<String, EntityProperty> properties = new HashMap<>();
+            TableEntity partitionEntity = new TableEntity(partitionId, key);
+            Map<String, Object> properties = new HashMap<>();
 
             if (property.isSensitive()) {
                 property.setValue(this.getTenantSafeSecreteId(partitionId, String.valueOf(property.getValue())));
             }
-            properties.put(VALUE, new EntityProperty(String.valueOf(property.getValue())));
-            properties.put(SENSITIVE, new EntityProperty(property.isSensitive()));
+            properties.put(VALUE, property.getValue());
+            properties.put(SENSITIVE, property.isSensitive());
             partitionEntity.setProperties(properties);
-            batchOperation.insertOrMerge(partitionEntity);
+
+            TableTransactionAction tableTransactionAction = new TableTransactionAction(TableTransactionActionType.UPSERT_MERGE,
+                    partitionEntity);
+
+            actionsList.add(tableTransactionAction);
         }
 
-        this.cloudTableStore.insertBatchEntities(batchOperation);
+        this.dataTableStore.insertBatchEntities(actionsList);
     }
 
     public boolean partitionExists(String partitionId) {
-        List<PartitionEntity> partitionEntities = this.queryById(partitionId);
+        List<TableEntity> partitionEntities = this.queryById(partitionId);
         return partitionEntities.size() == 1;
     }
 
     public Map<String, Property> getPartition(String partitionId) {
         Map<String, Property> out = new HashMap<>();
 
-        List<PartitionEntity> partitionEntities = this.getAllByPartitionId(partitionId);
+        List<TableEntity> partitionEntities = this.getAllByPartitionId(partitionId);
         if (partitionEntities.isEmpty()) {
             return out;
         }
 
-        for (PartitionEntity pe : partitionEntities) {
+        for (TableEntity pe : partitionEntities) {
             Property property = Property.builder().build();
-            HashMap<String, EntityProperty> properties = pe.getProperties();
+            Map<String, Object> properties = pe.getProperties();
             if (properties.containsKey(SENSITIVE)) {
-                property.setSensitive(properties.get(SENSITIVE).getValueAsBoolean());
+                property.setSensitive((boolean) properties.get(SENSITIVE));
             }
             if (properties.containsKey(VALUE)) {
-                property.setValue(properties.get(VALUE).getValueAsString());
+                property.setValue(properties.get(VALUE).toString());
             }
             out.put(pe.getRowKey(), property);
         }
@@ -90,38 +96,30 @@ public class PartitionTableStore {
 
     @SuppressWarnings("unchecked")
     public void deletePartition(String partitionId) {
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
-                this.cloudTableStore.queryByKey(PartitionEntity.class,
-                        PARTITION_KEY, partitionId);
-        for (PartitionEntity tableEntity : results) {
-            this.cloudTableStore.deleteCloudTableEntity(PartitionEntity.class, tableEntity.getPartitionKey(), tableEntity.getRowKey());
+        Iterable<TableEntity> results = this.dataTableStore.queryByKey(PARTITION_KEY, partitionId);
+        for (TableEntity tableEntity : results) {
+            this.dataTableStore.deleteCloudTableEntity(tableEntity.getPartitionKey(), tableEntity.getRowKey());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private List<PartitionEntity> queryById(String partitionId) {
-        List<PartitionEntity> out = new ArrayList<>();
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
-                this.cloudTableStore.queryByCompoundKey(PartitionEntity.class,
+    private List<TableEntity> queryById(String partitionId) {
+        List<TableEntity> out = new ArrayList<>();
+        Iterable<TableEntity> results = this.dataTableStore.queryByCompoundKey(
                         ROW_KEY, ID,
                         VALUE, partitionId);
-        for (PartitionEntity tableEntity : results) {
+        for (TableEntity tableEntity : results) {
             out.add(tableEntity);
         }
         return out;
     }
 
     @SuppressWarnings("unchecked")
-    private List<PartitionEntity> getAllByPartitionId(String partitionId) {
-        List<PartitionEntity> out = new ArrayList<>();
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
-                this.cloudTableStore.queryByKey(PartitionEntity.class,
-                        PARTITION_KEY, partitionId);
-        for (PartitionEntity tableEntity : results) {
-            tableEntity.setPartitionId(tableEntity.getPartitionKey());
-            tableEntity.setName(tableEntity.getRowKey());
-            out.add(tableEntity);
-        }
+    private List<TableEntity> getAllByPartitionId(String partitionId) {
+        List<TableEntity> out = new ArrayList<>();
+        Iterable<TableEntity> results = (Iterable<TableEntity>)
+                this.dataTableStore.queryByKey(PARTITION_KEY, partitionId);
+        results.forEach(out::add);
         return out;
     }
 
@@ -131,10 +129,8 @@ public class PartitionTableStore {
 
     public List<String> getAllPartitions() {
         List<String> partitions = new ArrayList<>();
-        Iterable<PartitionEntity> results = (Iterable<PartitionEntity>)
-                this.cloudTableStore.queryByKey(PartitionEntity.class,
-                        ROW_KEY, ID);
-        for (PartitionEntity tableEntity : results) {
+        Iterable<TableEntity> results = this.dataTableStore.queryByKey( ROW_KEY, ID);
+        for (TableEntity tableEntity : results) {
             partitions.add(tableEntity.getPartitionKey());
         }
         return partitions;
