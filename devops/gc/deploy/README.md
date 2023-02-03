@@ -141,7 +141,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | 512Mi | yes
 **istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
 **istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | 100m | yes
-**istio.sidecarInject** | whether to inject sidecar | boolean | true | yes
+**istio.sidecarInject** | whether Istio sidecar will be injected. Setting to "false" reduces security, because disables authorization policy. | boolean | true | yes
 
 ### Install the helm chart
 
