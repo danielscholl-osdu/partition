@@ -4,8 +4,6 @@ variables:
   GC_VENDOR: gc
   GC_HELM_ENV_DIR: "devops/gc/tests/env"
   ENV_BUILD_PATH: "devops/gc/tests/build/Dockerfile"
-  # FIXME remove when all services are migrated to a single helm
-  GC_ENABLE_HELM_CONFIG: "false"
 
 .common_cleanup:
   script:
