@@ -67,7 +67,7 @@ gc-anthos-deploy-test-env: #infra deploy for on-prem install
     - if: '$GC == "1"'
       when: on_success
 
-gc-anthos-deploy-deployment: # reuse common deploy job for test deployment
+gc-anthos-deploy: # reuse common deploy job for test deployment
   needs: ["gc-anthos-deploy-test-env", "gc-containerize-gitlab"]
   variables:
     GC_HELM_NAMESPACE: partition-int-test
@@ -105,7 +105,7 @@ gc-anthos-cleanup-env: # clean-up env after tests
     - if: '$GC == "1"'
       when: always
 
-gc-anthos-deploy: # verified deploy after tests
+gc-anthos-verified-deploy: # verified deploy after tests
   environment:
     name: gc
   extends: .gc-anthos-variables
@@ -144,7 +144,7 @@ gc-anthos-deploy: # verified deploy after tests
     - if: '$GC == "1"'
       when: on_success
 
-gc-deploy-deployment: # reuse common deploy job for test deployment
+gc-deploy: # reuse common deploy job for test deployment
   variables:
     GC_HELM_NAMESPACE: partition-int-test
     GC_HELM_SETS: >-
@@ -182,7 +182,7 @@ gc-cleanup-env: # clean-up env after tests
     - if: '$GC == "1"'
       when: always
 
-gc-deploy: # verified deploy after tests
+gc-verified-deploy: # verified deploy after tests
   environment:
     name: gc
   extends: .gc-variables
@@ -219,7 +219,7 @@ gc-deploy: # verified deploy after tests
     - if: '$GC == "1"'
       when: on_success
 
-gc-dev2-deploy-deployment: # reuse common deploy job for test deployment
+gc-dev2-deploy: # reuse common deploy job for test deployment
   variables:
     GC_HELM_NAMESPACE: partition-int-test
     GC_HELM_SETS: >-
@@ -255,7 +255,7 @@ gc-dev2-cleanup-env: # clean-up env after tests
     - if: '$GC == "1" && $CI_COMMIT_TAG'
       when: always
 
-gc-dev2-deploy: # verified deploy after tests
+gc-dev2-verified-deploy: # verified deploy after tests
   tags: ["osdu-small"]
   extends: .gc-dev2-variables
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
@@ -293,9 +293,9 @@ gc-dev2-deploy: # verified deploy after tests
     - if: '$GC == "1" && $CI_COMMIT_TAG'
       when: on_success
 
-gc-preship-deploy-deployment:
+gc-preship-deploy:
   extends: .gc-preship-variables
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: deploy_preship
-  needs: ["gc-dev2-deploy", "gc-dev2-test"]
+  needs: ["gc-dev2-verified-deploy", "gc-dev2-test"]
