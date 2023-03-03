@@ -27,6 +27,7 @@ conf:
   domain: ""
   onPremEnabled: false
   secret: "partition-postgres-secret"
+  domainTlsEnabled: true
 auth:
   realm: "osdu"
 istio:
