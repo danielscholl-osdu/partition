@@ -129,6 +129,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **conf.domain** | your domain | string | - | yes
 **conf.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **conf.secret** | secret for postgres | string | partition-postgres-secret | yes
+**conf.domainTlsEnabled** | whether TLS is enabled in domain - defines whether to use HTTPS instead of HTTP for connection to the minio s3 endpoint | boolean | true | yes
 **auth.realm** | realm in keycloak | string | osdu | yes
 
 ### ISTIO variables
