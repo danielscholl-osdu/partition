@@ -74,6 +74,7 @@ gc-anthos-deploy: # reuse common deploy job for test deployment
     GC_TENANT: test
     GC_HELM_SETS: >-
       --set istio.sidecarInject=false
+      --set data.indexerSa=indexer
 
 gc-anthos-test:
   variables:
@@ -131,6 +132,7 @@ gc-anthos-verified-deploy: # verified deploy after tests
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
+      --set data.indexerSa=indexer
       --set conf.onPremEnabled=true
       --set conf.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
