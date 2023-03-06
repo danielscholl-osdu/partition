@@ -135,6 +135,10 @@ generate_post_data_anthos() {
     "kubernetes-secret-name": {
       "sensitive": false,
       "value": "eds-${DATA_PARTITION_ID}"
+    },
+    "indexer.service.account": {
+      "sensitive": false,
+      "value": "${INDEXER_SERVICE_ACCOUNT}"
     }
   }
 }
