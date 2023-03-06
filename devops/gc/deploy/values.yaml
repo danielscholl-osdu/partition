@@ -9,6 +9,7 @@ data:
   partitionName: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
+  indexerSa: "workload-indexer-gcp"
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   # deployments
