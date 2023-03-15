@@ -15,6 +15,8 @@
 package org.opengroup.osdu.partition.model;
 
 import javax.validation.constraints.NotEmpty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,9 +29,12 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Partition properties and their values",
+        example = "OrderedMap { \"properties\": OrderedMap { \"compliance-ruleset\": OrderedMap { \"sensitive\": false, \"value\": \"shared\" }, \"elastic-endpoint\": OrderedMap { \"sensitive\": true, \"value\": \"elastic-endpoint\" }, \"cosmos-connection\": OrderedMap { \"sensitive\": true, \"value\": \"cosmos-connection\" } } }")
 public class PartitionInfo {
 
     @NotEmpty
     @Builder.Default
+    @Schema(description = "Free form key value pair object for any data partition specific values")
     Map<String, Property> properties = new HashMap<>();
 }
