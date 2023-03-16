@@ -92,6 +92,13 @@ Packages are only needed for installation from a local computer.
 
 First you need to set variables in **values.yaml** file using any code editor. Some of the values are prefilled, but you need to specify some values as well. You can find more information about them below.
 
+### Global variables
+
+| Name | Description | Type | Default |Required |
+|------|-------------|------|---------|---------|
+**global.domain** | your domain | string | - | yes
+**global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
@@ -127,8 +134,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **conf.appName** | name of the app | string | partition | yes
 **conf.configmap** | configmap to be used | string | partition-config | yes
-**conf.domain** | your domain | string | - | yes
-**conf.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **conf.secret** | secret for postgres | string | partition-postgres-secret | yes
 **conf.domainTlsEnabled** | whether TLS is enabled in domain - defines whether to use HTTPS instead of HTTP for connection to the minio s3 endpoint | boolean | true | yes
 **auth.realm** | realm in keycloak | string | osdu | yes

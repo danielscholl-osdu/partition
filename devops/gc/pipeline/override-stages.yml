@@ -133,8 +133,8 @@ gc-anthos-verified-deploy: # verified deploy after tests
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
       --set data.indexerSa=indexer
-      --set conf.onPremEnabled=true
-      --set conf.domain=$GC_DOMAIN
+      --set global.onPremEnabled=true
+      --set global.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
     - !reference [.verify_deploy, script]
     - !reference [.verify_bootstrap, script]
