@@ -9,16 +9,16 @@ data:
   PARTITION_NAME: "{{ .Values.data.partitionName }}"
   DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
   ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
-  {{- if .Values.conf.onPremEnabled }}
+  {{- if .Values.global.onPremEnabled }}
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
   INDEXER_SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.indexerSa | quote }}
-  DOMAIN: "{{ .Values.conf.domain }}"
+  DOMAIN: "{{ .Values.global.domain }}"
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
   MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
   {{- if .Values.conf.domainTlsEnabled }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- else }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "http://s3.%s" .Values.conf.domain) .Values.data.minioExternalEndpoint | quote }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- end }}
   {{- else }}
   {{- if .Values.data.dataProjectId }}
