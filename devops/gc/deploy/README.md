@@ -97,6 +97,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain | string | - | yes
+**global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | true | yes
 **global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 
 ### Configmap variables
@@ -135,7 +136,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **conf.appName** | name of the app | string | partition | yes
 **conf.configmap** | configmap to be used | string | partition-config | yes
 **conf.secret** | secret for postgres | string | partition-postgres-secret | yes
-**conf.domainTlsEnabled** | whether TLS is enabled in domain - defines whether to use HTTPS instead of HTTP for connection to the minio s3 endpoint | boolean | true | yes
 **auth.realm** | realm in keycloak | string | osdu | yes
 
 ### ISTIO variables

@@ -1,5 +1,6 @@
 global:
   domain: ""
+  useHttps: true
   onPremEnabled: false
 
 data:
@@ -31,7 +32,6 @@ conf:
   appName: "partition"
   configmap: "partition-config"
   secret: "partition-postgres-secret"
-  domainTlsEnabled: true
 
 auth:
   realm: "osdu"
