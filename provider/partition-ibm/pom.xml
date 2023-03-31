@@ -142,12 +142,11 @@
 		<dependency>
 		    <groupId>org.apache.tomcat.embed</groupId>
 		    <artifactId>tomcat-embed-core</artifactId>
-		    <version>9.0.68</version>
 		</dependency>
 		<dependency>
 		    <groupId>io.netty</groupId>
 		    <artifactId>netty-codec</artifactId>
-		    <version>4.1.77.Final</version>
+		    <version>4.1.86.Final</version>
 		</dependency>
 		
 		<dependency>
@@ -161,7 +160,11 @@
 		    <artifactId>okhttp</artifactId>
 		    <version>4.9.2</version>
 		</dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.4.2</version>
+        </dependency>
          <!-- Keycloak  -->
       <!--   <dependency>
             <groupId>org.keycloak</groupId>
