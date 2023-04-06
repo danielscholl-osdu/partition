@@ -16,10 +16,11 @@ data:
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
   MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
   {{- if .Values.global.useHttps }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
+  MINIO_EXTERNAL_ENDPOINT: {{ default (printf "https://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- else }}
-  FILE_MINIO_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
+  MINIO_EXTERNAL_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- end }}
+  MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
   {{- else }}
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
