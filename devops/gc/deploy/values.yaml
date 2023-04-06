@@ -17,6 +17,7 @@ data:
   indexerSa: "workload-indexer-gcp"
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
+  minioIgnoreCertCheck: "false"
   # deployments
   requestsCpu: "10m"
   requestsMemory: "400Mi"
