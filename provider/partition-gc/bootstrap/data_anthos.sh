@@ -48,18 +48,6 @@ generate_post_data_anthos() {
       "sensitive": true,
       "value": "POSTGRES_DB_PASSWORD_${DATA_PARTITION_ID_UPPER}"
     },
-    "file.minio.endpoint": {
-      "sensitive": false,
-      "value": "${FILE_MINIO_ENDPOINT}"
-    },
-    "file.minio.accessKey": {
-      "sensitive": true,
-      "value": "MINIO_ACCESS_KEY"
-    },
-    "file.minio.secretKey": {
-      "sensitive": true,
-      "value": "MINIO_SECRET_KEY"
-    },
     "obm.minio.endpoint": {
       "sensitive": false,
       "value": "${MINIO_ENDPOINT}"
@@ -71,6 +59,14 @@ generate_post_data_anthos() {
     "obm.minio.secretKey": {
       "sensitive": true,
       "value": "MINIO_SECRET_KEY"
+    },
+    "obm.minio.ignoreCertCheck": {
+      "sensitive": false,
+      "value": "${MINIO_IGNORE_CERT_CHECK}"
+    },
+    "obm.minio.external.endpoint": {
+      "sensitive": false,
+      "value": "${MINIO_EXTERNAL_ENDPOINT}"
     },
     "oqm.rabbitmq.amqp.host": {
       "sensitive": false,
