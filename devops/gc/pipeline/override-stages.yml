@@ -269,9 +269,8 @@ gc-dev2-verified-deploy: # verified deploy after tests
     - !reference [.common_config, script]
     - !reference [.define_version, script]
     - !reference [.set_image_name, script]
-    - helm repo add $GC_SERVICE ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable
     - >
-      helm upgrade $GC_SERVICE-deploy $GC_SERVICE/gc-$GC_SERVICE-deploy
+      helm upgrade $GC_SERVICE-deploy oci://$CI_REGISTRY_IMAGE/gc-helm/$GC_HELM_PACKAGE_NAME
       --version $VERSION
       --install
       --create-namespace
