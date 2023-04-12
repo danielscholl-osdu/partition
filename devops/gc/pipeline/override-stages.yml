@@ -1,0 +1,303 @@
+variables:
+  GC_ENABLE_BOOTSTRAP: "true"
+  GC_SERVICE: partition
+  GC_VENDOR: gc
+  GC_HELM_ENV_DIR: "devops/gc/tests/env"
+  ENV_BUILD_PATH: "devops/gc/tests/build/Dockerfile"
+
+.common_cleanup:
+  script:
+    - git clone https://community.opengroup.org/osdu/platform/deployment-and-operations/infra-gcp-provisioning.git
+    - cp infra-gcp-provisioning/tools/datastore-cleanup/* devops/gc/tests/clean_up/
+
+gc-containerize-bootstrap-env-gitlab:
+  stage: build
+  image: docker:19.03.15
+  tags: ["osdu-small"]
+  services:
+    - docker:20.10.7-dind
+  variables:
+    BUILD_BOOTSTRAP_PATH: "devops/gc/tests/build/Dockerfile"
+  script:
+    - export EXTRA_DOCKER_TAG=""
+    - >
+      if [[ "$CI_COMMIT_TAG" != "" ]];
+      then EXTRA_DOCKER_TAG="-t $CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME-env:$CI_COMMIT_TAG";
+      elif [[ "$CI_COMMIT_REF_NAME" = "$CI_DEFAULT_BRANCH" ]];
+      then EXTRA_DOCKER_TAG="-t $CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME-env:latest"; fi
+    - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME-env:$CI_COMMIT_SHORT_SHA $EXTRA_DOCKER_TAG -f $BUILD_BOOTSTRAP_PATH .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME-env
+  rules:
+    - if: "$GC == '1' && $GC_ENABLE_BOOTSTRAP == 'true'"
+      when: on_success
+
+gc-anthos-deploy-test-env: #infra deploy for on-prem install
+  environment:
+    name: gc
+  extends: .gc-anthos-variables
+  tags: ["osdu-small"]
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: deploy
+  needs: ["gc-containerize-bootstrap-env-gitlab", "compile-and-unit-test"]
+  retry: 1
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+  script:
+    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - export PASSWORD=$(</dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
+    - cd $GC_HELM_ENV_DIR
+    - helm dependency update
+    - >
+      helm upgrade $GC_SERVICE-env .
+      --install
+      --create-namespace
+      --namespace=$GC_HELM_NAMESPACE
+      --wait
+      --history-max=3
+      --set postgresql.global.postgresql.auth.postgresPassword=$PASSWORD
+      --set bootstrap.postgres.image=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE-env:$CI_COMMIT_SHORT_SHA
+      $GC_HELM_TIMEOUT
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: on_success
+
+gc-anthos-deploy: # reuse common deploy job for test deployment
+  needs: ["gc-anthos-deploy-test-env", "gc-containerize-gitlab"]
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_TENANT: test
+    GC_HELM_SETS: >-
+      --set istio.sidecarInject=false
+      --set data.indexerSa=indexer
+
+gc-anthos-test:
+  variables:
+    GC_VENDOR: anthos
+    PARTITION_BASE_URL: https://test.ref.gcp.gnrg-osdu.projects.epam.com/
+
+gc-anthos-cleanup-env: # clean-up env after tests
+  environment:
+    name: gc
+  stage: cleanup
+  extends: .gc-anthos-variables
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  needs: ["gc-anthos-test"]
+  tags: ["osdu-small"]
+  variables:
+    PARTITION_NAMESPACE: partition-test
+    GC_HELM_NAMESPACE: partition-int-test
+  script:
+    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_ANTHOS_DEPLOY_FILE"
+    - !reference [.common_cleanup, script]
+    - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --cluster
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: always
+
+gc-anthos-verified-deploy: # verified deploy after tests
+  environment:
+    name: gc
+  extends: .gc-anthos-variables
+  tags: ["osdu-small"]
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: verified-deploy
+  needs: ["gc-anthos-test"]
+  retry: 1
+  script:
+    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - >
+      helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
+      --install
+      --create-namespace
+      --namespace=$GC_HELM_NAMESPACE
+      --wait
+      --history-max=3
+      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
+      --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
+      --set data.serviceAccountName=$GC_SERVICE
+      --set data.bucketPrefix=osdu-anthos
+      --set data.dataPartitionId=$GC_TENANT
+      --set data.logLevel=INFO
+      --set data.springProfilesActive=anthos
+      --set data.indexerSa=indexer
+      --set global.onPremEnabled=true
+      --set global.domain=$GC_DOMAIN
+      $GC_HELM_TIMEOUT
+    - !reference [.verify_deploy, script]
+    - !reference [.verify_bootstrap, script]
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: on_success
+
+gc-deploy: # reuse common deploy job for test deployment
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_HELM_SETS: >-
+      --set data.dataPartitionId=test
+      --set data.partitionNamespace=partition-test
+      --set istio.sidecarInject=false
+
+gc-test:
+  variables:
+    CLIENT_TENANT: test
+    PARTITION_BASE_URL: https://test.community.gcp.gnrg-osdu.projects.epam.com/
+
+gc-cleanup-env: # clean-up env after tests
+  environment:
+    name: gc
+  stage: cleanup
+  extends: .gc-variables
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  needs: ["gc-test"]
+  tags: ["osdu-small"]
+  variables:
+    PARTITION_NAMESPACE: partition-test
+    GC_HELM_NAMESPACE: partition-int-test
+  script:
+    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
+    - !reference [.common_cleanup, script]
+    - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: always
+
+gc-verified-deploy: # verified deploy after tests
+  environment:
+    name: gc
+  extends: .gc-variables
+  tags: ["osdu-small"]
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: verified-deploy
+  needs: ["gc-test"]
+  retry: 1
+  script:
+    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - >
+      helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
+      --install
+      --create-namespace
+      --namespace=$GC_HELM_NAMESPACE
+      --wait
+      --history-max=3
+      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
+      --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
+      --set data.serviceAccountName=$GC_SERVICE-k8s
+      --set data.projectId=$GC_PROJECT
+      --set data.dataPartitionId=$GC_TENANT
+      --set data.logLevel=INFO
+      --set conf.domain=$GC_DOMAIN
+      $GC_HELM_TIMEOUT
+    - !reference [.verify_deploy, script]
+    - !reference [.verify_bootstrap, script]
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: on_success
+
+gc-dev2-deploy: # reuse common deploy job for test deployment
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_HELM_SETS: >-
+      --set data.dataPartitionId=test
+      --set data.partitionNamespace=partition-test
+      --set istio.sidecarInject=false
+
+gc-dev2-test:
+  variables:
+    CLIENT_TENANT: test
+    PARTITION_BASE_URL: https://test.dev2.gcp.gnrg-osdu.projects.epam.com/
+
+gc-dev2-cleanup-env: # clean-up env after tests
+  environment:
+    name: gc
+  stage: cleanup
+  extends: .gc-dev2-variables
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  needs: [gc-dev2-test]
+  tags: ["osdu-small"]
+  variables:
+    PARTITION_NAMESPACE: partition-test
+    GC_HELM_NAMESPACE: partition-int-test
+  script:
+    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
+    - !reference [.common_cleanup, script]
+    - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
+  rules:
+    - if: '$GC == "1" && $CI_COMMIT_BRANCH =~ /^release/'
+      when: always
+    - if: '$GC == "1" && $CI_COMMIT_TAG'
+      when: always
+
+gc-dev2-verified-deploy: # verified deploy after tests
+  tags: ["osdu-small"]
+  extends: .gc-dev2-variables
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: verified-deploy
+  needs: ["gc-containerize-gitlab", "gc-dev2-test"]
+  retry: 1
+  script:
+    - gcloud auth activate-service-account --key-file $GC_DEV2_DEPLOY_FILE
+    - !reference [.common_config, script]
+    - !reference [.define_version, script]
+    - !reference [.set_image_name, script]
+    - helm repo add $GC_SERVICE ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/stable
+    - >
+      helm upgrade $GC_SERVICE-deploy $GC_SERVICE/gc-$GC_SERVICE-deploy
+      --version $VERSION
+      --install
+      --create-namespace
+      --namespace=$GC_HELM_NAMESPACE
+      --wait
+      --history-max=3
+      --set data.imagePullPolicy=Always
+      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+      --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
+      --set data.serviceAccountName=$GC_SERVICE-k8s
+      --set data.projectId=osdu-dev2
+      --set data.dataPartitionId=$GC_TENANT
+      --set data.logLevel=INFO
+      --set conf.domain=$GC_DOMAIN
+      $GC_HELM_TIMEOUT
+    - !reference [.verify_deploy, script]
+    - !reference [.verify_bootstrap, script]
+  rules:
+    - if: '$GC == "1" && $CI_COMMIT_BRANCH =~ /^release/'
+      when: on_success
+    - if: '$GC == "1" && $CI_COMMIT_TAG'
+      when: on_success
+
+gc-preship-deploy:
+  extends: .gc-preship-variables
+  tags: ["osdu-small"]
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: deploy_preship
+  needs: ["gc-dev2-verified-deploy", "gc-dev2-test"]

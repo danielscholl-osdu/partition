@@ -61,8 +61,8 @@ environmentVariables:
     value: "true"
   - name: MONGODB_ENABLE_TLS
     value: "false"
-podAnnotations: 
-  seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
+  - name: TMP_VOLUME_PATH
+    value: "/tmp"
 
 # Resource Config
 replicaCount: 1
@@ -96,14 +96,18 @@ cors:
 securityContext: 
   runAsUser: 10001
   runAsNonRoot: true
-  readOnlyRootFilesystem: false
+  readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
   capabilities:
     drop:
     - ALL
+podSecurityContext: 
+  fsGroup: 1337
+  seccompProfile:
+    type: RuntimeDefault
 
 allowedPrincipals:
-  - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+  - cluster.local/ns/istio-system/sa/istio-ingressgateway
   - cluster.local/ns/{{ .Release.Namespace }}/sa/compliance-queue
   - cluster.local/ns/{{ .Release.Namespace }}/sa/compliance-queue-trigger
   - cluster.local/ns/{{ .Release.Namespace }}/sa/indexer-queue
@@ -129,6 +133,7 @@ allowedPrincipals:
   - cluster.local/ns/osdu-airflow/sa/airflow-worker
   - cluster.local/ns/osdu-ingest/sa/os-data-workflow
   - cluster.local/ns/osdu-ingest/sa/os-ingestion-workflow
+  - cluster.local/ns/osdu-ingest/sa/os-secret
   - cluster.local/ns/osdu-seismic-ddms/sa/os-seismic-store
   - cluster.local/ns/osdu-well-delivery/sa/os-welldelivery
   - cluster.local/ns/osdu-wellbore-ddms/sa/os-wellbore-ddms

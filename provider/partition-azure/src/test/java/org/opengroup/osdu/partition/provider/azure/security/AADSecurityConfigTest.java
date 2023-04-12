@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengroup.osdu.partition.api.PartitionApi;
-import org.opengroup.osdu.partition.swagger.HomeController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {HomeController.class,
+@SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {
         PartitionApi.class,
         AADSecurityConfig.class,
         AADAppRoleStatelessAuthenticationFilter.class})
@@ -55,8 +54,6 @@ public class AADSecurityConfigTest {
 
     @Test
     public void testOptions() throws Exception {
-        mockMvc.perform(options("/swagger"))
-                .andExpect(status().is2xxSuccessful());
 
         mockMvc.perform(options("/fake"))
                 .andExpect(status().isNotFound());

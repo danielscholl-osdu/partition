@@ -92,6 +92,19 @@ public abstract class TestUtils {
         return response;
     }
 
+	/** Referenced for Test cases where [Token, body] not required. ex [Swagger API] **/
+	public static ClientResponse send(String path, String httpMethod, boolean enforceHttp) throws Exception {
+
+		Client client = getClient();
+		client.setConnectTimeout(1500000);
+		client.setReadTimeout(1500000);
+		String url = getApiPath(path, enforceHttp);
+		WebResource webResource = client.resource(url);
+		final WebResource.Builder builder = webResource.getRequestBuilder();
+		ClientResponse response = builder.method(httpMethod, ClientResponse.class);
+		return response;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> T getResult(ClientResponse response, int exepectedStatus, Class<T> classOfT) {
 		String json = response.getEntity(String.class);

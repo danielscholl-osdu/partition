@@ -1,0 +1,46 @@
+global:
+  domain: ""
+  useHttps: true
+  onPremEnabled: false
+
+data:
+  # configmaps
+  logLevel: "ERROR"
+  springProfilesActive: "gcp"
+  projectId: ""
+  dataProjectId: ""
+  dataPartitionId: ""
+  dataPartitionIdList: []
+  partitionName: "partition"
+  partitionNamespace: "partition"
+  datafierSa: "datafier"
+  indexerSa: "workload-indexer-gcp"
+  bucketPrefix: "refi"
+  minioExternalEndpoint: "" # use only if external minio is configured
+  # deployments
+  requestsCpu: "10m"
+  requestsMemory: "400Mi"
+  limitsCpu: "500m"
+  limitsMemory: "1G"
+  serviceAccountName: "partition"
+  imagePullPolicy: "IfNotPresent"
+  image: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-partition:latest"
+  bootstrapImage: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-bootstrap-partition:latest"
+  # bootstrap onprem
+
+conf:
+  appName: "partition"
+  configmap: "partition-config"
+  secret: "partition-postgres-secret"
+
+auth:
+  realm: "osdu"
+
+istio:
+  proxyCPU: "10m"
+  proxyCPULimit: "500m"
+  proxyMemory: "100Mi"
+  proxyMemoryLimit: "512Mi"
+  bootstrapProxyCPU: "10m"
+  bootstrapProxyCPULimit: "100m"
+  sidecarInject: "true"
