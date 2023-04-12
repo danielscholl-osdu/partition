@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: "{{ .Values.conf.appName }}-bootstrap"
+  name: "{{ .Values.conf.configmap }}-bootstrap"
+  namespace: "{{ .Release.Namespace }}"
+data:
+  PARTITION_NAME: "{{ .Values.data.partitionName }}"
+  DATA_PARTITION_ID: "{{ .Values.data.dataPartitionId }}"
+  ENVIRONMENT: "{{ .Values.data.springProfilesActive }}"
+  {{- if .Values.global.onPremEnabled }}
+  SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
+  INDEXER_SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.indexerSa | quote }}
+  DOMAIN: "{{ .Values.global.domain }}"
+  BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
+  MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
+  {{- if .Values.global.useHttps }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "https://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
+  {{- else }}
+  FILE_MINIO_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
+  {{- end }}
+  {{- else }}
+  {{- if .Values.data.dataProjectId }}
+  PROJECT_ID: "{{ .Values.data.dataProjectId }}"
+  {{- else }}
+  PROJECT_ID: "{{ .Values.data.projectId }}"
+  {{- end }}
+  SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
+  INDEXER_SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.indexerSa .Values.data.projectId | quote }}
+  {{- end }}
+  DATA_PARTITION_ID_LIST: {{ join "," .Values.data.dataPartitionIdList | quote }}
