@@ -15,15 +15,14 @@
 package org.opengroup.osdu.partition.provider.aws.security;
 
 import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
-import org.opengroup.osdu.core.common.entitlements.IEntitlementsAndCacheService;
+import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 import org.opengroup.osdu.core.aws.entitlements.Authorizer;
 import org.opengroup.osdu.core.aws.ssm.SSMUtil;
 
@@ -39,27 +38,16 @@ public class AuthorizationService implements IAuthorizationService {
     @Autowired
     private DpsHeaders headers;
 
-
-    @Value("${aws.dynamodb.region}")
-    private String awsRegion;
-
-    @Value("${aws.environment}")
-    private String awsEnvironment;
-
     Authorizer authorizer;
     String memberEmail=null;
     SSMUtil ssmUtil = null;
     String spu_email=null;
 
     @PostConstruct
-    public void init() {
-        authorizer = new Authorizer(awsRegion, awsEnvironment);
-        if (ssmUtil == null) {
-            ssmUtil = new SSMUtil("/osdu/" + awsEnvironment + "/");
-        }
-        //get sp email
-        spu_email = ssmUtil.getSsmParameterAsString("service-principal-user");
-
+    public void init() throws K8sParameterNotFoundException {
+        authorizer = new Authorizer();
+        K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
+        spu_email = provider.getParameterAsString("service_principal_user");
     }
 
     @Override
