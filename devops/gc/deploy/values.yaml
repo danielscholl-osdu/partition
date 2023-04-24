@@ -19,8 +19,8 @@ data:
   minioExternalEndpoint: "" # use only if external minio is configured
   minioIgnoreCertCheck: "false"
   # deployments
-  requestsCpu: "10m"
-  requestsMemory: "400Mi"
+  requestsCpu: "5m"
+  requestsMemory: "350Mi"
   limitsCpu: "500m"
   limitsMemory: "1G"
   serviceAccountName: "partition"
@@ -38,10 +38,10 @@ auth:
   realm: "osdu"
 
 istio:
-  proxyCPU: "10m"
+  proxyCPU: "5m"
   proxyCPULimit: "500m"
-  proxyMemory: "100Mi"
+  proxyMemory: "64Mi"
   proxyMemoryLimit: "512Mi"
-  bootstrapProxyCPU: "10m"
+  bootstrapProxyCPU: "5m"
   bootstrapProxyCPULimit: "100m"
   sidecarInject: "true"
