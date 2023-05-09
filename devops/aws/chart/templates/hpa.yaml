@@ -1,4 +1,0 @@
-{{- template "common.hpa" (list . "os-partition.hpa") -}}
-{{- define "os-partition.hpa" -}}
-## Define overrides for the service HPA resource here
-{{- end -}}
