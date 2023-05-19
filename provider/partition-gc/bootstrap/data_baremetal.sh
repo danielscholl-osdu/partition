@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-generate_post_data_anthos() {
+generate_post_data_baremetal() {
   cat <<EOF
 {
   "properties": {
