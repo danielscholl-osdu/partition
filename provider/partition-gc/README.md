@@ -37,9 +37,9 @@ Pre-requisites
 * Lombok 1.16 or later
 * Maven
 
-### Anthos Service Configuration
+### Baremetal Service Configuration
 
-[Anthos service configuration](docs/anthos/README.md)
+[Baremetal service configuration](docs/baremetal/README.md)
 
 ### Google Cloud Service Configuration
 
@@ -134,9 +134,9 @@ $ (cd testing/partition-test-core/ && mvn clean install)
 
 This section describes how to run cloud OSDU E2E tests.
 
-### Anthos test configuration
+### Baremetal test configuration
 
-[Anthos service configuration](docs/anthos/README.md)
+[Baremetal service configuration](docs/baremetal/README.md)
 
 ### Google Cloud test configuration
 

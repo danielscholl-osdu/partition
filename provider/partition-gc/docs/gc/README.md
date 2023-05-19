@@ -21,7 +21,7 @@ Defined in default application property file but possible to override:
 | `PARTITION_PROPERTY_KIND` | ex `PartitionProperty` | Kind name to store the properties. | no | - |
 | `PARTITION_NAMESPACE` | ex `partition` | Namespace for database. | no | - |
 
-These variables define service behavior, and are used to switch between `anthos` or `gc` environments, their overriding and usage in mixed mode was not tested.
+These variables define service behavior, and are used to switch between `baremetal` or `gc` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
 
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
