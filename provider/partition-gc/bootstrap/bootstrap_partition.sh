@@ -2,11 +2,11 @@
 
 set -ex
 
-source ./data_anthos.sh
+source ./data_baremetal.sh
 source ./data_gc.sh
 
-# Bootstrap Partition service on Anthos (on-prem)
-bootstrap_anthos() {
+# Bootstrap Partition service on Baremetal (on-prem)
+bootstrap_baremetal() {
 
   DATA_PARTITION_ID=$1
   DATA_PARTITION_ID_UPPER=$2
@@ -14,7 +14,7 @@ bootstrap_anthos() {
   status_code=$(curl -X POST \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
-    --data-raw "$(generate_post_data_anthos)")
+    --data-raw "$(generate_post_data_baremetal)")
 
   # shellcheck disable=SC2002
   if [[ "${status_code}" == 201 ]]; then
@@ -24,7 +24,7 @@ bootstrap_anthos() {
     patch_status_code=$(curl -X PATCH \
     --url "http://${PARTITION_NAME}/api/partition/v1/partitions/${DATA_PARTITION_ID}" --write-out "%{http_code}" --silent --output "/dev/null" \
     -H "Content-Type: application/json" \
-    --data-raw "$(generate_post_data_anthos)")
+    --data-raw "$(generate_post_data_baremetal)")
 
     echo "Partition was patched because Postgres Database had already had entities! Status code: ${patch_status_code}"
   else
@@ -65,7 +65,7 @@ bootstrap_gc() {
 }
 
 if [[ "${ENVIRONMENT}" == "anthos" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
-  bootstrap_anthos "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
+  bootstrap_baremetal "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
 elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" == "" ]]; then
   bootstrap_gc "${DATA_PARTITION_ID}" "${DATA_PARTITION_ID^^}"
 elif [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
