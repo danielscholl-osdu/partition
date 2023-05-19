@@ -1,4 +1,4 @@
-# Service Configuration for Anthos
+# Service Configuration for Baremetal
 
 ## Environment variables
 
@@ -8,7 +8,7 @@ Must have:
 
 | name | value | description | sensitive? | source |
 | ---  | ---   | ---         | ---        | ---    |
-| `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for Anthos environment | false | - |
+| `SPRING_PROFILES_ACTIVE` | ex `anthos` | Spring profile that activate default configuration for Baremetal environment | false | - |
 | `OSM_POSTGRES_URL` | ex `jdbc:postgresql://127.0.0.1:5432/postgres` | Postgres server URL | no | - |
 | `OSM_POSTGRES_USERNAME` | ex `postgres` | Postgres admin username | no | - |
 | `OSM_POSTGRES_PASSWORD` | ex `postgres` | Postgres admin password | yes | - |
@@ -23,7 +23,7 @@ Defined in default application property file but possible to override:
 | `PARTITION_PROPERTY_KIND` | ex `PartitionProperty` | Kind name to store the properties. | no | - |
 | `PARTITION_NAMESPACE` | ex `partition` | Namespace for database. | no | - |
 
-These variables define service behavior, and are used to switch between `anthos` or `gcp` environments, their overriding and usage in mixed mode was not tested.
+These variables define service behavior, and are used to switch between `baremetal` or `gcp` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
 
 | `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
@@ -65,7 +65,7 @@ Execute following command to build code and run all the integration tests:
 ```bash
 # Note: this assumes that the environment variables for integration tests as outlined
 #       above are already exported in your environment.
-$ (cd testing/partition-test-anthos/ && mvn clean test)
+$ (cd testing/partition-test-baremetal/ && mvn clean test)
 ```
 
 ## License

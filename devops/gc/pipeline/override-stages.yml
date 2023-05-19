@@ -32,10 +32,10 @@ gc-containerize-bootstrap-env-gitlab:
     - if: "$GC == '1' && $GC_ENABLE_BOOTSTRAP == 'true'"
       when: on_success
 
-gc-anthos-deploy-test-env: #infra deploy for on-prem install
+gc-baremetal-deploy-test-env: #infra deploy for on-prem install
   environment:
     name: gc
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: deploy
@@ -44,7 +44,7 @@ gc-anthos-deploy-test-env: #infra deploy for on-prem install
   variables:
     GC_HELM_NAMESPACE: partition-int-test
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
     - !reference [.common_config, script]
     - export PASSWORD=$(</dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
     - cd $GC_HELM_ENV_DIR
@@ -67,8 +67,8 @@ gc-anthos-deploy-test-env: #infra deploy for on-prem install
     - if: '$GC == "1"'
       when: on_success
 
-gc-anthos-deploy: # reuse common deploy job for test deployment
-  needs: ["gc-anthos-deploy-test-env", "gc-containerize-gitlab"]
+gc-baremetal-deploy: # reuse common deploy job for test deployment
+  needs: ["gc-baremetal-deploy-test-env", "gc-containerize-gitlab"]
   variables:
     GC_HELM_NAMESPACE: partition-int-test
     GC_TENANT: test
@@ -76,26 +76,26 @@ gc-anthos-deploy: # reuse common deploy job for test deployment
       --set istio.sidecarInject=false
       --set data.indexerSa=indexer
 
-gc-anthos-test:
+gc-baremetal-test:
   variables:
-    GC_VENDOR: anthos
+    GC_VENDOR: baremetal
     PARTITION_BASE_URL: https://test.ref.gcp.gnrg-osdu.projects.epam.com/
 
-gc-anthos-cleanup-env: # clean-up env after tests
+gc-baremetal-cleanup-env: # clean-up env after tests
   environment:
     name: gc
   stage: cleanup
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
-  needs: ["gc-anthos-test"]
+  needs: ["gc-baremetal-test"]
   tags: ["osdu-small"]
   variables:
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
     - !reference [.common_config, script]
-    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_ANTHOS_DEPLOY_FILE"
+    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_BAREMETAL_DEPLOY_FILE"
     - !reference [.common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --cluster
   rules:
@@ -106,17 +106,17 @@ gc-anthos-cleanup-env: # clean-up env after tests
     - if: '$GC == "1"'
       when: always
 
-gc-anthos-verified-deploy: # verified deploy after tests
+gc-baremetal-verified-deploy: # verified deploy after tests
   environment:
     name: gc
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: verified-deploy
-  needs: ["gc-anthos-test"]
+  needs: ["gc-baremetal-test"]
   retry: 1
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
     - !reference [.common_config, script]
     - >
       helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
