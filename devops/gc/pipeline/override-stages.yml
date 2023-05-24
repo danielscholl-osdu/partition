@@ -133,6 +133,7 @@ gc-baremetal-verified-deploy: # verified deploy after tests
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
       --set data.indexerSa=indexer
+      --set data.indexerAugmenterEnabled=true
       --set global.onPremEnabled=true
       --set global.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
@@ -209,6 +210,7 @@ gc-verified-deploy: # verified deploy after tests
       --set data.projectId=$GC_PROJECT
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
+      --set data.indexerAugmenterEnabled=true
       --set conf.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
     - !reference [.verify_deploy, script]

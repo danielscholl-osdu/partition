@@ -18,6 +18,7 @@ data:
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   minioIgnoreCertCheck: "false"
+  indexerAugmenterEnabled: "false"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
