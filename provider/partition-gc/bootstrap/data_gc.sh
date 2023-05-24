@@ -59,6 +59,10 @@ generate_post_data_gc() {
     "indexer.service.account": {
       "sensitive": false,
       "value": "${INDEXER_SERVICE_ACCOUNT}"
+    },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
     }
   }
 }
