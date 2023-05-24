@@ -116,6 +116,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
 **data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
+**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
 
 ### Deployment variables
 
