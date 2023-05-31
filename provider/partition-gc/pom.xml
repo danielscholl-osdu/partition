@@ -47,6 +47,13 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- Mappers -->
+    <dependency>
+      <groupId>org.opengroup.osdu</groupId>
+      <artifactId>osm</artifactId>
+      <version>0.21.0</version>
+    </dependency>
+
     <!-- Third party Apache 2.0 license packages -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
