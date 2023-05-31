@@ -39,12 +39,19 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-gc</artifactId>
-      <version>0.21.0-rc3</version>
+      <version>0.21.0</version>
     </dependency>
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>partition-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <!-- Mappers -->
+    <dependency>
+      <groupId>org.opengroup.osdu</groupId>
+      <artifactId>osm</artifactId>
+      <version>0.21.0</version>
     </dependency>
 
     <!-- Third party Apache 2.0 license packages -->
