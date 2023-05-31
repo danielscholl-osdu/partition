@@ -26,7 +26,7 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-gc</artifactId>
-      <version>0.20.0</version>
+      <version>0.21.0</version>
     </dependency>
 
     <dependency>
