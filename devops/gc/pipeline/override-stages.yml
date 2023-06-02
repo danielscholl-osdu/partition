@@ -206,7 +206,7 @@ gc-verified-deploy: # verified deploy after tests
       --history-max=3
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
       --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.serviceAccountName=$GC_SERVICE-k8s
+      --set data.serviceAccountName=$GC_SERVICE
       --set data.projectId=$GC_PROJECT
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
@@ -282,7 +282,7 @@ gc-dev2-verified-deploy: # verified deploy after tests
       --set data.imagePullPolicy=Always
       --set data.bootstrapImage=$CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
       --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-      --set data.serviceAccountName=$GC_SERVICE-k8s
+      --set data.serviceAccountName=$GC_SERVICE
       --set data.projectId=osdu-dev2
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
