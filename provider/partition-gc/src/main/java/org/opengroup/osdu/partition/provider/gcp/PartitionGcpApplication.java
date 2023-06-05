@@ -18,6 +18,7 @@
 package org.opengroup.osdu.partition.provider.gcp;
 
 import org.opengroup.osdu.core.di.GcpPartitionClientFactory;
+import org.opengroup.osdu.core.gcp.osm.translate.postgresql.PgTenantOsmDestinationResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,13 +26,16 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
-@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {GcpPartitionClientFactory.class})
+@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+    GcpPartitionClientFactory.class,
+    PgTenantOsmDestinationResolver.class
+})
 )
 @SpringBootApplication
 @PropertySource("classpath:swagger.properties")
 public class PartitionGcpApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(PartitionGcpApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(PartitionGcpApplication.class, args);
+  }
 }
