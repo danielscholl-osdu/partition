@@ -15,6 +15,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>partition-ibm</artifactId>
+    <version>0.22.0-SNAPSHOT</version>
     <description>Partition service on IBM</description>
     <packaging>jar</packaging>
 
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>partition-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.22.0-SNAPSHOT</version>
         </dependency>
 
 
