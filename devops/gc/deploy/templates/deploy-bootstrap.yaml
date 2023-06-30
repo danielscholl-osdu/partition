@@ -32,5 +32,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-bootstrap" .Values.conf.configmap | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
       restartPolicy: Always
       serviceAccountName: {{ printf "%s-bootstrap" .Values.data.serviceAccountName | quote }}
