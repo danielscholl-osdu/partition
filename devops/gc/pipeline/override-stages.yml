@@ -5,7 +5,7 @@ variables:
   GC_HELM_ENV_DIR: "devops/gc/tests/env"
   ENV_BUILD_PATH: "devops/gc/tests/build/Dockerfile"
 
-.common_cleanup:
+.gc_common_cleanup:
   script:
     - git clone https://community.opengroup.org/osdu/platform/deployment-and-operations/infra-gcp-provisioning.git
     - cp infra-gcp-provisioning/tools/datastore-cleanup/* devops/gc/tests/clean_up/
@@ -32,10 +32,10 @@ gc-containerize-bootstrap-env-gitlab:
     - if: "$GC == '1' && $GC_ENABLE_BOOTSTRAP == 'true'"
       when: on_success
 
-gc-anthos-deploy-test-env: #infra deploy for on-prem install
+gc-baremetal-deploy-test-env: #infra deploy for on-prem install
   environment:
     name: gc
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: deploy
@@ -44,8 +44,8 @@ gc-anthos-deploy-test-env: #infra deploy for on-prem install
   variables:
     GC_HELM_NAMESPACE: partition-int-test
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
-    - !reference [.common_config, script]
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
+    - !reference [.gc_common_config, script]
     - export PASSWORD=$(</dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
     - cd $GC_HELM_ENV_DIR
     - helm dependency update
@@ -67,8 +67,8 @@ gc-anthos-deploy-test-env: #infra deploy for on-prem install
     - if: '$GC == "1"'
       when: on_success
 
-gc-anthos-deploy: # reuse common deploy job for test deployment
-  needs: ["gc-anthos-deploy-test-env", "gc-containerize-gitlab"]
+gc-baremetal-deploy: # reuse common deploy job for test deployment
+  needs: ["gc-baremetal-deploy-test-env", "gc-containerize-gitlab"]
   variables:
     GC_HELM_NAMESPACE: partition-int-test
     GC_TENANT: test
@@ -76,27 +76,27 @@ gc-anthos-deploy: # reuse common deploy job for test deployment
       --set istio.sidecarInject=false
       --set data.indexerSa=indexer
 
-gc-anthos-test:
+gc-baremetal-test:
   variables:
-    GC_VENDOR: anthos
+    GC_VENDOR: baremetal
     PARTITION_BASE_URL: https://test.ref.gcp.gnrg-osdu.projects.epam.com/
 
-gc-anthos-cleanup-env: # clean-up env after tests
+gc-baremetal-cleanup-env: # clean-up env after tests
   environment:
     name: gc
   stage: cleanup
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
-  needs: ["gc-anthos-test"]
+  needs: ["gc-baremetal-test"]
   tags: ["osdu-small"]
   variables:
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
-    - !reference [.common_config, script]
-    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_ANTHOS_DEPLOY_FILE"
-    - !reference [.common_cleanup, script]
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
+    - !reference [.gc_common_config, script]
+    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_BAREMETAL_DEPLOY_FILE"
+    - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --cluster
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
@@ -106,18 +106,18 @@ gc-anthos-cleanup-env: # clean-up env after tests
     - if: '$GC == "1"'
       when: always
 
-gc-anthos-verified-deploy: # verified deploy after tests
+gc-baremetal-verified-deploy: # verified deploy after tests
   environment:
     name: gc
-  extends: .gc-anthos-variables
+  extends: .gc-baremetal-variables
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: verified-deploy
-  needs: ["gc-anthos-test"]
+  needs: ["gc-baremetal-test"]
   retry: 1
   script:
-    - gcloud auth activate-service-account --key-file $GC_ANTHOS_DEPLOY_FILE
-    - !reference [.common_config, script]
+    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
+    - !reference [.gc_common_config, script]
     - >
       helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
       --install
@@ -133,11 +133,12 @@ gc-anthos-verified-deploy: # verified deploy after tests
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
       --set data.indexerSa=indexer
+      --set data.indexerAugmenterEnabled=true
       --set global.onPremEnabled=true
       --set global.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
-    - !reference [.verify_deploy, script]
-    - !reference [.verify_bootstrap, script]
+    - !reference [.gc_verify_deploy, script]
+    - !reference [.gc_verify_bootstrap, script]
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
       when: never
@@ -172,9 +173,9 @@ gc-cleanup-env: # clean-up env after tests
     GC_HELM_NAMESPACE: partition-int-test
   script:
     - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
-    - !reference [.common_config, script]
+    - !reference [.gc_common_config, script]
     - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
-    - !reference [.common_cleanup, script]
+    - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
@@ -195,7 +196,7 @@ gc-verified-deploy: # verified deploy after tests
   retry: 1
   script:
     - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
-    - !reference [.common_config, script]
+    - !reference [.gc_common_config, script]
     - >
       helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
       --install
@@ -209,10 +210,11 @@ gc-verified-deploy: # verified deploy after tests
       --set data.projectId=$GC_PROJECT
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
+      --set data.indexerAugmenterEnabled=true
       --set conf.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
-    - !reference [.verify_deploy, script]
-    - !reference [.verify_bootstrap, script]
+    - !reference [.gc_verify_deploy, script]
+    - !reference [.gc_verify_bootstrap, script]
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
       when: never
@@ -247,9 +249,9 @@ gc-dev2-cleanup-env: # clean-up env after tests
     GC_HELM_NAMESPACE: partition-int-test
   script:
     - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
-    - !reference [.common_config, script]
+    - !reference [.gc_common_config, script]
     - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
-    - !reference [.common_cleanup, script]
+    - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
   rules:
     - if: '$GC == "1" && $CI_COMMIT_BRANCH =~ /^release/'
@@ -266,9 +268,9 @@ gc-dev2-verified-deploy: # verified deploy after tests
   retry: 1
   script:
     - gcloud auth activate-service-account --key-file $GC_DEV2_DEPLOY_FILE
-    - !reference [.common_config, script]
-    - !reference [.define_version, script]
-    - !reference [.set_image_name, script]
+    - !reference [.gc_common_config, script]
+    - !reference [.gc_define_version, script]
+    - !reference [.gc_set_image_name, script]
     - >
       helm upgrade $GC_SERVICE-deploy oci://$CI_REGISTRY_IMAGE/gc-helm/$GC_HELM_PACKAGE_NAME
       --version $VERSION
@@ -286,8 +288,8 @@ gc-dev2-verified-deploy: # verified deploy after tests
       --set data.logLevel=INFO
       --set conf.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
-    - !reference [.verify_deploy, script]
-    - !reference [.verify_bootstrap, script]
+    - !reference [.gc_verify_deploy, script]
+    - !reference [.gc_verify_bootstrap, script]
   rules:
     - if: '$GC == "1" && $CI_COMMIT_BRANCH =~ /^release/'
       when: on_success

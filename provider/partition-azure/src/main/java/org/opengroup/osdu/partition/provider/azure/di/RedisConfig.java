@@ -23,17 +23,20 @@ public class RedisConfig {
     private int database;
 
     @Value("${redis.connection.timeout}")
-    private long timeout;
+    private long connectionTimeout;
+
+    @Value("${redis.command.timeout}")
+    private int commandTimeout;
 
     @Bean
     public RedisAzureCache<String, PartitionInfo> partitionServiceCache() {
-        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, timeout);
+        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout);
         return new RedisAzureCache<>(String.class, PartitionInfo.class, redisAzureConfiguration);
     }
 
     @Bean
     public RedisAzureCache<String, List<String>> partitionListCache() {
-        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, timeout);
+        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout);
         return new RedisAzureCache(String.class, List.class, redisAzureConfiguration);
     }
 }

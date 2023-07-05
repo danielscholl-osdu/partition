@@ -9,19 +9,20 @@
     <parent>
         <artifactId>partition</artifactId>
         <groupId>org.opengroup.osdu</groupId>
-        <version>0.21.0-SNAPSHOT</version>
+        <version>0.22.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>partition-ibm</artifactId>
+    <version>0.22.0-SNAPSHOT</version>
     <description>Partition service on IBM</description>
     <packaging>jar</packaging>
 
     <properties>
         <version.keycloak>9.0.2</version.keycloak>
         <spring-webmvc.version>5.3.22</spring-webmvc.version>
-        <os-core-lib-ibm.version>0.20.0</os-core-lib-ibm.version>
+        <os-core-lib-ibm.version>0.21.0</os-core-lib-ibm.version>
     </properties>
 
     <dependencyManagement>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>partition-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.22.0-SNAPSHOT</version>
         </dependency>
 
 
