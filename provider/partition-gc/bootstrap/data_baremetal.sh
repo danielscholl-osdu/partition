@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-generate_post_data_anthos() {
+generate_post_data_baremetal() {
   cat <<EOF
 {
   "properties": {
@@ -135,6 +135,10 @@ generate_post_data_anthos() {
     "indexer.service.account": {
       "sensitive": false,
       "value": "${INDEXER_SERVICE_ACCOUNT}"
+    },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
     }
   }
 }

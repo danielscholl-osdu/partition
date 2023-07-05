@@ -2,6 +2,7 @@ global:
   domain: ""
   useHttps: true
   onPremEnabled: false
+  limitsEnabled: true
 
 data:
   # configmaps
@@ -18,6 +19,7 @@ data:
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
   minioIgnoreCertCheck: "false"
+  indexerAugmenterEnabled: "false"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"

@@ -36,6 +36,10 @@ generate_post_data_gc() {
       "sensitive": false,
       "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
     },
+    "reservoir-connection": {
+      "sensitive": true,
+      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
+    },
     "elasticsearch.host": {
       "sensitive": true,
       "value": "ELASTIC_HOST_${DATA_PARTITION_ID_UPPER}"
@@ -59,6 +63,10 @@ generate_post_data_gc() {
     "indexer.service.account": {
       "sensitive": false,
       "value": "${INDEXER_SERVICE_ACCOUNT}"
+    },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
     }
   }
 }

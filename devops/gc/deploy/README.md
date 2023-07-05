@@ -99,6 +99,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **global.domain** | your domain | string | - | yes
 **global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | true | yes
 **global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
+**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
 
 ### Configmap variables
 
@@ -116,6 +117,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
 **data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
+**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
 
 ### Deployment variables
 
@@ -123,8 +125,8 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **data.requestsCpu** | amount of requests CPU | string | 10m | yes
 **data.requestsMemory** | amount of requests memory | string | 400Mi | yes
-**data.limitsCpu** | CPU limit | string | 500m | yes
-**data.imitsMemory** | memory limit | string | 1G | yes
+**data.limitsCpu** | CPU limit | string | 500m | only if `global.limitsEnabled` is true
+**data.limitsMemory** | memory limit | string | 1G | only if `global.limitsEnabled` is true
 **data.serviceAccountName** | name of your service account | string | partition | yes
 **data.image** | path to the image in a registry | string | - | yes
 **data.imagePullPolicy** | when to pull the image | string | IfNotPresent | yes

@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.opengroup.osdu</groupId>
 	<artifactId>os-partition-testing</artifactId>
-	<version>0.21.0-SNAPSHOT</version>
+	<version>0.22.0-SNAPSHOT</version>
 	<description>Root partition test project</description>
 	<packaging>pom</packaging>
 
@@ -35,7 +35,7 @@
 		<module>partition-test-aws</module>
 		<module>partition-test-ibm</module>
     	<module>partition-test-gc</module>
-		<module>partition-test-anthos</module>
+		<module>partition-test-baremetal</module>
   </modules>
 
 	<repositories>
