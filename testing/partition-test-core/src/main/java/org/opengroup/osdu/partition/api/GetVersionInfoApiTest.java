@@ -17,16 +17,16 @@
 
 package org.opengroup.osdu.partition.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.Test;
-import org.opengroup.osdu.partition.util.TestBase;
 import org.opengroup.osdu.partition.util.TestUtils;
+import org.opengroup.osdu.partition.util.TestBase;
 import org.opengroup.osdu.partition.util.VersionInfoUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public abstract class GetVersionInfoApiTest extends TestBase {
 
@@ -34,10 +34,10 @@ public abstract class GetVersionInfoApiTest extends TestBase {
 
   @Test
   public void should_returnInfo() throws Exception {
-    ClientResponse response = TestUtils
+    CloseableHttpResponse response = TestUtils
         .send("api/partition/v1/info", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "",
             "", false);
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(HttpStatus.OK.value(), response.getCode());
 
     VersionInfoUtils.VersionInfo responseObject = VERSION_INFO_UTILS
         .getVersionInfoFromResponse(response);

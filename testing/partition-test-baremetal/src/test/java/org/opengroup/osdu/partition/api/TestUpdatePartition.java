@@ -17,9 +17,7 @@
 
 package org.opengroup.osdu.partition.api;
 
-import static org.junit.Assert.assertEquals;
-
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +48,7 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(getId());
-        ClientResponse response = deletePartitionDes.run(getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = deletePartitionDes.run(getId(), this.testUtils.getAccessToken());
     }
 
     @Override

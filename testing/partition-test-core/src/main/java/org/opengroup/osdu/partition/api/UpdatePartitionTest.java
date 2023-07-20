@@ -1,6 +1,7 @@
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
@@ -29,8 +30,8 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
-        assertEquals(this.error(""), HttpStatus.NO_CONTENT.value(), (long) response.getStatus());
+        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        assertEquals(this.error(""), HttpStatus.NO_CONTENT.value(), response.getCode());
     }
 
     @Override
@@ -38,9 +39,9 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
         CreatePartitionDescriptor createPartitionDescriptor = new CreatePartitionDescriptor();
         createPartitionDescriptor.setPartitionId(partitionId);
 
-        ClientResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
-        assertEquals(this.error((String) createResponse.getEntity(String.class))
-                , HttpStatus.CREATED.value(), (long) createResponse.getStatus());
+        CloseableHttpResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
+        assertEquals(this.error(EntityUtils.toString(createResponse.getEntity())), HttpStatus.CREATED.value(),
+                createResponse.getCode());
     }
 
     @Override
@@ -50,15 +51,15 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
 
     @Test
     public void should_return404_when_updatingNonExistentPartition() throws Exception {
-        ClientResponse response = this.descriptor.run(nonExistentPartitionId, this.testUtils.getAccessToken());
-        assertEquals(this.error(""), HttpStatus.NOT_FOUND.value(), (long) response.getStatus());
+        CloseableHttpResponse response = this.descriptor.run(nonExistentPartitionId, this.testUtils.getAccessToken());
+        assertEquals(this.error(""), HttpStatus.NOT_FOUND.value(), response.getCode());
     }
 
     @Test
     public void should_return400_when_updatingPartitionWithIdField() throws Exception {
         createResource();
-        ClientResponse response = this.descriptor.runWithCustomPayload(this.getId(), getInvalidBodyForUpdatePartition(), this.testUtils.getAccessToken());
-        assertEquals(this.error(""), HttpStatus.BAD_REQUEST.value(), (long) response.getStatus());
+        CloseableHttpResponse response = this.descriptor.runWithCustomPayload(this.getId(), getInvalidBodyForUpdatePartition(), this.testUtils.getAccessToken());
+        assertEquals(this.error(""), HttpStatus.BAD_REQUEST.value(), response.getCode());
         deleteResource();
     }
 
@@ -66,20 +67,20 @@ public abstract class UpdatePartitionTest extends BaseTestTemplate {
     @Override
     public void should_return20XResponseCode_when_makingValidHttpsRequest() throws Exception {
         createResource();
-        ClientResponse response = this.descriptor.runWithCustomPayload(this.getId(), getValidBodyForUpdatePartition(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = this.descriptor.runWithCustomPayload(this.getId(), getValidBodyForUpdatePartition(), this.testUtils.getAccessToken());
         deleteResource();
-        assertEquals(response.getStatus(), HttpStatus.NO_CONTENT.value());
-        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
-        assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
-        assertEquals("true", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
-        assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
-        assertEquals("max-age=31536000; includeSubDomains", response.getHeaders().getFirst("Strict-Transport-Security"));
-        assertEquals("0", response.getHeaders().getFirst("Expires"));
-        assertEquals("DENY", response.getHeaders().getFirst("X-Frame-Options"));
-        assertEquals("private, max-age=300", response.getHeaders().getFirst("Cache-Control"));
-        assertEquals("1; mode=block", response.getHeaders().getFirst("X-XSS-Protection"));
-        assertEquals("nosniff", response.getHeaders().getFirst("X-Content-Type-Options"));
+        assertEquals(HttpStatus.NO_CONTENT.value(), response.getCode());
+        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeader("Access-Control-Allow-Methods").getValue());
+        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeader("Access-Control-Allow-Headers").getValue());
+        assertEquals("*", response.getHeader("Access-Control-Allow-Origin").getValue());
+        assertEquals("true", response.getHeader("Access-Control-Allow-Credentials").getValue());
+        assertEquals("default-src 'self'", response.getHeader("Content-Security-Policy").getValue());
+        assertEquals("max-age=31536000; includeSubDomains", response.getHeader("Strict-Transport-Security").getValue());
+        assertEquals("0", response.getHeader("Expires").getValue());
+        assertEquals("DENY", response.getHeader("X-Frame-Options").getValue());
+        assertEquals("private, max-age=300", response.getHeader("Cache-Control").getValue());
+        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection").getValue());
+        assertEquals("nosniff", response.getHeader("X-Content-Type-Options").getValue());
     }
 
     private String getInvalidBodyForUpdatePartition() {
