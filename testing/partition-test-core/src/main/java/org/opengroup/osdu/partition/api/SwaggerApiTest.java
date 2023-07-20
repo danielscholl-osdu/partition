@@ -17,7 +17,7 @@
 
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.Test;
 import org.opengroup.osdu.partition.util.TestBase;
 import org.opengroup.osdu.partition.util.TestUtils;
@@ -34,14 +34,14 @@ public abstract class SwaggerApiTest extends TestBase {
 
   @Test
   public void shouldReturn200_whenSwaggerApiIsCalled() throws Exception {
-    ClientResponse response = TestUtils.send(CONTEXT_PATH + SWAGGER_API_PATH, HttpMethod.GET.name(),false);
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    CloseableHttpResponse response = TestUtils.send(CONTEXT_PATH + SWAGGER_API_PATH, HttpMethod.GET.name(),false);
+    assertEquals(HttpStatus.OK.value(), response.getCode());
   }
 
   @Test
   public void shouldReturn200_whenSwaggerApiDocsIsCalled() throws Exception {
-    ClientResponse response = TestUtils.send(CONTEXT_PATH + SWAGGER_API_DOCS_PATH, HttpMethod.GET.name(),false);
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    CloseableHttpResponse response = TestUtils.send(CONTEXT_PATH + SWAGGER_API_DOCS_PATH, HttpMethod.GET.name(),false);
+    assertEquals(HttpStatus.OK.value(), response.getCode());
   }
 
 }

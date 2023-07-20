@@ -16,9 +16,7 @@
 
   <properties>
     <osdu.corelibazure.version>0.22.0</osdu.corelibazure.version>
-    <junit.version>4.12</junit.version>
-    <mockito.version>2.25.0</mockito.version>
-    <powermock.version>2.0.2</powermock.version>
+    <junit.version>4.13.2</junit.version>
     <spring-webmvc.version>5.3.22</spring-webmvc.version>
   </properties>
 
@@ -122,30 +120,13 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+      <version>1.18.26</version>
     </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>${powermock.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -188,9 +169,17 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+        <configuration>
+          <argLine>@{argLine} --add-opens java.base/java.lang=ALL_UNNAMED</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.3</version>
+        <version>0.8.8</version>
         <executions>
         <execution>
             <goals>

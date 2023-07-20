@@ -17,8 +17,8 @@
 
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,41 +47,41 @@ public class TestCreatePartition extends CreatePartitionTest {
   public void should_return40XResponseCode_when_makingRequest_withInvalidPayload()
       throws Exception {
     String invalidPayload = "{\"properties_invalid\":{}}";
-    ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload,
+    CloseableHttpResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload,
         testUtils.getAccessToken());
-    assertEquals(400, response.getStatus());
+    assertEquals(400, response.getCode());
   }
 
   // Test depends on an infrastructure level.
   @Override
   @Test
   public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-    ClientResponse response = descriptor.run(getId(), "");
+    CloseableHttpResponse response = descriptor.run(getId(), "");
     log.info(
         "Test should_return401_when_makingHttpRequestWithoutToken has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 
   // Test depends on an infrastructure level.
   @Override
   @Test
   public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-    ClientResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
+    CloseableHttpResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
     log.info(
         "Test should_return401_when_accessingWithCredentialsWithoutPermission has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 
   // Test depends on an infrastructure level.
   @Override
   @Test
   public void should_return401_when_noAccessToken() throws Exception {
-    ClientResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
+    CloseableHttpResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
     log.info(
         "Test should_return401_when_noAccessToken has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 }

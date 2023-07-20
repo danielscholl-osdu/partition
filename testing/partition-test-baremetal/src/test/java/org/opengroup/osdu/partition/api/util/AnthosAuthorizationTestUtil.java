@@ -17,8 +17,8 @@
 
 package org.opengroup.osdu.partition.api.util;
 
-import com.sun.jersey.api.client.ClientResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.opengroup.osdu.partition.util.RestDescriptor;
 import org.opengroup.osdu.partition.util.TestUtils;
 
@@ -35,32 +35,31 @@ public class AnthosAuthorizationTestUtil {
 
   // Test depends on an infrastructure level.
   public void should_return401or403_when_noAccessToken(String partitionId) throws Exception {
-    ClientResponse response =
-        descriptor.runOnCustomerTenant(partitionId, testUtils.getNoAccessToken());
+    CloseableHttpResponse response = descriptor.runOnCustomerTenant(partitionId, testUtils.getNoAccessToken());
     log.info(
         "Test should_return401or403_when_noAccessToken has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 
   // Test depends on an infrastructure level.
   public void should_return401or403_when_accessingWithCredentialsWithoutPermission(
       String partitionId) throws Exception {
-    ClientResponse response = descriptor.run(partitionId, testUtils.getNoAccessToken());
+    CloseableHttpResponse response = descriptor.run(partitionId, testUtils.getNoAccessToken());
     log.info(
         "Test should_return401or403_when_accessingWithCredentialsWithoutPermission has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 
   // Test depends on an infrastructure level.
   public void should_return401or403_when_makingHttpRequestWithoutToken(String partitionId)
       throws Exception {
-    ClientResponse response = descriptor.run(partitionId, "");
+    CloseableHttpResponse response = descriptor.run(partitionId, "");
     log.info(
         "Test should_return401or403_when_makingHttpRequestWithoutToken has a response code = {}."
             + "This test depends on an infrastructure level.",
-        response.getStatus());
+        response.getCode());
   }
 
   protected String error(String body) {

@@ -14,7 +14,8 @@
 
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.GetPartitionDescriptor;
@@ -36,8 +37,8 @@ public abstract class GetPartitionByIdApitTest extends BaseTestTemplate {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
-        assertEquals(this.error(""), HttpStatus.NO_CONTENT.value(), (long) response.getStatus());
+        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        assertEquals(this.error(""), HttpStatus.NO_CONTENT.value(), response.getCode());
     }
 
     @Override
@@ -45,9 +46,9 @@ public abstract class GetPartitionByIdApitTest extends BaseTestTemplate {
         CreatePartitionDescriptor createPartitionDescriptor = new CreatePartitionDescriptor();
         createPartitionDescriptor.setPartitionId(partitionId);
 
-        ClientResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
-        assertEquals(this.error((String) createResponse.getEntity(String.class))
-                , HttpStatus.CREATED.value(), (long) createResponse.getStatus());
+        CloseableHttpResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
+        assertEquals(this.error(EntityUtils.toString(createResponse.getEntity())), HttpStatus.CREATED.value(),
+                createResponse.getCode());
     }
 
     public GetPartitionByIdApitTest() {

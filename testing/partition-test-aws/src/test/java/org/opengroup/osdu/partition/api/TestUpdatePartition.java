@@ -14,16 +14,15 @@
 
 package org.opengroup.osdu.partition.api;
 
-import static org.junit.Assert.assertEquals;
-
-import com.sun.jersey.api.client.ClientResponse;
-
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.util.AwsTestUtils;
 import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestUpdatePartition extends UpdatePartitionTest {
 
@@ -49,23 +48,23 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());        
+        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
     }
 
     @Test
     @Override
     public void should_return20XResponseCode_when_makingValidHttpsRequest() throws Exception {
         createResource();
-        ClientResponse response = this.descriptor.runWithCustomPayload(this.getId(), getValidBodyForUpdatePartition(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = this.descriptor.runWithCustomPayload(this.getId(), getValidBodyForUpdatePartition(), this.testUtils.getAccessToken());
         deleteResource();
-        assertEquals(response.getStatus(), HttpStatus.NO_CONTENT.value());
-        assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
-        assertEquals("max-age=31536000; includeSubDomains", response.getHeaders().getFirst("Strict-Transport-Security"));
-        assertEquals("0", response.getHeaders().getFirst("Expires"));
-        assertEquals("DENY", response.getHeaders().getFirst("X-Frame-Options"));
-        assertEquals("private, max-age=300", response.getHeaders().getFirst("Cache-Control"));
-        assertEquals("1; mode=block", response.getHeaders().getFirst("X-XSS-Protection"));
-        assertEquals("nosniff", response.getHeaders().getFirst("X-Content-Type-Options"));
+        assertEquals(HttpStatus.NO_CONTENT.value(), response.getCode());
+        assertEquals("default-src 'self'", response.getHeader("Content-Security-Policy").getValue());
+        assertEquals("max-age=31536000; includeSubDomains", response.getHeader("Strict-Transport-Security").getValue());
+        assertEquals("0", response.getHeader("Expires").getValue());
+        assertEquals("DENY", response.getHeader("X-Frame-Options").getValue());
+        assertEquals("private, max-age=300", response.getHeader("Cache-Control").getValue());
+        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection").getValue());
+        assertEquals("nosniff", response.getHeader("X-Content-Type-Options").getValue());
     }
 
 }
