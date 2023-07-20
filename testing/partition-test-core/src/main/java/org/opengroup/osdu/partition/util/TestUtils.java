@@ -16,33 +16,28 @@
 
 package org.opengroup.osdu.partition.util;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.net.HttpURLConnection;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.*;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.core.MediaType;
-
-import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public abstract class TestUtils {
 
 	protected static String token = null;
 	protected static String noAccessToken = null;
 
-	public static String getApiPath(String api, boolean enforceHttp) throws Exception {
+	public static String getApiPath(String api, boolean enforceHttp) throws MalformedURLException {
 		String baseUrl = Config.Instance().hostUrl;
 		if(enforceHttp)
 			baseUrl = baseUrl.replaceFirst("https", "http");
@@ -54,19 +49,11 @@ public abstract class TestUtils {
 
     public abstract String getNoAccessToken() throws Exception;
 
-	public static ClientResponse send(String path, String httpMethod, String token, String requestBody, String query, boolean enforceHttp)
-			throws Exception {
-
-        Map<String, String> headers = getOsduTenantHeaders();
-
-		return send(path, httpMethod, token, requestBody, query, headers, enforceHttp);
+	public static Map<String, String> getOsduTenantHeaders() {
+		Map<String, String> headers = new HashMap<>();
+		headers.put("data-partition-id", Config.Instance().osduTenant);
+		return headers;
 	}
-
-    public static Map<String, String> getOsduTenantHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("data-partition-id", Config.Instance().osduTenant);
-        return headers;
-    }
 
 	public static Map<String, String> getCustomerTenantHeaders() {
 		Map<String, String> headers = new HashMap<>();
@@ -74,97 +61,62 @@ public abstract class TestUtils {
 		return headers;
 	}
 
-    public static ClientResponse send(String path, String httpMethod, String token, String requestBody, String query,
-                               Map<String,String> headers, boolean enforceHttp)
-            throws Exception {
+	public static CloseableHttpResponse send(String path, String httpMethod, String token, String requestBody, String query, boolean enforceHttp)
+			throws IOException {
 
-        Client client = getClient();
-		client.setConnectTimeout(1500000);
-		client.setReadTimeout(1500000);
-        client.setFollowRedirects(false);
-        String url = getApiPath(path + query, enforceHttp);
-        WebResource webResource = client.resource(url);
-        final WebResource.Builder builder = webResource.type(MediaType.APPLICATION_JSON)
-                .header("Authorization", token);
-        headers.forEach((k, v) -> builder.header(k, v));
-        ClientResponse response = builder.method(httpMethod, ClientResponse.class, requestBody);
+		Map<String, String> headers = getOsduTenantHeaders();
+		return send(path, httpMethod, token, requestBody, query, headers, enforceHttp);
+	}
 
-        return response;
-    }
+	public static CloseableHttpResponse send(String path, String httpMethod, String token, String requestBody, String query,
+											 Map<String, String> headers, boolean enforceHttp)
+			throws IOException {
 
-	/** Referenced for Test cases where [Token, body] not required. ex [Swagger API] **/
-	public static ClientResponse send(String path, String httpMethod, boolean enforceHttp) throws Exception {
+		BasicHttpClientConnectionManager cm = createBasicHttpClientConnectionManager();
+		ClassicHttpRequest httpRequest = createHttpRequest(path, httpMethod, token, requestBody, headers, enforceHttp);
 
-		Client client = getClient();
-		client.setConnectTimeout(1500000);
-		client.setReadTimeout(1500000);
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(cm).build()) {
+			return httpClient.execute(httpRequest, new CustomHttpClientResponseHandler());
+		}
+	}
+
+	/**
+	 * Referenced for Test cases where [Token, body] not required. ex [Swagger API]
+	 **/
+	public static CloseableHttpResponse send(String path, String httpMethod, boolean enforceHttp) throws IOException {
+
+		BasicHttpClientConnectionManager cm = createBasicHttpClientConnectionManager();
+		ClassicHttpRequest httpRequest = createHttpRequest(path, httpMethod, enforceHttp);
+
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().setConnectionManager(cm).build()) {
+			return httpClient.execute(httpRequest, new CustomHttpClientResponseHandler());
+		}
+	}
+
+	private static ClassicHttpRequest createHttpRequest(String path, String httpMethod, String token, String requestBody,
+														Map<String, String> headers, boolean enforceHttp) throws MalformedURLException {
 		String url = getApiPath(path, enforceHttp);
-		WebResource webResource = client.resource(url);
-		final WebResource.Builder builder = webResource.getRequestBuilder();
-		ClientResponse response = builder.method(httpMethod, ClientResponse.class);
-		return response;
+		ClassicRequestBuilder classicRequestBuilder = ClassicRequestBuilder.create(httpMethod)
+				.setUri(url)
+				.addHeader("Authorization", token)
+				.setEntity(requestBody, ContentType.APPLICATION_JSON);
+		headers.forEach(classicRequestBuilder::addHeader);
+		return classicRequestBuilder.build();
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> T getResult(ClientResponse response, int exepectedStatus, Class<T> classOfT) {
-		String json = response.getEntity(String.class);
-
-		assertEquals(exepectedStatus, response.getStatus());
-		if (exepectedStatus == 204) {
-			return null;
-		}
-		assertEquals(MediaType.APPLICATION_JSON, response.getType().toString());
-		if (classOfT == String.class) {
-			return (T) json;
-		}
-		Gson gson = new Gson();
-		return gson.fromJson(json, classOfT);
+	private static ClassicHttpRequest createHttpRequest(String path, String httpMethod, boolean enforceHttp) throws MalformedURLException {
+		String url = getApiPath(path, enforceHttp);
+		return ClassicRequestBuilder.create(httpMethod).setUri(url).build();
 	}
 
-	public static Client getClient() {
-		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-			@Override
-			public X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			@Override
-			public void checkClientTrusted(X509Certificate[] certs, String authType) {
-			}
-
-			@Override
-			public void checkServerTrusted(X509Certificate[] certs, String authType) {
-			}
-		} };
-
-		try {
-			SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, trustAllCerts, new SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
-		}
-		allowMethods("PATCH");
-		return Client.create();
+	private static BasicHttpClientConnectionManager createBasicHttpClientConnectionManager() {
+		ConnectionConfig connConfig = ConnectionConfig.custom()
+				.setConnectTimeout(1500000, TimeUnit.MILLISECONDS)
+				.setSocketTimeout(1500000, TimeUnit.MILLISECONDS)
+				.build();
+		BasicHttpClientConnectionManager cm = new BasicHttpClientConnectionManager();
+		cm.setConnectionConfig(connConfig);
+		return cm;
 	}
 
-	private static void allowMethods(String... methods) {
-		try {
-			Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
-
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
-
-			methodsField.setAccessible(true);
-
-			String[] oldMethods = (String[]) methodsField.get(null);
-			Set<String> methodsSet = new LinkedHashSet<>(Arrays.asList(oldMethods));
-			methodsSet.addAll(Arrays.asList(methods));
-			String[] newMethods = methodsSet.toArray(new String[0]);
-
-			methodsField.set(null/*static field*/, newMethods);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new IllegalStateException(e);
-		}
-	}
 }

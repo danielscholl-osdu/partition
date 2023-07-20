@@ -17,6 +17,8 @@
 package org.opengroup.osdu.partition.util;
 
 import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -48,14 +50,14 @@ public abstract class BaseTestTemplate extends TestBase {
 
     @Test
     public void should_return401_when_noAccessToken() throws Exception {
-        ClientResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(response.getEntity(String.class)), 401, response.getStatus());
+        CloseableHttpResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
 
     @Test
     public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        ClientResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(response.getEntity(String.class)), 401, response.getStatus());
+        CloseableHttpResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
 
     @Test
@@ -65,33 +67,33 @@ public abstract class BaseTestTemplate extends TestBase {
 
     public void should_return20X_when_usingCredentialsWithPermission(String token) throws Exception {
         createResource();
-        ClientResponse response = descriptor.run(getId(), token);
+        CloseableHttpResponse response = descriptor.run(getId(), token);
         deleteResource();
-        assertEquals(error(response.getStatus() == 204 ? "" : response.getEntity(String.class)), expectedOkResponseCode(), response.getStatus());
-        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeaders().getFirst("Access-Control-Allow-Methods"));
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeaders().getFirst("Access-Control-Allow-Headers"));
-        assertEquals("*", response.getHeaders().getFirst("Access-Control-Allow-Origin"));
-        assertEquals("true", response.getHeaders().getFirst("Access-Control-Allow-Credentials"));
-        assertEquals("default-src 'self'", response.getHeaders().getFirst("Content-Security-Policy"));
-        assertEquals("max-age=31536000; includeSubDomains", response.getHeaders().getFirst("Strict-Transport-Security"));
-        assertEquals("0", response.getHeaders().getFirst("Expires"));
-        assertEquals("DENY", response.getHeaders().getFirst("X-Frame-Options"));
-        assertEquals("private, max-age=300", response.getHeaders().getFirst("Cache-Control"));
-        assertEquals("1; mode=block", response.getHeaders().getFirst("X-XSS-Protection"));
-        assertEquals("nosniff", response.getHeaders().getFirst("X-Content-Type-Options"));
+        assertEquals(error(response.getCode() == 204 ? "" : EntityUtils.toString(response.getEntity())), expectedOkResponseCode(), response.getCode());
+        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeader("Access-Control-Allow-Methods").getValue());
+        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeader("Access-Control-Allow-Headers").getValue());
+        assertEquals("*", response.getHeader("Access-Control-Allow-Origin").getValue());
+        assertEquals("true", response.getHeader("Access-Control-Allow-Credentials").getValue());
+        assertEquals("default-src 'self'", response.getHeader("Content-Security-Policy").getValue());
+        assertEquals("max-age=31536000; includeSubDomains", response.getHeader("Strict-Transport-Security").getValue());
+        assertEquals("0", response.getHeader("Expires").getValue());
+        assertEquals("DENY", response.getHeader("X-Frame-Options").getValue());
+        assertEquals("private, max-age=300", response.getHeader("Cache-Control").getValue());
+        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection").getValue());
+        assertEquals("nosniff", response.getHeader("X-Content-Type-Options").getValue());
     }
 
     @Test
     public void should_returnOk_when_makingHttpOptionsRequest() throws Exception {
         createResource();
-        ClientResponse response = descriptor.runOptions(getId(), testUtils.getAccessToken());
-        assertEquals(error(response.getEntity(String.class)), 200, response.getStatus());
+        CloseableHttpResponse response = descriptor.runOptions(getId(), testUtils.getAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 200, response.getCode());
         deleteResource();
     }
 
     @Test
     public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        ClientResponse response = descriptor.run(getId(), "");
-        assertEquals(error(response.getEntity(String.class)), 401, response.getStatus());
+        CloseableHttpResponse response = descriptor.run(getId(), "");
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
 }

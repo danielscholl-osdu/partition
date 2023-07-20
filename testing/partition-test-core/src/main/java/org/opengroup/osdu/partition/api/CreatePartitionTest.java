@@ -14,7 +14,7 @@
 
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
@@ -36,7 +36,7 @@ public abstract class CreatePartitionTest extends BaseTestTemplate {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
     }
 
     @Override
@@ -54,18 +54,18 @@ public abstract class CreatePartitionTest extends BaseTestTemplate {
 
     @Test
     public void should_return409_when_creatingSamePartitionTwice() throws Exception {
-        ClientResponse response = this.descriptor.run(this.getId(), testUtils.getAccessToken());
-        assertEquals(this.error(""), (long) this.expectedOkResponseCode(), (long) response.getStatus());
+        CloseableHttpResponse response = this.descriptor.run(this.getId(), testUtils.getAccessToken());
+        assertEquals(this.error(""), this.expectedOkResponseCode(), response.getCode());
 
-        ClientResponse response2 = this.descriptor.run(this.getId(), testUtils.getAccessToken());
-        assertEquals(this.error(""), HttpStatus.CONFLICT.value(), (long) response2.getStatus());
+        CloseableHttpResponse response2 = this.descriptor.run(this.getId(), testUtils.getAccessToken());
+        assertEquals(this.error(""), HttpStatus.CONFLICT.value(), response2.getCode());
         deleteResource();
     }
 
     @Test
     public void should_return40XResponseCode_when_makingRequest_withInvalidPayload() throws Exception {
         String invalidPayload = "";
-        ClientResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
-        assertEquals(400, response.getStatus());
+        CloseableHttpResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
+        assertEquals(400, response.getCode());
     }
 }

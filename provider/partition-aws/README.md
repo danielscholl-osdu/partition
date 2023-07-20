@@ -5,8 +5,9 @@ The AWS Partition service is a [Spring Boot](https://spring.io/projects/spring-b
 The following instructions are the minimum requirements for running the AWS partition service locally.
 
 ### Prerequisites
-* [JDK 8](https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-list.html)
-* [Maven 3.6.0+](https://maven.apache.org/download.cgi)
+* [JDK 17]
+* [Maven 3.8.0+](https://maven.apache.org/download.cgi)
+* Lombok 1.18 or later
 * IDE ([IntelliJ](https://www.jetbrains.com/idea/download/) is preferred)
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 * [Postman](https://www.postman.com/)
@@ -51,7 +52,7 @@ Check that maven is installed:
 mvn --version
 Apache Maven 3.8.3
 Maven home: C:\opt\apache-maven-3.8.3
-Java version: 1.8.0_302, vendor: Amazon.com Inc., runtime: C:\Program Files\Amazon Corretto\jdk1.8.0_302\jre
+Java version: 17.0.7
 ```
 
 You may need to configure access to the remote maven repository that holds the OSDU dependencies. Copy one of the below files' content to your .m2 folder

@@ -16,7 +16,7 @@
 
 package org.opengroup.osdu.partition.util;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 
 public abstract class RestDescriptor {
 
@@ -32,24 +32,24 @@ public abstract class RestDescriptor {
     public abstract String getValidBody();
     public String getQuery() { return ""; }
 
-    public ClientResponse runHttp(String arg, String token) throws Exception{
+    public CloseableHttpResponse runHttp(String arg, String token) throws Exception{
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), true);
     }
-    public ClientResponse run(String arg, String token) throws Exception{
+    public CloseableHttpResponse run(String arg, String token) throws Exception{
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), false);
     }
-    public ClientResponse runOnCustomerTenant(String arg, String token) throws Exception{
+    public CloseableHttpResponse runOnCustomerTenant(String arg, String token) throws Exception{
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), TestUtils.getCustomerTenantHeaders(), false);
     }
-    public ClientResponse runOptions(String arg, String token) throws Exception{
+    public CloseableHttpResponse runOptions(String arg, String token) throws Exception{
         this.arg = arg;
         return TestUtils.send(getPath(), "OPTIONS", token, "", "", false);
     }
 
-    public ClientResponse runWithCustomPayload(String arg, String body, String token) throws Exception {
+    public CloseableHttpResponse runWithCustomPayload(String arg, String body, String token) throws Exception {
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, body, getQuery(), false);
     }
