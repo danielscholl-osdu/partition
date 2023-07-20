@@ -3,14 +3,13 @@
 
 package org.opengroup.osdu.partition.api;
 
-import static org.junit.Assert.assertEquals;
-
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.opengroup.osdu.partition.util.IBMTestUtils;
 
-import com.sun.jersey.api.client.ClientResponse;
+import static org.junit.Assert.assertEquals;
 
 public class TestUpdatePartition extends UpdatePartitionTest {
 
@@ -29,8 +28,8 @@ public class TestUpdatePartition extends UpdatePartitionTest {
     //servicemesh changes response code - 403
     @Override
 	public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-		 ClientResponse response = descriptor.run(getId(), "");
-	     assertEquals(error(response.getEntity(String.class)), 403, response.getStatus());
+		 CloseableHttpResponse response = descriptor.run(getId(), "");
+	     assertEquals(error(EntityUtils.toString(response.getEntity())), 403, response.getCode());
 	}
 
 

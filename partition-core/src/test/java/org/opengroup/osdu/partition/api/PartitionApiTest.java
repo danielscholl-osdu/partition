@@ -14,36 +14,36 @@
 
 package org.opengroup.osdu.partition.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ServletUriComponentsBuilder.class)
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class PartitionApiTest {
 
     private final AppException NOT_FOUND_EXCEPTION =
@@ -66,16 +66,16 @@ public class PartitionApiTest {
     public void should_return201AndPartitionId_when_givenValidPartitionId() {
         String partitionId = "partition1";
 
-        mockStatic(ServletUriComponentsBuilder.class);
-
+        MockedStatic<ServletUriComponentsBuilder> mockedSettings = mockStatic(ServletUriComponentsBuilder.class);
         ServletUriComponentsBuilder builder = spy(ServletUriComponentsBuilder.class);
-
         when(ServletUriComponentsBuilder.fromCurrentRequest()).thenReturn(builder);
 
         ResponseEntity result = this.sut.create(partitionId, partitionInfo);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNull(result.getBody());
         assertNotNull(result.getHeaders().get(HttpHeaders.LOCATION));
+
+        mockedSettings.close();
     }
 
     @Test

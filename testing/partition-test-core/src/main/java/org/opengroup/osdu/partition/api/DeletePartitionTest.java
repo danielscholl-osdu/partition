@@ -14,7 +14,8 @@
 
 package org.opengroup.osdu.partition.api;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
@@ -50,7 +51,7 @@ public abstract class DeletePartitionTest extends BaseTestTemplate {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        ClientResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
     }
 
     protected void createResource() throws Exception {
@@ -62,17 +63,17 @@ public abstract class DeletePartitionTest extends BaseTestTemplate {
 
         this.descriptor = createPartition;
 
-        ClientResponse createResponse = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
-        Assert.assertEquals(this.error((String) createResponse.getEntity(String.class))
-                , HttpStatus.CREATED.value(), (long) createResponse.getStatus());
+        CloseableHttpResponse createResponse = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+        Assert.assertEquals(this.error(EntityUtils.toString(createResponse.getEntity())), HttpStatus.CREATED.value(),
+                createResponse.getCode());
 
         this.descriptor = oldDescriptor;
     }
 
     @Test
     public void should_return404_when_deletingNonExistedPartition() throws Exception {
-        ClientResponse response1 = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
-        Assert.assertEquals(this.error(""), HttpStatus.NOT_FOUND.value(), (long) response1.getStatus());
+        CloseableHttpResponse response1 = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+        Assert.assertEquals(this.error(""), HttpStatus.NOT_FOUND.value(), response1.getCode());
     }
 
     @Override
