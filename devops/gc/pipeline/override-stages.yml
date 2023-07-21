@@ -209,7 +209,7 @@ gc-verified-deploy: # verified deploy after tests
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set data.indexerAugmenterEnabled=true
-      --set conf.domain=$GC_DOMAIN
+      --set global.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
     - !reference [.gc_verify_deploy, script]
     - !reference [.gc_verify_bootstrap, script]
@@ -284,7 +284,7 @@ gc-dev2-verified-deploy: # verified deploy after tests
       --set data.projectId=osdu-dev2
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
-      --set conf.domain=$GC_DOMAIN
+      --set global.domain=$GC_DOMAIN
       $GC_HELM_TIMEOUT
     - !reference [.gc_verify_deploy, script]
     - !reference [.gc_verify_bootstrap, script]
