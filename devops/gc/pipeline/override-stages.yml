@@ -74,7 +74,6 @@ gc-baremetal-deploy: # reuse common deploy job for test deployment
     GC_TENANT: test
     GC_HELM_SETS: >-
       --set istio.sidecarInject=false
-      --set data.indexerSa=indexer
 
 gc-baremetal-test:
   variables:
@@ -132,7 +131,6 @@ gc-baremetal-verified-deploy: # verified deploy after tests
       --set data.dataPartitionId=$GC_TENANT
       --set data.logLevel=INFO
       --set data.springProfilesActive=anthos
-      --set data.indexerSa=indexer
       --set data.indexerAugmenterEnabled=true
       --set global.onPremEnabled=true
       --set global.domain=$GC_DOMAIN
