@@ -132,10 +132,6 @@ generate_post_data_baremetal() {
       "sensitive": false,
       "value": "eds-${DATA_PARTITION_ID}"
     },
-    "indexer.service.account": {
-      "sensitive": false,
-      "value": "${INDEXER_SERVICE_ACCOUNT}"
-    },
     "index-augmenter-enabled": {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"

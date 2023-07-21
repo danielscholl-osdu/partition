@@ -12,7 +12,6 @@ data:
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   {{- if .Values.global.onPremEnabled }}
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
-  INDEXER_SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.indexerSa | quote }}
   DOMAIN: "{{ .Values.global.domain }}"
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
   MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
@@ -29,6 +28,5 @@ data:
   PROJECT_ID: "{{ .Values.data.projectId }}"
   {{- end }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
-  INDEXER_SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.indexerSa .Values.data.projectId | quote }}
   {{- end }}
   DATA_PARTITION_ID_LIST: {{ join "," .Values.data.dataPartitionIdList | quote }}
