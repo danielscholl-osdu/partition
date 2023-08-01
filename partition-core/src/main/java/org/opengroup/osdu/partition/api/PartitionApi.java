@@ -24,37 +24,23 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.opengroup.osdu.core.common.model.http.AppError;
-import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
-import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@RestController
 @RequestScope
 @RequestMapping(path = "/partitions", produces = "application/json")
 @Tag(name = "partition-api", description = "Partition API")
-public class PartitionApi {
-
-    @Autowired
-    @Qualifier("partitionServiceImpl")
-    private IPartitionService partitionService;
-
-    @Autowired
-    private AuditLogger auditLogger;
+public interface PartitionApi {
 
     @Operation(summary = "${partitionApi.create.summary}", description = "${partitionApi.create.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
@@ -70,13 +56,8 @@ public class PartitionApi {
     })
     @PostMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public ResponseEntity create(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId,
-                                 @RequestBody @Valid PartitionInfo partitionInfo) {
-        this.partitionService.createPartition(partitionId, partitionInfo);
-        URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-        this.auditLogger.createPartitionSuccess(Collections.singletonList(partitionId));
-        return ResponseEntity.created(partitionLocation).build();
-    }
+    ResponseEntity create(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId,
+                          @RequestBody @Valid PartitionInfo partitionInfo);
 
     @Operation(summary = "${partitionApi.patch.summary}", description = "${partitionApi.patch.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
@@ -93,11 +74,8 @@ public class PartitionApi {
     @PatchMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void patch(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId,
-                      @RequestBody @Valid PartitionInfo partitionInfo) {
-        this.partitionService.updatePartition(partitionId, partitionInfo);
-        this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(partitionId));
-    }
+    void patch(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId,
+               @RequestBody @Valid PartitionInfo partitionInfo);
 
     @Operation(summary = "${partitionApi.get.summary}", description = "${partitionApi.get.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
@@ -113,11 +91,7 @@ public class PartitionApi {
     })
     @GetMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public ResponseEntity<Map<String, Property>> get(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId) {
-        PartitionInfo partitionInfo = this.partitionService.getPartition(partitionId);
-        this.auditLogger.readPartitionSuccess(Collections.singletonList(partitionId));
-        return ResponseEntity.ok(partitionInfo.getProperties());
-    }
+    ResponseEntity<Map<String, Property>> get(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId);
 
     @Operation(summary = "${partitionApi.delete.summary}", description = "${partitionApi.delete.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
@@ -133,11 +107,7 @@ public class PartitionApi {
     })
     @DeleteMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public ResponseEntity delete(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId) {
-        this.partitionService.deletePartition(partitionId);
-        this.auditLogger.deletePartitionSuccess(Collections.singletonList(partitionId));
-        return ResponseEntity.noContent().build();
-    }
+    ResponseEntity delete(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId);
 
     @Operation(summary = "${partitionApi.list.summary}", description = "${partitionApi.list.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
@@ -153,10 +123,5 @@ public class PartitionApi {
     })
     @GetMapping
     @PreAuthorize("@authorizationFilter.hasPermissions()")
-    public List<String> list() {
-        List<String> partitions = this.partitionService.getAllPartitions();
-        this.auditLogger.readListPartitionSuccess(
-            Collections.singletonList(String.format("Partition list size = %s", partitions.size())));
-        return partitions;
-    }
+    List<String> list();
 }
