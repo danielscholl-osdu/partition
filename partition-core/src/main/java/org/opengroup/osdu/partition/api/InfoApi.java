@@ -33,20 +33,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @RequestMapping
 @Tag(name = "info", description = "Version info endpoint")
-public class InfoApi {
-
-  @Autowired
-  private VersionInfoBuilder versionInfoBuilder;
+public interface InfoApi {
 
   @Operation(summary = "${infoApi.info.summary}", description = "${infoApi.info.description}", tags = { "info" })
   @ApiResponses(value = {
           @ApiResponse(responseCode = "200", description = "Version info.", content = { @Content(schema = @Schema(implementation = VersionInfo.class)) })
   })
   @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
-  public VersionInfo info() throws IOException {
-    return versionInfoBuilder.buildVersionInfo();
-  }
+  VersionInfo info() throws IOException;
 }
