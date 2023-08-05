@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.opengroup.osdu.partition.api;
+package org.opengroup.osdu.partition.controller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,16 +35,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PartitionApiTest {
+public class PartitionControllerTest {
 
     private final AppException NOT_FOUND_EXCEPTION =
             new AppException(org.apache.http.HttpStatus.SC_NOT_FOUND, "partition not found"
@@ -57,7 +53,7 @@ public class PartitionApiTest {
     private AuditLogger auditLogger;
 
     @InjectMocks
-    private PartitionApi sut;
+    private PartitionController sut;
 
     @Mock
     private PartitionInfo partitionInfo;

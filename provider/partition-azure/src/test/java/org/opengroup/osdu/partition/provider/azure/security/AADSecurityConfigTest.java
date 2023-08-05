@@ -20,7 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengroup.osdu.partition.api.PartitionApi;
+import org.opengroup.osdu.partition.controller.PartitionController;
+import org.opengroup.osdu.partition.logging.AuditLogger;
+import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -34,12 +38,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {
-        PartitionApi.class,
+        PartitionController.class,
         AADSecurityConfig.class,
         AADAppRoleStatelessAuthenticationFilter.class})
 @WebAppConfiguration
 public class AADSecurityConfigTest {
     private MockMvc mockMvc = null;
+
+    @MockBean
+    @Qualifier("partitionServiceImpl")
+    private IPartitionService partitionService;
+
+    @MockBean
+    private AuditLogger auditLogger;
 
     @MockBean
     private UserPrincipalManager userPrincipalManager;
