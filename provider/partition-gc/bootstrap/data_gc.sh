@@ -32,6 +32,10 @@ generate_post_data_gc() {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-records"
     },
+    "seismicBucket ": {
+      "sensitive": false,
+      "value": "${PROJECT_ID}.${DATA_PARTITION_ID}.ss.seismic"
+    },
     "crmAccountID": {
       "sensitive": false,
       "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
