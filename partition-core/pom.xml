@@ -40,7 +40,7 @@
 		<maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
 		<maven_failsafe_plugin_version>3.0.0-M4</maven_failsafe_plugin_version>
 		<spring-webmvc.version>5.3.22</spring-webmvc.version>
-		<os-core-common.version>0.22.0</os-core-common.version>
+		<os-core-common.version>0.23.1</os-core-common.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 	</properties>
 
