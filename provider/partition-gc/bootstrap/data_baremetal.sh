@@ -114,19 +114,19 @@ generate_post_data_baremetal() {
     },
     "elasticsearch.host": {
       "sensitive": true,
-      "value": "ELASTIC_HOST_${DATA_PARTITION_ID_UPPER}"
+      "value": "ELASTIC_HOST"
     },
     "elasticsearch.port": {
       "sensitive": true,
-      "value": "ELASTIC_PORT_${DATA_PARTITION_ID_UPPER}"
+      "value": "ELASTIC_PORT"
     },
     "elasticsearch.user": {
       "sensitive": true,
-      "value": "ELASTIC_USER_${DATA_PARTITION_ID_UPPER}"
+      "value": "ELASTIC_USER"
     },
     "elasticsearch.password": {
       "sensitive": true,
-      "value": "ELASTIC_PASS_${DATA_PARTITION_ID_UPPER}"
+      "value": "ELASTIC_PASS"
     },
     "kubernetes-secret-name": {
       "sensitive": false,
