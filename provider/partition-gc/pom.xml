@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-gc</artifactId>
-      <version>0.22.1</version>
+      <version>0.23.0</version>
     </dependency>
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>osm</artifactId>
-      <version>0.22.0</version>
+      <version>0.23.0</version>
     </dependency>
 
     <!-- Third party Apache 2.0 license packages -->
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>osm</artifactId>
-      <version>0.22.0</version>
+      <version>0.23.0</version>
     </dependency>
   </dependencies>
 
