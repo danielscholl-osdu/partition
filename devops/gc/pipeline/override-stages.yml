@@ -106,44 +106,13 @@ gc-baremetal-cleanup-env: # clean-up env after tests
       when: always
 
 gc-baremetal-verified-deploy: # verified deploy after tests
-  environment:
-    name: gc
-  extends: .gc-baremetal-variables
-  tags: ["osdu-small"]
-  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  extends: gc-baremetal-deploy
   stage: verified-deploy
   needs: ["gc-baremetal-test"]
-  retry: 1
-  script:
-    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
-    - !reference [.gc_common_config, script]
-    - >
-      helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
-      --install
-      --create-namespace
-      --namespace=$GC_HELM_NAMESPACE
-      --wait
-      --history-max=3
-      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.serviceAccountName=$GC_SERVICE
-      --set data.bucketPrefix=osdu-anthos
-      --set data.dataPartitionId=$GC_TENANT
-      --set data.logLevel=INFO
-      --set data.springProfilesActive=anthos
-      --set data.indexerAugmenterEnabled=true
-      --set global.onPremEnabled=true
-      --set global.domain=$GC_DOMAIN
-      $GC_HELM_TIMEOUT
-    - !reference [.gc_verify_deploy, script]
-    - !reference [.gc_verify_bootstrap, script]
-  rules:
-    - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: never
-    - if: "$CI_COMMIT_TAG"
-      when: never
-    - if: '$GC == "1"'
-      when: on_success
+  variables:
+    GC_HELM_NAMESPACE: default
+    GC_TENANT: osdu
+    GC_HELM_SETS: "--set data.indexerAugmenterEnabled=true"
 
 gc-deploy: # reuse common deploy job for test deployment
   variables:
@@ -184,42 +153,12 @@ gc-cleanup-env: # clean-up env after tests
       when: always
 
 gc-verified-deploy: # verified deploy after tests
-  environment:
-    name: gc
-  extends: .gc-variables
-  tags: ["osdu-small"]
-  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  extends: gc-deploy
   stage: verified-deploy
   needs: ["gc-test"]
-  retry: 1
-  script:
-    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
-    - !reference [.gc_common_config, script]
-    - >
-      helm upgrade $GC_SERVICE-deploy $GC_HELM_DEPLOYMENT_DIR
-      --install
-      --create-namespace
-      --namespace=$GC_HELM_NAMESPACE
-      --wait
-      --history-max=3
-      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.image=$CI_REGISTRY_IMAGE/gc-$GC_SERVICE:$CI_COMMIT_SHORT_SHA
-      --set data.serviceAccountName=$GC_SERVICE
-      --set data.projectId=$GC_PROJECT
-      --set data.dataPartitionId=$GC_TENANT
-      --set data.logLevel=INFO
-      --set data.indexerAugmenterEnabled=true
-      --set global.domain=$GC_DOMAIN
-      $GC_HELM_TIMEOUT
-    - !reference [.gc_verify_deploy, script]
-    - !reference [.gc_verify_bootstrap, script]
-  rules:
-    - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: never
-    - if: "$CI_COMMIT_TAG"
-      when: never
-    - if: '$GC == "1"'
-      when: on_success
+  variables:
+    GC_HELM_NAMESPACE: default
+    GC_TENANT: osdu
 
 gc-dev2-deploy: # reuse common deploy job for test deployment
   variables:
