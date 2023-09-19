@@ -141,6 +141,7 @@
     <module>provider/partition-aws</module>
     <module>provider/partition-ibm</module>
     <module>provider/partition-gc</module>
+      <module>partition-core-plus</module>
   </modules>
 
   <profiles>
