@@ -49,21 +49,11 @@ public class OsmPostgresDestinationResolver implements PgDestinationResolver {
 
     private static final String DRIVER_CLASS_NAME = "org.postgresql.Driver";
 
-    private final Map<String, DataSource> dataSourceCache = new HashMap<>();
-
+    private static DataSource dataSource;
     @Override
     public PgDestinationResolution resolve(Destination destination) {
-
-        String partitionId = destination.getPartitionId();
-
-        DataSource dataSource = dataSourceCache.get(partitionId);
         if (dataSource == null || (dataSource instanceof HikariDataSource && ((HikariDataSource) dataSource).isClosed())) {
-            synchronized (dataSourceCache) {
-                dataSource = dataSourceCache.get(partitionId);
-                if (dataSource == null || (dataSource instanceof HikariDataSource && ((HikariDataSource) dataSource).isClosed())) {
-                    dataSource = buildDataSourceFromProperties(partitionId);
-                }
-            }
+            dataSource = buildDataSourceFromProperties();
         }
 
         return PgDestinationResolution.builder()
@@ -71,7 +61,7 @@ public class OsmPostgresDestinationResolver implements PgDestinationResolver {
             .build();
     }
 
-    private DataSource buildDataSourceFromProperties(String partitionId) {
+    private DataSource buildDataSourceFromProperties() {
         DataSource dataSource;
         dataSource = DataSourceBuilder.create()
             .driverClassName(DRIVER_CLASS_NAME)
@@ -86,19 +76,15 @@ public class OsmPostgresDestinationResolver implements PgDestinationResolver {
         hikariDataSource.setIdleTimeout(properties.getIdleTimeout());
         hikariDataSource.setMaxLifetime(properties.getMaxLifetime());
         hikariDataSource.setConnectionTimeout(properties.getConnectionTimeout());
-
-        dataSourceCache.put(partitionId, dataSource);
         return dataSource;
     }
 
     @PreDestroy
     @Override
     public void close() {
-        log.info("On pre-destroy. {} DataSources to shutdown", dataSourceCache.size());
-        for (DataSource dataSource : dataSourceCache.values()) {
-            if (dataSource instanceof HikariDataSource && !((HikariDataSource) dataSource).isClosed()) {
-                ((HikariDataSource) dataSource).close();
-            }
+        log.info("On pre-destroy. {} shutting down the datasource");
+        if (dataSource instanceof HikariDataSource && !((HikariDataSource) dataSource).isClosed()) {
+            ((HikariDataSource) dataSource).close();
         }
     }
 }
