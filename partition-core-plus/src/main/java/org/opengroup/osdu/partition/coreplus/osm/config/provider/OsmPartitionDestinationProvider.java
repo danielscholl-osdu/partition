@@ -34,7 +34,6 @@ public class OsmPartitionDestinationProvider {
 
     public Destination getDestination() {
         return Destination.builder()
-            .partitionId(config.getGoogleCloudProject())
             .namespace(new Namespace(config.getPartitionNamespace()))
             .kind(new Kind(config.getPartitionPropertyKind()))
             .build();
