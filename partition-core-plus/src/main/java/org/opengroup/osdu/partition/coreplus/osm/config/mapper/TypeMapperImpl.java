@@ -18,8 +18,6 @@
 package org.opengroup.osdu.partition.coreplus.osm.config.mapper;
 
 import com.google.cloud.datastore.Key;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import org.opengroup.osdu.core.osm.core.persistence.IdentityTranslator;
 import org.opengroup.osdu.core.osm.core.translate.Instrumentation;
 import org.opengroup.osdu.core.osm.core.translate.TypeMapper;
@@ -38,12 +36,12 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SING
 @ConditionalOnProperty(name = "osmDriver")
 public class TypeMapperImpl extends TypeMapper {
     public TypeMapperImpl(){
-        super(ImmutableList.of(
+        super(java.util.List.of(
                 new Instrumentation<>(PartitionPropertyEntity.class,
                         new HashMap<String, String>() {{
                             put("partitionId", "partition_id");
                         }},
-                        ImmutableMap.of(),
+                        java.util.Map.of(),
                         new IdentityTranslator<>(
                                 PartitionPropertyEntity::getId,
                                 (p, o) -> p.setId(((Key)o).getName())

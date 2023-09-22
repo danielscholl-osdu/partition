@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class PropertiesConfiguration {
 
+  private String dataPartitionId;
   private int cacheExpiration;
 
   private int cacheMaxSize;

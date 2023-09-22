@@ -35,7 +35,12 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-osm.postgres</artifactId>
-            <version>0.24.0-rc5</version>
+            <version>0.24.0-rc6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-datastore</artifactId>
+            <version>2.13.5</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
