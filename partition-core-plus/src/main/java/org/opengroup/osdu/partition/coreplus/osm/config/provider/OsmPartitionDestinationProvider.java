@@ -34,8 +34,9 @@ public class OsmPartitionDestinationProvider {
 
     public Destination getDestination() {
         return Destination.builder()
-            .namespace(new Namespace(config.getPartitionNamespace()))
-            .kind(new Kind(config.getPartitionPropertyKind()))
-            .build();
+                .partitionId(config.getDataPartitionId())
+                .namespace(new Namespace(config.getPartitionNamespace()))
+                .kind(new Kind(config.getPartitionPropertyKind()))
+                .build();
     }
 }
