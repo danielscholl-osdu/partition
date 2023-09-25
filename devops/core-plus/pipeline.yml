@@ -26,9 +26,56 @@ core-plus-containerize:
     IMAGE_NAME: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   script:
     - echo building $CI_REGISTRY_IMAGE:$IMAGE_NAME
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_NAME -f $BUILD_PATH $BUILD_ARGS .
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
   only:
     variables:
       - $PROTECTED == '1'
 
+core-plus-tests:
+  tags: [ "osdu-medium" ]
+  extends:
+    - .maven
+  stage: integration
+  needs: [ "compile-and-unit-test" ]
+  retry: 1
+  services:
+    - name: postgres
+      command:
+        ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
+  variables:
+    POSTGRES_DATASOURCE_URL_OSDU: jdbc:postgresql://172.17.0.2:5432/postgres
+    PARTITION_POSTGRESQL_USERNAME: postgres
+    PARTITION_POSTGRESQL_USERNAME: $GC_OSM_POSTGRES_PASSWORD
+    POSTGRES_DB: postgres
+    POSTGRES_HOST: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: $GC_OSM_POSTGRES_PASSWORD
+    TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester
+    TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET
+    TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu
+  script:
+    - echo "--- Install psql ---"
+    - apt-get update && apt-get install -y postgresql-client libpq-dev
+    - echo "--- Bootstrap tables ---"
+    - export PGPASSWORD=$POSTGRES_PASSWORD
+    - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "devops/core-plus/test/bootstrap.sql"
+    - echo "--- Run integration tests ---"
+    - >
+      $MAVEN_BUILD . test-results.log
+      verify -DdisableXmlReport=true
+      --quiet
+      --file testing/pom.xml
+      --projects osm-test-core,osm-test-postgres
+      --update-snapshots
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+    expire_in: 1 days
+  only:
+    variables:
+      - $PROTECTED == '1'
