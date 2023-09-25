@@ -44,7 +44,6 @@ core-plus-tests:
     - name: postgres
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
-    - name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   variables:
     PARTITION_POSTGRESQL_DB_NAME: partition_db
     PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
