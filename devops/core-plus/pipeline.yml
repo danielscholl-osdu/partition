@@ -61,8 +61,7 @@ core-plus-tests:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev
     - echo "--- Bootstrap tables ---"
-    - export PGPASSWORD=$POSTGRES_PASSWORD
-    - psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "devops/core-plus/test/bootstrap.sql"
+    - RUN chmod +x devops/core-plus/test/bootstrap.sh
     - echo "--- Run integration tests ---"
     - >
       $MAVEN_BUILD . test-results.log
