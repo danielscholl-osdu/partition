@@ -25,24 +25,22 @@ EOF
 
 execute_sql_scripts() {
     export PGPASSWORD=${POSTGRESQL_PASSWORD}
-
-    psql -h "${POSTGRESQL_HOST}" -U "${POSTGRESQL_USERNAME}" -p "${POSTGRESQL_PORT}" -f "./bootstrap.sql"
+    psql -h "${POSTGRESQL_HOST}" -U "${POSTGRESQL_USERNAME}" -p "${POSTGRESQL_PORT}" -f "devops/core-plus/test/bootstrap.sql"
 }
 
 # General connection variables
-source ./validate-env.sh "DATA_PARTITION_ID"
+source devops/core-plus/test/validate-env.sh "DATA_PARTITION_ID"
 
 # Service users and passwords
-source ./validate-env.sh "PARTITION_POSTGRESQL_DB_NAME"
-source ./validate-env.sh "PARTITION_POSTGRESQL_USERNAME"
-source ./validate-env.sh "PARTITION_POSTGRESQL_PASSWORD"
-source ./validate-env.sh "POSTGRESQL_HOST"
-source ./validate-env.sh "POSTGRESQL_PORT"
-source ./validate-env.sh "POSTGRESQL_USERNAME"
-source ./validate-env.sh "POSTGRESQL_PASSWORD"
-source ./validate-env.sh "POSTGRESQL_DATABASE"
+source devops/core-plus/test/validate-env.sh "PARTITION_POSTGRESQL_DB_NAME"
+source devops/core-plus/test/validate-env.sh "PARTITION_POSTGRESQL_USERNAME"
+source devops/core-plus/test/validate-env.sh "PARTITION_POSTGRESQL_PASSWORD"
+source devops/core-plus/test/validate-env.sh "POSTGRESQL_HOST"
+source devops/core-plus/test/validate-env.sh "POSTGRESQL_PORT"
+source devops/core-plus/test/validate-env.sh "POSTGRESQL_USERNAME"
+source devops/core-plus/test/validate-env.sh "POSTGRESQL_PASSWORD"
+source devops/core-plus/test/validate-env.sh "POSTGRESQL_DATABASE"
 substitute_values
 execute_sql_scripts
-touch /tmp/bootstrap_ready
-# sleeping if success
-sleep 365d
+
+echo "Done bootstrapping the env"
