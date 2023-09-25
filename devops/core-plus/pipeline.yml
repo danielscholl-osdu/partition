@@ -49,15 +49,17 @@ core-plus-tests:
     PARTITION_POSTGRESQL_DB_NAME: partition_db
     PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
     PARTITION_POSTGRESQL_PASSWORD: partition_pg
-    POSTGRES_DB: postgres
-    POSTGRES_HOST: postgres
-    POSTGRES_USER: postgres
+    POSTGRESQL_PORT: 5432
+    POSTGRESQL_HOST: postgres
+    POSTGRESQL_USERNAME: postgres
     POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    POSTGRESQL_DATABASE: postgres
     TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester
     TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET
     TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester
     TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET
     TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu
+    DATA_PARTITION_ID: test-partition
   script:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev
