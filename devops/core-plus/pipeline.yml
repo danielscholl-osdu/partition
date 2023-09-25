@@ -22,8 +22,8 @@ core-plus-containerize:
   variables:
     BUILD_ARGS: "--build-arg PORT=$SERVICE_PORT"
     BUILD_PATH: "devops/core-plus/build/Dockerfile"
-    CI_PROJECT_NAME: "partition-core-plus"
-    IMAGE_NAME: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    CUSTOM_PROJECT_NAME: "partition-core-plus"
+    IMAGE_NAME: ${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   script:
     - echo building $CI_REGISTRY_IMAGE:$IMAGE_NAME
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -44,7 +44,7 @@ core-plus-tests:
     - name: postgres
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
-    - name: ${CI_REGISTRY_IMAGE}/${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   variables:
     PARTITION_POSTGRESQL_DB_NAME: partition_db
     PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
@@ -60,6 +60,7 @@ core-plus-tests:
     TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET
     TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu
     DATA_PARTITION_ID: test-partition
+    CUSTOM_PROJECT_NAME: "partition-core-plus"
   script:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev
