@@ -61,7 +61,8 @@ core-plus-tests:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev
     - echo "--- Bootstrap tables ---"
-    - RUN chmod +x devops/core-plus/test/bootstrap.sh
+    - chmod +x devops/core-plus/test/bootstrap.sh
+    - devops/core-plus/test/bootstrap.sh
     - echo "--- Run integration tests ---"
     - >
       $MAVEN_BUILD . test-results.log
