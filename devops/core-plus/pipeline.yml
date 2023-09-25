@@ -1,0 +1,32 @@
+variables:
+  SERVICE_PORT: 8080
+  POSTGRES_DATASOURCE_URL_OSDU: jdbc:postgresql://172.17.0.2:5432/postgres
+  POSTGRES_DB_USERNAME_OSDU: postgres
+  POSTGRES_DB_PASSWORD_OSDU: $GC_OSM_POSTGRES_PASSWORD
+  POSTGRES_DB: postgres
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: $GC_OSM_POSTGRES_PASSWORD
+  TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester
+  TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET
+  TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester
+  TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET
+  TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu
+
+core-plus-containerize:
+  stage: containerize
+  needs: ["compile-and-unit-test"]
+  tags: ["osdu-small"]
+  image: docker:19.03
+  cache: {}
+  variables:
+    BUILD_ARGS: "--build-arg PORT=$SERVICE_PORT"
+    BUILD_PATH: "devops/core-plus/build/Dockerfile"
+    CI_PROJECT_NAME: "partition-core-plus"
+    IMAGE_NAME: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+  script:
+    - docker build $CI_REGISTRY_IMAGE:$IMAGE_NAME -f $BUILD_PATH $BUILD_ARGS .
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
+  only:
+    variables:
+      - $PROTECTED == '1'

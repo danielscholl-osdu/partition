@@ -66,6 +66,8 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "publishing/pages.yml"
 
+  - local: "devops/core-plus/pipeline.yml"
+
 .maven:
   image: maven:3.9.3-eclipse-temurin-17
   tags: ['osdu-medium']
