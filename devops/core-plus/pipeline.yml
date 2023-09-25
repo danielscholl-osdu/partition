@@ -38,7 +38,7 @@ core-plus-tests:
   extends:
     - .maven
   stage: integration
-  needs: [ "compile-and-unit-test" ]
+  needs: [ "compile-and-unit-test", "core-plus-containerize" ]
   retry: 1
   services:
     - name: postgres
