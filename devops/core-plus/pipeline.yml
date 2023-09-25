@@ -45,9 +45,9 @@ core-plus-tests:
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
   variables:
-    POSTGRES_DATASOURCE_URL_OSDU: jdbc:postgresql://172.17.0.2:5432/postgres
-    PARTITION_POSTGRESQL_USERNAME: postgres
-    PARTITION_POSTGRESQL_USERNAME: $GC_OSM_POSTGRES_PASSWORD
+    PARTITION_POSTGRESQL_DB_NAME: partition_db
+    PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
+    PARTITION_POSTGRESQL_PASSWORD: partition_pg
     POSTGRES_DB: postgres
     POSTGRES_HOST: postgres
     POSTGRES_USER: postgres
@@ -69,7 +69,7 @@ core-plus-tests:
       verify -DdisableXmlReport=true
       --quiet
       --file testing/pom.xml
-      --projects osm-test-core,osm-test-postgres
+      --projects partition-test-core,partition-test-core-plus
       --update-snapshots
   artifacts:
     when: always
