@@ -25,8 +25,10 @@ core-plus-containerize:
     CI_PROJECT_NAME: "partition-core-plus"
     IMAGE_NAME: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
   script:
-    - docker build $CI_REGISTRY_IMAGE:$IMAGE_NAME -f $BUILD_PATH $BUILD_ARGS .
+    - echo building $CI_REGISTRY_IMAGE:$IMAGE_NAME
+    - docker build -t $CI_REGISTRY_IMAGE:$IMAGE_NAME -f $BUILD_PATH $BUILD_ARGS .
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
   only:
     variables:
       - $PROTECTED == '1'
+
