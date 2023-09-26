@@ -64,7 +64,7 @@ core-plus-tests:
     CUSTOM_PROJECT_NAME: "partition-core-plus"
   script:
     - echo "--- Install psql ---"
-    - apt-get update && apt-get install -y postgresql-client libpq-dev
+    - apt-get update && apt-get install -y postgresql-client libpq-dev jq
     - echo "--- Bootstrap tables ---"
     - chmod +x devops/core-plus/test/bootstrap.sh
     - devops/core-plus/test/bootstrap.sh
