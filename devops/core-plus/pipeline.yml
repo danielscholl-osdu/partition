@@ -74,7 +74,7 @@ core-plus-tests:
       verify -DdisableXmlReport=true
       --quiet
       --file testing/pom.xml
-      --projects  
+      --projects partition-test-core,partition-test-core-plus
       --update-snapshots
   artifacts:
     when: always
