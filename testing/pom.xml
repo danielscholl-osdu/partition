@@ -36,6 +36,7 @@
 		<module>partition-test-ibm</module>
     	<module>partition-test-gc</module>
 		<module>partition-test-baremetal</module>
+		<module>partition-test-core-plus</module>
   </modules>
 
 	<repositories>
