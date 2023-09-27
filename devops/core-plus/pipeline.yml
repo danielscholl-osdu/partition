@@ -45,7 +45,7 @@ core-plus-tests:
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
     - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
-      alias: partition_service_image
+      alias: PartitionService
       command: [ "--port","8080"]
   variables:
     FF_NETWORK_PER_BUILD: "true"     # activate container-to-container networking
@@ -68,7 +68,7 @@ core-plus-tests:
     #required for integration tests
     CLIENT_TENANT: osdu
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
-    PARTITION_BASE_URL: http://partition_service_image:8080/
+    PARTITION_BASE_URL: http://PartitionService:8080/
     CI_DEBUG_SERVICES: "true"
   script:
     - echo "--- Install psql ---"
