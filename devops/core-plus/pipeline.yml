@@ -86,7 +86,6 @@ core-plus-tests:
     when: always
     paths:
       - test-results.log
-      - svc0.log
     expire_in: 1 days
   only:
     variables:
