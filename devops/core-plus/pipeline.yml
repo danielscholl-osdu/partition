@@ -68,6 +68,7 @@ core-plus-tests:
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
     PARTITION_BASE_URL: http://partition_service_image:8080/
   script:
+    - kubectl logs partition_service_image -A > svc0.log
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev jq
     - echo "--- Bootstrap tables ---"
@@ -85,6 +86,7 @@ core-plus-tests:
     when: always
     paths:
       - test-results.log
+      - svc0.log
     expire_in: 1 days
   only:
     variables:
