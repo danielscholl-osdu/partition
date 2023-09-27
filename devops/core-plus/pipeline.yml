@@ -44,9 +44,7 @@ core-plus-tests:
     - name: postgres
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
-    - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
-      alias: PartitionService
-      command: [ "--port","8080"]
+    - name: docker:dind #necessary for docker-run
   variables:
     FF_NETWORK_PER_BUILD: "true"     # activate container-to-container networking
     PARTITION_POSTGRESQL_DB_NAME: partition_db
@@ -71,11 +69,14 @@ core-plus-tests:
     PARTITION_BASE_URL: http://PartitionService:8080/
     CI_DEBUG_SERVICES: "true"
   script:
+    - docker run -d --name PartitionService -p 8080:8080 ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+    - sleep 30 #wait for the service to come up, TODO, add another way here
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev jq
     - echo "--- Bootstrap tables ---"
     - chmod +x devops/core-plus/test/bootstrap.sh
     - devops/core-plus/test/bootstrap.sh
+    - curl "http://PartitionService:8080" #check service is reachable
     - echo "--- Run integration tests ---"
     - >
       $MAVEN_BUILD . test-results.log
