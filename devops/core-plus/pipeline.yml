@@ -68,12 +68,12 @@ core-plus-tests:
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
     PARTITION_BASE_URL: http://partition_service_image:8080/
   script:
-    - kubectl logs partition_service_image -A > svc0.log
     - echo "--- Install psql ---"
-    - apt-get update && apt-get install -y postgresql-client libpq-dev jq
+    - apt-get update && apt-get install -y postgresql-client libpq-dev jq kubectl
     - echo "--- Bootstrap tables ---"
     - chmod +x devops/core-plus/test/bootstrap.sh
     - devops/core-plus/test/bootstrap.sh
+    - kubectl logs partition_service_image -A > svc0.log
     - echo "--- Run integration tests ---"
     - >
       $MAVEN_BUILD . test-results.log
