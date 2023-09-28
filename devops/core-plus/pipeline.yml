@@ -44,9 +44,9 @@ core-plus-tests:
     - name: postgres
       command:
         ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
-    - name: docker:dind #necessary for docker-run
+    - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+      alias: partition-service-image
   variables:
-    FF_NETWORK_PER_BUILD: "true"     # activate container-to-container networking
     PARTITION_POSTGRESQL_DB_NAME: partition_db
     PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
     PARTITION_POSTGRESQL_PASSWORD: partition_pg
@@ -66,17 +66,14 @@ core-plus-tests:
     #required for integration tests
     CLIENT_TENANT: osdu
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
-    PARTITION_BASE_URL: http://PartitionService:8080/
+    PARTITION_BASE_URL: http://partition-service-image:8080/
     CI_DEBUG_SERVICES: "true"
   script:
-    - docker run -d --name PartitionService -p 8080:8080 ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
-    - sleep 30 #wait for the service to come up, TODO, add another way here
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev jq
     - echo "--- Bootstrap tables ---"
     - chmod +x devops/core-plus/test/bootstrap.sh
     - devops/core-plus/test/bootstrap.sh
-    - curl "http://PartitionService:8080" #check service is reachable
     - echo "--- Run integration tests ---"
     - >
       $MAVEN_BUILD . test-results.log
