@@ -47,27 +47,27 @@ core-plus-tests:
     - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
       alias: partition-service-image
   variables:
-    PARTITION_POSTGRESQL_DB_NAME: partition_db
-    PARTITION_POSTGRESQL_USERNAME: usr_partition_pg
-    PARTITION_POSTGRESQL_PASSWORD: partition_pg
-    POSTGRESQL_PORT: 5432
-    POSTGRESQL_HOST: postgres
-    POSTGRESQL_USERNAME: postgres
-    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-    POSTGRESQL_DATABASE: postgres
-    POSTGRESQL_PASSWORD: $POSTGRES_PASSWORD
-    TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester
-    TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET
-    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester
-    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET
-    TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu
-    DATA_PARTITION_ID: test-partition
+    PARTITION_POSTGRESQL_DB_NAME: partition_db  #Used from bootstrapping script
+    PARTITION_POSTGRESQL_USERNAME: usr_partition_pg #Used from bootstrapping script
+    PARTITION_POSTGRESQL_PASSWORD: partition_pg #Used from bootstrapping script
+    POSTGRESQL_PORT: 5432 #used from the docker script
+    POSTGRESQL_HOST: postgres #used from the docker script
+    POSTGRESQL_USERNAME: postgres #used from the docker script
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD #used to start the postgres service alongside the runner
+    POSTGRESQL_DATABASE: postgres #default postgres database for scripts to connect
+    POSTGRESQL_PASSWORD: $POSTGRES_PASSWORD #password for above db
+    TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester #integration testing
+    TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET #integration testing
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester #integration testing
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET #integration testing
+    TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu #token provider for testing config, need to change it later
+    DATA_PARTITION_ID: test-partition #for default configs
     CUSTOM_PROJECT_NAME: "partition-core-plus"
     #required for integration tests
-    CLIENT_TENANT: osdu
+    CLIENT_TENANT: osdu #int tests
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
-    PARTITION_BASE_URL: http://partition-service-image:8080/
-    CI_DEBUG_SERVICES: "true"
+    PARTITION_BASE_URL: http://partition-service-image:8080/ #url where integration tests are hitting
+    #CI_DEBUG_SERVICES: "true" #flag for debugging the services in the runner
   script:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev jq
