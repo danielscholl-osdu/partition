@@ -68,6 +68,7 @@ core-plus-tests:
     ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
     PARTITION_BASE_URL: http://partition-service-image:8080/ #url where integration tests are hitting
     #CI_DEBUG_SERVICES: "true" #flag for debugging the services in the runner
+    PARTITION_POSTGRES_URL: $PARTITION_POSTGRES_URL
   script:
     - echo "--- Install psql ---"
     - apt-get update && apt-get install -y postgresql-client libpq-dev jq
