@@ -112,6 +112,7 @@ gc-baremetal-verified-deploy: # verified deploy after tests
   variables:
     GC_HELM_NAMESPACE: default
     GC_TENANT: osdu
+    # if parameter is not necessary define the GC_HELM_SETS as blank
     GC_HELM_SETS: "--set data.indexerAugmenterEnabled=true"
 
 gc-deploy: # reuse common deploy job for test deployment
@@ -159,6 +160,8 @@ gc-verified-deploy: # verified deploy after tests
   variables:
     GC_HELM_NAMESPACE: default
     GC_TENANT: osdu
+    # GC_HELM_SETS is blanked since values from gc-deploy is not compatible
+    GC_HELM_SETS: ""
 
 gc-dev2-deploy: # reuse common deploy job for test deployment
   variables:
