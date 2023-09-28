@@ -38,7 +38,6 @@ public class AzureExceptionMapper extends GlobalExceptionMapper {
 
     @ExceptionHandler(HttpResponseException.class)
     protected ResponseEntity<Object> handleHttpResponseException(HttpResponseException e) {
-
         if (e.getResponse().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
             return this.getErrorResponse(new AppException(e.getResponse().getStatusCode(), e.getLocalizedMessage(), e.getMessage(), e));
         }
