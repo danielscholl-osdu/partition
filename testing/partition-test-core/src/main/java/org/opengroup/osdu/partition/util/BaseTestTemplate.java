@@ -96,4 +96,12 @@ public abstract class BaseTestTemplate extends TestBase {
         CloseableHttpResponse response = descriptor.run(getId(), "");
         assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
+
+    @Test
+    public void should_return400_when_makingHttpRequestWithoutValidUrl() throws Exception {
+        ClientResponse response = TestUtils
+                .send("api/partition/v1/partitions//", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "",
+                        "", false);
+        assertEquals(error(response.getEntity(String.class)), 400, response.getStatus());
+    }
 }
