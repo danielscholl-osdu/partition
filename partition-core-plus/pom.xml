@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>os-osm.postgres</artifactId>
-            <version>0.24.0-rc6</version>
+            <version>0.24.0-rc7</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
