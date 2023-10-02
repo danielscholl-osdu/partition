@@ -20,7 +20,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Test;
-import org.springframework.http.HttpMethod;
 
 import static org.junit.Assert.assertEquals;
 
@@ -100,9 +99,7 @@ public abstract class BaseTestTemplate extends TestBase {
 
     @Test
     public void should_return400_when_makingHttpRequestWithoutValidUrl() throws Exception {
-        ClientResponse response = TestUtils
-                .send("api/partition/v1/partitions//", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "",
-                        "", false);
-        assertEquals(error(response.getEntity(String.class)), 400, response.getStatus());
+        CloseableHttpResponse response = descriptor.run("/", testUtils.getAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 400, response.getCode());
     }
 }
