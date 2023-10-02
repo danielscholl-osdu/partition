@@ -20,6 +20,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.Test;
+import org.springframework.http.HttpMethod;
 
 import static org.junit.Assert.assertEquals;
 
