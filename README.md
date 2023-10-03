@@ -2,6 +2,12 @@
 
 The Partition service is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not. It is a Maven multi-module project with each cloud implementation placed in its submodule.
 
+## Community Implementation
+It is containing an Open-Source version with os-osm Driver containing the postgres db for consumption. As of now the code is not having any authentication for core-plus as it is not having the infra for authentication.
+So, currently it's only enough to run and consume the service locally, for development and understanding purpose.
+
+One could either spin up a postgres docker container locally, and use along with local partition service code. Or else, fetch the container image for postgres service and Partition service both and then use them. More details [here](./README.md#running-locally---partition-core-plus) 
+
 ## Running Locally - AWS
 
 Instructions for running the AWS implementation locally can be found [here](./provider/partition-aws/README.md)
@@ -15,6 +21,9 @@ Instructions for running the Azure implementation locally can be found [here](./
 Instructions for running the Google Cloud implementation locally can be found [here](./provider/partition-gc/README.md)
 
 ## Running Locally - IBM
+
+## Running Locally - Partition Core Plus
+Instructions for running the Partion Core Plus can be found [here](./partition-core-plus/README.md)
 
 ## Running Integration Tests
 
