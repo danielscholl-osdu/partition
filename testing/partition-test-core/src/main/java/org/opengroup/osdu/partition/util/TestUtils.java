@@ -25,6 +25,7 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
+import java.io.Console;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -96,6 +97,7 @@ public abstract class TestUtils {
 	private static ClassicHttpRequest createHttpRequest(String path, String httpMethod, String token, String requestBody,
 														Map<String, String> headers, boolean enforceHttp) throws MalformedURLException {
 		String url = getApiPath(path, enforceHttp);
+		System.out.print("http req: " + url);
 		ClassicRequestBuilder classicRequestBuilder = ClassicRequestBuilder.create(httpMethod)
 				.setUri(url)
 				.addHeader("Authorization", token)
@@ -106,6 +108,7 @@ public abstract class TestUtils {
 
 	private static ClassicHttpRequest createHttpRequest(String path, String httpMethod, boolean enforceHttp) throws MalformedURLException {
 		String url = getApiPath(path, enforceHttp);
+		System.out.print("http req: " + url);
 		return ClassicRequestBuilder.create(httpMethod).setUri(url).build();
 	}
 
