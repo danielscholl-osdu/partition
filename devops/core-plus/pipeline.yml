@@ -1,0 +1,78 @@
+core-plus-containerize:
+  stage: containerize
+  needs: ["compile-and-unit-test"]
+  tags: ["osdu-small"]
+  image: docker:19.03
+  cache: {}
+  variables:
+    BUILD_ARGS: "--build-arg PORT=$SERVICE_PORT"
+    BUILD_PATH: "devops/core-plus/build/Dockerfile"
+    CUSTOM_PROJECT_NAME: "partition-core-plus"
+    IMAGE_NAME: ${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+  script:
+    - echo building $CI_REGISTRY_IMAGE:$IMAGE_NAME
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE/$IMAGE_NAME -f $BUILD_PATH $BUILD_ARGS .
+    - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
+  only:
+    variables:
+      - $PROTECTED == '1'
+
+core-plus-tests:
+  tags: [ "osdu-medium" ]
+  extends:
+    - .maven
+  stage: integration
+  needs: [ "compile-and-unit-test", "core-plus-containerize" ]
+  retry: 1
+  services:
+    - name: postgres
+      command:
+        ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
+    - name: ${CI_REGISTRY_IMAGE}/${CUSTOM_PROJECT_NAME}-${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}
+      alias: partition-service-image
+  variables:
+    PARTITION_POSTGRESQL_DB_NAME: partition_db  #Used from bootstrapping script
+    PARTITION_POSTGRESQL_USERNAME: usr_partition_pg #Used from bootstrapping script
+    PARTITION_POSTGRESQL_PASSWORD: partition_pg #Used from bootstrapping script
+    POSTGRESQL_PORT: 5432 #used from the docker script
+    POSTGRESQL_HOST: postgres #used from the docker script
+    POSTGRESQL_USERNAME: postgres #used from the docker script
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD #used to start the postgres service alongside the runner
+    POSTGRESQL_DATABASE: postgres #default postgres database for scripts to connect
+    POSTGRESQL_PASSWORD: $POSTGRES_PASSWORD #password for above db
+    TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester #integration testing
+    TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET #integration testing
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester #integration testing
+    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET #integration testing
+    TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu #token provider for testing config, need to change it later
+    DATA_PARTITION_ID: test-partition #for default configs
+    CUSTOM_PROJECT_NAME: "partition-core-plus"
+    #required for integration tests
+    CLIENT_TENANT: osdu #int tests
+    ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
+    PARTITION_BASE_URL: http://partition-service-image:8080/ #url where integration tests are hitting
+    #CI_DEBUG_SERVICES: "true" #flag for debugging the services in the runner
+    PARTITION_POSTGRES_URL: $PARTITION_POSTGRES_URL
+  script:
+    - echo "--- Install psql ---"
+    - apt-get update && apt-get install -y postgresql-client libpq-dev jq
+    - echo "--- Bootstrap tables ---"
+    - chmod +x devops/core-plus/test/bootstrap.sh
+    - devops/core-plus/test/bootstrap.sh
+    - echo "--- Run integration tests ---"
+    - >
+      $MAVEN_BUILD . test-results.log
+      verify -DdisableXmlReport=true
+      --quiet
+      --file testing/pom.xml
+      --projects partition-test-core,partition-test-core-plus
+      --update-snapshots
+  artifacts:
+    when: always
+    paths:
+      - test-results.log
+    expire_in: 1 days
+  only:
+    variables:
+      - $PROTECTED == '1'
