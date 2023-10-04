@@ -5,6 +5,7 @@ ENV PREFIX=$(pwd)
 RUN apk update && apk add \
     bash \
     curl \
+    jq \
     && chmod 775 bootstrap_partition.sh
 RUN addgroup -g 10001 -S nonroot \
   && adduser -h /opt -G nonroot -S -u 10001 nonroot

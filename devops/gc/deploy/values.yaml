@@ -12,7 +12,7 @@ data:
   dataProjectId: ""
   dataPartitionId: ""
   dataPartitionIdList: []
-  partitionName: "partition"
+  partitionHost: "partition"
   partitionNamespace: "partition"
   datafierSa: "datafier"
   bucketPrefix: "refi"
