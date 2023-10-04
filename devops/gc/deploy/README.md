@@ -109,7 +109,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.springProfilesActive** | active spring profile | string | gcp | yes
 **data.projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
 **data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
-**data.partitionName** | partition host | string | partition | yes
+**data.partitionHost** | partition host | string | partition | yes
 **data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
 **data.dataPartitionId** | data partition id | string | - | yes
 **data.datafierSa** | datafier service account | string | datafier | yes

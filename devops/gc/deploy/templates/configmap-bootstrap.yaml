@@ -6,7 +6,7 @@ metadata:
   name: "{{ .Values.conf.configmap }}-bootstrap"
   namespace: "{{ .Release.Namespace }}"
 data:
-  PARTITION_NAME: {{ .Values.data.partitionName | quote }}
+  PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
   DATA_PARTITION_ID: {{ .Values.data.dataPartitionId | quote }}
   ENVIRONMENT: {{ .Values.data.springProfilesActive | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
