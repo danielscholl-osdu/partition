@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-generate_post_data_baremetal() {
+# FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
+# FIXME (GONRG-7696): Move rabbitmq properties to additional partition when resolved
+baremetal_system_partition_data() {
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
   cat <<EOF
 {
   "properties": {
@@ -23,10 +26,6 @@ generate_post_data_baremetal() {
     "name": {
       "sensitive": false,
       "value": "${DATA_PARTITION_ID}"
-    },
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "false"
     },
     "bucket": {
       "sensitive": false,
@@ -64,9 +63,9 @@ generate_post_data_baremetal() {
       "sensitive": false,
       "value": "${MINIO_IGNORE_CERT_CHECK}"
     },
-    "obm.minio.external.endpoint": {
+    "kubernetes-secret-name": {
       "sensitive": false,
-      "value": "${MINIO_EXTERNAL_ENDPOINT}"
+      "value": "eds-${DATA_PARTITION_ID}"
     },
     "oqm.rabbitmq.amqp.host": {
       "sensitive": false,
@@ -127,16 +126,32 @@ generate_post_data_baremetal() {
     "elasticsearch.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS"
-    },
-    "kubernetes-secret-name": {
-      "sensitive": false,
-      "value": "eds-${DATA_PARTITION_ID}"
-    },
-    "index-augmenter-enabled": {
-      "sensitive": false,
-      "value": "${INDEXER_AUGMENTER_ENABLED}"
     }
   }
 }
 EOF
 }
+
+baremetal_additional_partition_data() {
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
+  cat <<EOF
+{
+  "properties": {
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
+    },
+    "policy-service-enabled": {
+      "sensitive": false,
+      "value": "false"
+    },
+    "obm.minio.external.endpoint": {
+      "sensitive": false,
+      "value": "${MINIO_EXTERNAL_ENDPOINT}"
+    }
+  }
+}
+EOF
+}
+
+
