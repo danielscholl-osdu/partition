@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-generate_post_data_gc() {
+# FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
+gc_system_partition_data() {
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
   cat <<EOF
 {
   "properties": {
@@ -24,10 +26,6 @@ generate_post_data_gc() {
       "sensitive": false,
       "value": "${DATA_PARTITION_ID}"
     },
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "false"
-    },
     "bucket": {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-records"
@@ -39,10 +37,6 @@ generate_post_data_gc() {
     "crmAccountID": {
       "sensitive": false,
       "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
-    },
-    "reservoir-connection": {
-      "sensitive": true,
-      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
     },
     "elasticsearch.host": {
       "sensitive": true,
@@ -59,6 +53,19 @@ generate_post_data_gc() {
     "elasticsearch.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS"
+    }
+  }
+}
+EOF
+}
+
+gc_additional_partition_data() {
+  cat <<EOF
+{
+  "properties": {
+    "policy-service-enabled": {
+      "sensitive": false,
+      "value": "false"
     },
     "kubernetes-secret-name": {
       "sensitive": false,
@@ -67,6 +74,10 @@ generate_post_data_gc() {
     "index-augmenter-enabled": {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
+    },
+    "reservoir-connection": {
+      "sensitive": true,
+      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
     }
   }
 }
