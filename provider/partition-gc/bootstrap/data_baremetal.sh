@@ -3,7 +3,7 @@
 # FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
 # FIXME (GONRG-7696): Move rabbitmq properties to additional partition when resolved
 baremetal_system_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
   cat <<EOF
 {
   "properties": {
@@ -21,19 +21,19 @@ baremetal_system_partition_data() {
     },
     "dataPartitionId": {
       "sensitive": false,
-      "value": "${DATA_PARTITION_ID}"
+      "value": "${DATA_PARTITION_ID_VALUE}"
     },
     "name": {
       "sensitive": false,
-      "value": "${DATA_PARTITION_ID}"
+      "value": "${DATA_PARTITION_ID_VALUE}"
     },
     "bucket": {
       "sensitive": false,
-      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID}-records"
+      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-records"
     },
     "crmAccountID": {
       "sensitive": false,
-      "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
+      "value": "[${DATA_PARTITION_ID_VALUE},${DATA_PARTITION_ID_VALUE}]"
     },
     "osm.postgres.datasource.url": {
       "sensitive": true,
@@ -65,7 +65,7 @@ baremetal_system_partition_data() {
     },
     "kubernetes-secret-name": {
       "sensitive": false,
-      "value": "eds-${DATA_PARTITION_ID}"
+      "value": "eds-${DATA_PARTITION_ID_VALUE}"
     },
     "oqm.rabbitmq.amqp.host": {
       "sensitive": false,
@@ -133,7 +133,7 @@ EOF
 }
 
 baremetal_additional_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
   cat <<EOF
 {
   "properties": {
