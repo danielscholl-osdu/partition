@@ -42,8 +42,10 @@ bootstrap_partition() {
 
 # Bootstrap system partition
 if [[ "${ENVIRONMENT}" == "gcp" ]]; then
+  export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
   bootstrap_partition "${DATA_PARTITION_ID}" "$(gc_system_partition_data)"
 elif [[ "${ENVIRONMENT}" == "anthos" ]]; then
+  export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
   bootstrap_partition "${DATA_PARTITION_ID}" "$(baremetal_system_partition_data)"
 fi
 
@@ -52,6 +54,7 @@ if [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
   IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
 
   for PARTITION in "${PARTITIONS[@]}"; do
+    export DATA_PARTITION_ID_VALUE="${PARTITION}"
     additional_partition_data=$(merge "gc_system_partition_data" "gc_additional_partition_data")
     bootstrap_partition "${PARTITION}" "$additional_partition_data"
   done
@@ -59,6 +62,7 @@ elif [[ "${ENVIRONMENT}" == "anthos" && "${DATA_PARTITION_ID_LIST}" != "" ]]; th
   IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
 
   for PARTITION in "${PARTITIONS[@]}"; do
+    export DATA_PARTITION_ID_VALUE="${PARTITION}"
     additional_partition_data=$(merge "baremetal_system_partition_data" "baremetal_additional_partition_data")
     bootstrap_partition "${PARTITION}" "$additional_partition_data"
   done
