@@ -2,7 +2,7 @@
 
 # FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
 gc_system_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID^^}"
+  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
   cat <<EOF
 {
   "properties": {
@@ -20,23 +20,23 @@ gc_system_partition_data() {
     },
     "dataPartitionId": {
       "sensitive": false,
-      "value": "${DATA_PARTITION_ID}"
+      "value": "${DATA_PARTITION_ID_VALUE}"
     },
     "name": {
       "sensitive": false,
-      "value": "${DATA_PARTITION_ID}"
+      "value": "${DATA_PARTITION_ID_VALUE}"
     },
     "bucket": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-records"
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-records"
     },
     "seismicBucket": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-${DATA_PARTITION_ID}-ss-seismic"
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-ss-seismic"
     },
     "crmAccountID": {
       "sensitive": false,
-      "value": "[${DATA_PARTITION_ID},${DATA_PARTITION_ID}]"
+      "value": "[${DATA_PARTITION_ID_VALUE},${DATA_PARTITION_ID_VALUE}]"
     },
     "elasticsearch.host": {
       "sensitive": true,
@@ -69,7 +69,7 @@ gc_additional_partition_data() {
     },
     "kubernetes-secret-name": {
       "sensitive": false,
-      "value": "eds-${DATA_PARTITION_ID}"
+      "value": "eds-${DATA_PARTITION_ID_VALUE}"
     },
     "index-augmenter-enabled": {
       "sensitive": false,
