@@ -63,6 +63,10 @@ baremetal_system_partition_data() {
       "sensitive": false,
       "value": "${MINIO_IGNORE_CERT_CHECK}"
     },
+    "obm.minio.ui.endpoint": {
+        "sensitive": false,
+        "value": "${MINIO_UI_ENDPOINT}"
+    },
     "kubernetes-secret-name": {
       "sensitive": false,
       "value": "eds-${DATA_PARTITION_ID_VALUE}"
