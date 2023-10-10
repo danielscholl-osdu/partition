@@ -1,6 +1,6 @@
 /*
-  Copyright 2002-2021 Google LLC
-  Copyright 2002-2021 EPAM Systems, Inc
+  Copyright 2002-2023 Google LLC
+  Copyright 2002-2023 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,16 +17,6 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +27,17 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
+
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PartitionServiceImplTest {
@@ -47,6 +46,7 @@ public class PartitionServiceImplTest {
     private static final boolean SENSITIVE = false;
     private static final String NAME = "new-key";
     private static final String VALUE = "new-value";
+    public static final String SYSTEM_PARTITION_ID = "systemPartitionId";
 
     @Mock
     private ICache<String, PartitionInfo> partitionServiceCache;
@@ -67,13 +67,18 @@ public class PartitionServiceImplTest {
     private Optional<List<PartitionPropertyEntity>> partitionPropertyEntityList;
     private Optional<List<PartitionPropertyEntity>> emptyList;
 
+    @Mock
+    private PropertiesConfiguration propertiesConfiguration;
+
     @BeforeEach
     public void setup() {
         partitionServiceImpl = new PartitionServiceImpl(
                 partitionPropertyEntityRepository,
                 auditLogger,
                 partitionServiceCache,
-                partitionListCache
+                partitionListCache,
+                propertiesConfiguration
+
         );
 
         expectedPartitionInfo = new PartitionInfo();
@@ -189,5 +194,33 @@ public class PartitionServiceImplTest {
         List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
 
         assertEquals(expectedPartitions, actualPartitions);
+    }
+
+    @Test
+    public void should_getAllPartitionsExceptEmptySystemPartition() {
+        var expectedPartitions = new ArrayList<String>();
+        expectedPartitions.add(PARTITION_ID);
+        expectedPartitions.add(SYSTEM_PARTITION_ID);
+
+        when(propertiesConfiguration.getSystemPartitionId()).thenReturn("");
+        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
+
+        var actualPartitions = partitionServiceImpl.getAllPartitions();
+
+        assertEquals(expectedPartitions, actualPartitions);
+    }
+
+    @Test
+    public void should_getAllPartitionsExceptSystemPartition() {
+        var expectedPartitions = new ArrayList<String>();
+        expectedPartitions.add(PARTITION_ID);
+        expectedPartitions.add(SYSTEM_PARTITION_ID);
+
+        when(propertiesConfiguration.getSystemPartitionId()).thenReturn(SYSTEM_PARTITION_ID);
+        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
+
+        var actualPartitions= partitionServiceImpl.getAllPartitions();
+
+        assertTrue(!actualPartitions.contains(SYSTEM_PARTITION_ID));
     }
 }
