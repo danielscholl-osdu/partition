@@ -1,6 +1,6 @@
 /*
- * Copyright 2020-2021 Google LLC
- * Copyright 2020-2021 EPAM Systems, Inc
+ * Copyright 2020-2023 Google LLC
+ * Copyright 2020-2023 EPAM Systems, Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,6 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.cache.ICache;
@@ -31,11 +24,14 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +47,8 @@ public class PartitionServiceImpl implements IPartitionService {
   private final ICache<String, PartitionInfo> partitionServiceCache;
 
   private final ICache<String, List<String>> partitionListCache;
+
+  private final PropertiesConfiguration propertiesConfiguration;
 
   @Override
   public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
@@ -168,7 +166,10 @@ public class PartitionServiceImpl implements IPartitionService {
     List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
 
     if (Objects.isNull(partitions)) {
-      List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
+      List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions()
+              .stream()
+              .filter(partitionId -> !partitionId.equals(propertiesConfiguration.getSystemPartitionId()))
+              .toList();
       partitions = (allPartitions.isEmpty() ? Collections.emptyList() : allPartitions);
 
       if (!CollectionUtils.isEmpty(partitions)) {

@@ -1,6 +1,6 @@
 /*
-  Copyright 2002-2021 Google LLC
-  Copyright 2002-2021 EPAM Systems, Inc
+  Copyright 2002-2023 Google LLC
+  Copyright 2002-2023 EPAM Systems, Inc
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -17,18 +17,6 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +27,18 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PartitionServiceImplCacheTest {
@@ -59,13 +57,18 @@ public class PartitionServiceImplCacheTest {
 
     private PartitionServiceImpl partitionServiceImpl;
 
+    @Mock
+    private PropertiesConfiguration propertiesConfiguration;
+
     @BeforeEach
     public void setup() {
         partitionServiceImpl = new PartitionServiceImpl(
                 partitionPropertyEntityRepository,
                 auditLogger,
                 partitionServiceCache,
-                partitionListCache
+                partitionListCache,
+                propertiesConfiguration
+
         );
     }
 
