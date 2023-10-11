@@ -41,13 +41,13 @@ public class AuthorizationService implements IAuthorizationService {
     Authorizer authorizer;
     String memberEmail=null;
     SSMUtil ssmUtil = null;
-    String spu_email=null;
+    String spuEmail =null;
 
     @PostConstruct
     public void init() throws K8sParameterNotFoundException {
         authorizer = new Authorizer();
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
-        spu_email = provider.getParameterAsString("service_principal_user");
+        spuEmail = provider.getParameterAsString("service_principal_user");
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AuthorizationService implements IAuthorizationService {
             memberEmail = headers.getUserId();
             if(memberEmail == null){
                 throw  AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
-            } else if(memberEmail.equals(spu_email)){
+            } else if(memberEmail.equals(spuEmail)){
                 return true;
             } else{
                 throw  AppException.createUnauthorized("Unauthorized. The user is not Service Principal");
