@@ -24,12 +24,10 @@ import com.amazonaws.encryptionsdk.CryptoResult;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
 import com.amazonaws.encryptionsdk.CommitmentPolicy;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
 
 import org.opengroup.osdu.core.aws.iam.IAMConfig;
 import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
-import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
@@ -59,8 +57,19 @@ public class AwsKmsEncryptionClient {
             .withCommitmentPolicy(CommitmentPolicy.RequireEncryptRequireDecrypt)
             .build();
 
+
+    private final AwsCrypto instanceCrypto;
+
+    public AwsKmsEncryptionClient() {
+        instanceCrypto = crypto;
+    }
+
+    public AwsKmsEncryptionClient(final AwsCrypto argCrypto) {
+        instanceCrypto = argCrypto;
+    }
+
     @PostConstruct
-    private void initializeKeyProvider() throws K8sParameterNotFoundException, JsonProcessingException {
+    private void initializeKeyProvider() {
 
         // grab key arn from K8s
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
@@ -81,15 +90,13 @@ public class AwsKmsEncryptionClient {
     public byte[] encrypt(String plainText, String id) {
 
         final Map<String, String> encryptionContext = generateEncryptionContext(id);
-        final CryptoResult<byte[], KmsMasterKey> encryptResult = crypto.encryptData(keyProvider, plainText.getBytes(StandardCharsets.UTF_8), encryptionContext);
-        final byte[] ciphertext = encryptResult.getResult();
-
-        return ciphertext;
+        final CryptoResult<byte[], KmsMasterKey> encryptResult = instanceCrypto.encryptData(keyProvider, plainText.getBytes(StandardCharsets.UTF_8), encryptionContext);
+        return encryptResult.getResult();
     }
 
     public String decrypt(byte[] ciphertext, String id) {
 
-        final CryptoResult<byte[], KmsMasterKey> decryptResult = crypto.decryptData(keyProvider, ciphertext);
+        final CryptoResult<byte[], KmsMasterKey> decryptResult = instanceCrypto.decryptData(keyProvider, ciphertext);
         final Map<String, String> encryptionContext = generateEncryptionContext(id);
 
         // throw error if context doesn't match
