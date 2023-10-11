@@ -15,16 +15,19 @@
 
 package org.opengroup.osdu.partition.provider.aws.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class BasicAuthSecurityConfig extends WebSecurityConfigurerAdapter {
-  protected void configure(HttpSecurity http) throws Exception {
-    ((HttpSecurity)http.httpBasic().disable())
+public class BasicAuthSecurityConfig {
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    (http.httpBasic().disable())
       .csrf().disable();
+    return http.build();
   }
 }

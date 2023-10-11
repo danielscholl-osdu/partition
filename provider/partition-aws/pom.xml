@@ -35,6 +35,7 @@
         <aws.version>1.11.1018</aws.version>
         <deployment.environment>dev</deployment.environment>
         <spring-webmvc.version>5.3.22</spring-webmvc.version>
+        <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
         <junit.version>4.13.2</junit.version>
     </properties>
 
@@ -231,6 +232,18 @@
                         ${project.build.outputDirectory}/git.properties
                     </generateGitPropertiesFilename>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven_surefire_plugin_version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${maven_surefire_plugin_version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
