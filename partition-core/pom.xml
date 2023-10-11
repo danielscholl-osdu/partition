@@ -175,6 +175,13 @@
 					<useSystemClassLoader>false</useSystemClassLoader>
 					<threadCount>1</threadCount>
 				</configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${maven_surefire_plugin_version}</version>
+                    </dependency>
+                </dependencies>
 			</plugin>
 		</plugins>
 	</build>

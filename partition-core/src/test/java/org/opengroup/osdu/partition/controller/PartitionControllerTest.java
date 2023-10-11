@@ -77,6 +77,11 @@ public class PartitionControllerTest {
     @Test
     public void should_return204_when_givenUpdatingValidPartitionId() {
         String partitionId = "partition1";
+        Map<String, Property> properties = new HashMap<>();
+
+        when(partitionService.getPartition(partitionId)).thenReturn(partitionInfo);
+        when(partitionInfo.getProperties()).thenReturn(properties);
+
         this.sut.patch(partitionId, partitionInfo);
 
         ResponseEntity<Map<String, Property>> result = this.sut.get(partitionId);
