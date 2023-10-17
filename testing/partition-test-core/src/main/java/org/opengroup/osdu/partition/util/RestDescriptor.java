@@ -53,4 +53,9 @@ public abstract class RestDescriptor {
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, body, getQuery(), false);
     }
+
+    public CloseableHttpResponse runWithInvalidPath(String arg, String token) throws Exception {
+        this.arg = arg;
+        return TestUtils.send(getPath() + "//", getHttpMethod(), token, getValidBody(), getQuery(), false);
+    }
 }
