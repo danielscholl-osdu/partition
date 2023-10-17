@@ -7,13 +7,10 @@ import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.middleware.GlobalExceptionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler;
-import org.springframework.security.web.firewall.RequestRejectedHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,11 +27,6 @@ public class AzureExceptionMapper extends GlobalExceptionMapper {
 
     @Autowired
     private TelemetryClient telemetryClient;
-
-    @Bean
-    public RequestRejectedHandler requestRejectedHandler() {
-        return new HttpStatusRequestRejectedHandler();
-    }
 
     @ExceptionHandler(HttpResponseException.class)
     protected ResponseEntity<Object> handleHttpResponseException(HttpResponseException e) {
