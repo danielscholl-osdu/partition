@@ -34,8 +34,11 @@ gc-containerize-bootstrap-env-gitlab:
 
 gc-baremetal-deploy-test-env: #infra deploy for on-prem install
   environment:
-    name: gc
+    name: GC_Baremetal
   extends: .gc-baremetal-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
   tags: ["osdu-small"]
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: deploy
@@ -43,8 +46,9 @@ gc-baremetal-deploy-test-env: #infra deploy for on-prem install
   retry: 1
   variables:
     GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
   script:
-    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
+    - !reference [.gc_obtain_credentials, script]
     - !reference [.gc_common_config, script]
     - export PASSWORD=$(</dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
     - cd $GC_HELM_ENV_DIR
@@ -74,6 +78,7 @@ gc-baremetal-deploy: # reuse common deploy job for test deployment
     GC_TENANT: test
     GC_HELM_SETS: >-
       --set istio.sidecarInject=false
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-baremetal-test:
   variables:
@@ -82,19 +87,22 @@ gc-baremetal-test:
 
 gc-baremetal-cleanup-env: # clean-up env after tests
   environment:
-    name: gc
+    name: GC_Baremetal
   stage: cleanup
   extends: .gc-baremetal-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   needs: ["gc-baremetal-test"]
   tags: ["osdu-small"]
   variables:
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
   script:
-    - gcloud auth activate-service-account --key-file $GC_BAREMETAL_DEPLOY_FILE
+    - !reference [.gc_obtain_credentials, script]
     - !reference [.gc_common_config, script]
-    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_BAREMETAL_DEPLOY_FILE"
     - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --cluster
   rules:
@@ -122,6 +130,7 @@ gc-deploy: # reuse common deploy job for test deployment
       --set data.dataPartitionId=test
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-test:
   variables:
@@ -130,19 +139,22 @@ gc-test:
 
 gc-cleanup-env: # clean-up env after tests
   environment:
-    name: gc
+    name: Google_Cloud
   stage: cleanup
   extends: .gc-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   needs: ["gc-test"]
   tags: ["osdu-small"]
   variables:
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
   script:
-    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
+    - !reference [.gc_obtain_credentials, script]
     - !reference [.gc_common_config, script]
-    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
     - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
   rules:
@@ -170,6 +182,7 @@ gc-dev2-deploy: # reuse common deploy job for test deployment
       --set data.dataPartitionId=test
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-dev2-test:
   variables:
@@ -178,19 +191,22 @@ gc-dev2-test:
 
 gc-dev2-cleanup-env: # clean-up env after tests
   environment:
-    name: gc
+    name: GC_Dev2
   stage: cleanup
   extends: .gc-dev2-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   needs: [gc-dev2-test]
   tags: ["osdu-small"]
   variables:
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
   script:
-    - gcloud auth activate-service-account --key-file $GC_DEPLOY_FILE
+    - !reference [.gc_obtain_credentials, script]
     - !reference [.gc_common_config, script]
-    - export GOOGLE_APPLICATION_CREDENTIALS="$GC_DEPLOY_FILE"
     - !reference [.gc_common_cleanup, script]
     - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --all
   rules:
@@ -200,41 +216,15 @@ gc-dev2-cleanup-env: # clean-up env after tests
       when: always
 
 gc-dev2-verified-deploy: # verified deploy after tests
-  tags: ["osdu-small"]
-  extends: .gc-dev2-variables
-  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  extends: gc-dev2-deploy
   stage: verified-deploy
-  needs: ["gc-containerize-gitlab", "gc-dev2-test"]
+  needs: ["gc-dev2-test"]
   retry: 1
-  script:
-    - gcloud auth activate-service-account --key-file $GC_DEV2_DEPLOY_FILE
-    - !reference [.gc_common_config, script]
-    - !reference [.gc_define_version, script]
-    - !reference [.gc_set_image_name, script]
-    - >
-      helm upgrade $GC_SERVICE-deploy oci://$CI_REGISTRY_IMAGE/gc-helm/$GC_HELM_PACKAGE_NAME
-      --version $VERSION
-      --install
-      --create-namespace
-      --namespace=$GC_HELM_NAMESPACE
-      --wait
-      --history-max=3
-      --set data.imagePullPolicy=Always
-      --set data.bootstrapImage=$CI_REGISTRY_IMAGE/$IMAGE_BOOTSTRAP_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-      --set data.image=$CI_REGISTRY_IMAGE/$IMAGE_NAME:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
-      --set data.serviceAccountName=$GC_SERVICE
-      --set data.projectId=osdu-dev2
-      --set data.dataPartitionId=$GC_TENANT
-      --set data.logLevel=INFO
-      --set global.domain=$GC_DOMAIN
-      $GC_HELM_TIMEOUT
-    - !reference [.gc_verify_deploy, script]
-    - !reference [.gc_verify_bootstrap, script]
-  rules:
-    - if: '$GC == "1" && $CI_COMMIT_BRANCH =~ /^release/'
-      when: on_success
-    - if: '$GC == "1" && $CI_COMMIT_TAG'
-      when: on_success
+  variables:
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
+    GC_HELM_NAMESPACE: default
+    GC_TENANT: devtwo
+    GC_HELM_SETS: ""
 
 gc-preship-deploy:
   extends: .gc-preship-variables
