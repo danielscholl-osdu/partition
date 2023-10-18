@@ -99,7 +99,7 @@ public abstract class BaseTestTemplate extends TestBase {
 
     @Test
     public void should_return400_when_makingHttpRequestWithoutValidUrl() throws Exception {
-        CloseableHttpResponse response = descriptor.run("/", testUtils.getAccessToken());
+        CloseableHttpResponse response = descriptor.runWithInvalidPath(getId(), testUtils.getAccessToken());
         assertEquals(error(EntityUtils.toString(response.getEntity())), 400, response.getCode());
     }
 }
