@@ -130,6 +130,18 @@ baremetal_system_partition_data() {
     "elasticsearch.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS"
+    },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
+    },
+    "policy-service-enabled": {
+      "sensitive": false,
+      "value": "false"
+    },
+    "obm.minio.external.endpoint": {
+      "sensitive": false,
+      "value": "${MINIO_EXTERNAL_ENDPOINT}"
     }
   }
 }
@@ -157,5 +169,3 @@ baremetal_additional_partition_data() {
 }
 EOF
 }
-
-
