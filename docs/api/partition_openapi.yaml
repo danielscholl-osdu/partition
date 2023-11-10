@@ -1,283 +1,458 @@
-swagger: '2.0'
+openapi: 3.0.1
 info:
-  description: API documentation for Partition service
-  version: '1.0.0'
-  title: Partition
+  title: Partition Service
+  description: Partition service is responsible for creating and retrieving the partition specific properties (secret and non-secret) on behalf of other services.
   contact:
-    name: OSDU Support
-    email: devportal-help@osdu.com
+    name: OSDU Data Platform Team
+    email: dps@OSDU.org
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0'
-basePath: /api/partition/v1
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: '1.0'
+servers:
+  - url: /api/partition/v1
+security:
+  - Authorization: []
 tags:
   - name: partition-api
-    description: Partition Api
-  - name: health-check
-    description: Health Check
+    description: Partition API
+  - name: health-check-api
+    description: Health Check API
   - name: info
-    description: "Version info endpoint"
+    description: Version info endpoint
 paths:
-  /actuator/health:
-    get:
-      tags:
-        - health-check
-      summary: "Health check: liveness, readiness."
-      operationId: healthCheckUsingGET
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - JWT:
-            - global
-  '/partitions/{partitionId}':
+  /partitions/{partitionId}:
     get:
       tags:
         - partition-api
-      summary: get
-      operationId: getUsingGET
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      summary: Get Partition Info
+      description: Get all properties and their values for a given data partition id
+      operationId: get
       parameters:
         - name: partitionId
           in: path
-          description: partitionId
+          description: Partition Id
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
-            additionalProperties:
-              "$ref": "#/definitions/Property"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Map'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '403':
-          description: Forbidden
+          description: User not authorized to perform the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
       security:
-        - JWT:
-            - global
-  '/partitions':
-    get:
-      tags:
-        - partition-api
-      summary: list
-      operationId: listUsingGET
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              type: string
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-        - JWT:
-            - global
+        - Authorization: []
     post:
       tags:
         - partition-api
-      summary: create
-      operationId: createUsingPOST
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      summary: Create a new Partition
+      description: Creates a new data partition with all given properties and their values.
+      operationId: create
       parameters:
         - name: partitionId
           in: path
-          description: partitionId
-          required: true
-          type: string
-        - in: body
-          name: partitionInfo
-          description: partitionInfo
+          description: Partition Id
           required: true
           schema:
-            $ref: '#/definitions/PartitionInfo'
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionInfo'
+        required: true
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '403':
-          description: Forbidden
+          description: User not authorized to perform the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '404':
           description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
       security:
-        - JWT:
-            - global
-    patch:
-      tags:
-      - partition-api
-      summary: update
-      operationId: updateUsingPATCH
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      parameters:
-      - name: partitionId
-        in: path
-        description: partitionId
-        required: true
-        type: string
-      - in: body
-        name: partitionInfo
-        description: partitionInfo
-        required: true
-        schema:
-          $ref: '#/definitions/PartitionInfo'
-      responses:
-        '204':
-          description: No Content
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      security:
-      - JWT:
-        - global
+        - Authorization: []
     delete:
       tags:
         - partition-api
-      summary: delete
-      operationId: deleteUsingDELETE
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      summary: Delete an existing Partition
+      description: Delete all the properties of a given data partition
+      operationId: delete
       parameters:
         - name: partitionId
           in: path
-          description: partitionId
+          description: Partition Id
           required: true
-          type: string
+          schema:
+            type: string
       responses:
         '204':
           description: No Content
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
         '403':
-          description: Forbidden
+          description: User not authorized to perform the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
       security:
-        - JWT:
-            - global
+        - Authorization: []
+    patch:
+      tags:
+        - partition-api
+      summary: Updates an existing Partition
+      description: Add new properties or update existing properties of a given data partition
+      operationId: patch
+      parameters:
+        - name: partitionId
+          in: path
+          description: Partition Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionInfo'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '403':
+          description: User not authorized to perform the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+      security:
+        - Authorization: []
+  /partitions:
+    get:
+      tags:
+        - partition-api
+      summary: List all Partitions
+      description: Returns all existing data partitions
+      operationId: list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '403':
+          description: User not authorized to perform the action.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+      security:
+        - Authorization: []
+  /liveness_check:
+    get:
+      tags:
+        - health-check-api
+      summary: Liveness Check endpoint
+      description: For deployment available public `/liveness_check` endpoint.
+      operationId: livenessCheck
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '502':
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
+        '503':
+          description: Service Unavailable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppError'
   /info:
     get:
       tags:
         - info
-      summary: "Version info"
-      description: "For deployment available public `/info` endpoint, \
-          \ which provides build and git related information."
-      operationId: "Version info"
-      produces:
-        - "application/json"
+      summary: Version info
+      description: For deployment available public `/info` endpoint, which provides build and git related information.
+      operationId: info
       responses:
-        200:
-          description: "Version info."
-          schema:
-            $ref: "#/definitions/VersionInfo"
-securityDefinitions:
-  JWT:
-    type: apiKey
-    name: Authorization
-    in: header
-definitions:
-  PartitionInfo:
-    type: object
-    required:
-      - properties
-    properties:
+        '200':
+          description: Version info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+components:
+  schemas:
+    Map:
+      type: object
       properties:
-        type: object
-        description: 'Free form key value pair object for any data partition specific values'
-        additionalProperties:
-          "$ref": "#/definitions/Property"
-    example:
+        < * >:
+          $ref: '#/components/schemas/Property'
+    PartitionInfo:
+      required:
+        - properties
+      type: object
       properties:
-        compliance-ruleset:
-          sensitive: false
-          value: 'shared'
-        elastic-endpoint:
-          sensitive: true
-          value: 'elastic-endpoint'
-        cosmos-connection:
-          sensitive: true
-          value: 'cosmos-connection'
-  VersionInfo:
-    type: "object"
-    properties:
-      groupId:
-        type: "string"
-        description: "Maven artifact group ID."
-      actifactId:
-        type: "string"
-        description: "Maven artifact ID."
-      version:
-        type: "string"
-        description: "Maven artifact version"
-      buildTime:
-        type: "string"
-        description: "Maven artifact build time"
-      branch:
-        type: "string"
-        description: "Current git branch"
-      commitId:
-        type: "string"
-        description: "Latest commit hash"
-      commitMessage:
-        type: "string"
-        description: "Latest commit message"
-      connectedOuterServices:
-        type: "array"
-        description: "Connected outer services information"
-        items:
-          $ref: "#/definitions/ConnectedOuterService"
-    description: "Version info."
-  ConnectedOuterService:
-    type: "object"
-    properties:
-      name:
-        type: "string"
-        description: "Connected outer service name."
-      version:
-        type: "string"
-        description: "Connected outer service version."
-    description: "Connected outer service information."
-  Property:
-    type: object
-    properties:
-      sensitive:
-        type: boolean
-      value:
-        type: object
+        properties:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Property'
+          description: Free form key value pair object for any data partition specific values
+      description: Partition properties and their values
+      example: 'OrderedMap { "properties": OrderedMap { "compliance-ruleset": OrderedMap { "sensitive": false, "value": "shared" }, "elastic-endpoint": OrderedMap { "sensitive": true, "value": "elastic-endpoint" }, "cosmos-connection": OrderedMap { "sensitive": true, "value": "cosmos-connection" } } }'
+    Property:
+      type: object
+      properties:
+        sensitive:
+          type: boolean
+        value:
+          type: object
+      description: Free form key value pair object for any data partition specific values
+    AppError:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        reason:
+          type: string
+        message:
+          type: string
+    ConnectedOuterService:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+    VersionInfo:
+      type: object
+      properties:
+        groupId:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        buildTime:
+          type: string
+        branch:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: Authorization
