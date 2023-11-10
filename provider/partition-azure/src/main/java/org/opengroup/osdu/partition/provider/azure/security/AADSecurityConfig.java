@@ -42,7 +42,8 @@ public class AADSecurityConfig extends WebSecurityConfigurerAdapter {
             "/info",
             "/swagger",
             "/swagger-ui.html",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/liveness_check"
     };
 
     @Override
