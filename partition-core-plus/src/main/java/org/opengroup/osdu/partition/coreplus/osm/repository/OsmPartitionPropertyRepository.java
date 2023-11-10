@@ -18,6 +18,12 @@
 package org.opengroup.osdu.partition.coreplus.osm.repository;
 
 
+import static org.opengroup.osdu.core.osm.core.model.where.predicate.Eq.eq;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -30,21 +36,12 @@ import org.opengroup.osdu.core.osm.core.service.Transaction;
 import org.opengroup.osdu.core.osm.core.translate.TranslatorException;
 import org.opengroup.osdu.partition.coreplus.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.coreplus.osm.config.provider.OsmPartitionDestinationProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.opengroup.osdu.core.osm.core.model.where.predicate.Eq.eq;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty("osmDriver")
 public class OsmPartitionPropertyRepository {
 
     public static final String PARTITION_ID_FILED = "partition_id";

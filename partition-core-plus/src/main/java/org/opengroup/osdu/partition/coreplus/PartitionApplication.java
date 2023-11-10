@@ -14,23 +14,17 @@
 
 package org.opengroup.osdu.partition.coreplus;
 
-import org.opengroup.osdu.core.osm.postgresql.PgTenantOsmDestinationResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 
-@ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
-@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        PgTenantOsmDestinationResolver.class
-}
-))
 @SpringBootApplication
+@ComponentScan({"org.opengroup.osdu"})
 @PropertySource("classpath:swagger.properties")
 public class PartitionApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(PartitionApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(PartitionApplication.class, args);
+  }
 }
