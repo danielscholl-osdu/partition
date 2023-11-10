@@ -17,23 +17,20 @@
 
 package org.opengroup.osdu.partition.coreplus.mapper;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
+
 import com.google.cloud.datastore.Key;
+import java.util.Collections;
+import java.util.HashMap;
 import org.opengroup.osdu.core.osm.core.persistence.IdentityTranslator;
 import org.opengroup.osdu.core.osm.core.translate.Instrumentation;
 import org.opengroup.osdu.core.osm.core.translate.TypeMapper;
 import org.opengroup.osdu.partition.coreplus.model.PartitionPropertyEntity;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.HashMap;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
-
 @Component
 @Scope(SCOPE_SINGLETON)
-@ConditionalOnProperty(name = "osmDriver")
 public class TypeMapperImpl extends TypeMapper {
     public TypeMapperImpl(){
         super(java.util.List.of(
