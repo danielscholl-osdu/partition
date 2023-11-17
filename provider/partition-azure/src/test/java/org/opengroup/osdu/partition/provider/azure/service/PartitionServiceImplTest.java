@@ -27,12 +27,14 @@ import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -65,6 +67,19 @@ public class PartitionServiceImplTest {
     }
 
     @Test
+    public void should_ThrowConflictError_when_createPartition_whenPartitionExistsInCache() {
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(this.partitionInfo);
+
+        try {
+            sut.createPartition(PARTITION_ID, this.partitionInfo);
+        } catch (AppException e) {
+            assertEquals(409, e.getError().getCode());
+            assertTrue(e.getError().getReason().equalsIgnoreCase("partition exist"));
+            assertTrue(e.getError().getMessage().equalsIgnoreCase("Partition with same id exist"));
+        }
+    }
+
+    @Test
     public void should_ThrowConflictError_when_createPartition_whenPartitionExists() {
         when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(true);
 
@@ -78,10 +93,11 @@ public class PartitionServiceImplTest {
     }
 
     @Test
-    public void should_returnPartitionInfo_when_createPartition_whenPartitionDoesntExist() {
+    public void should_returnPartitionInfo_when_createPartition_whenPartitionDoesNotExist() {
         when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
 
         PartitionInfo partInfo = sut.createPartition(PARTITION_ID, this.partitionInfo);
+
         assertEquals(3, partInfo.getProperties().size());
         assertTrue(partInfo.getProperties().containsKey("id"));
         assertTrue(partInfo.getProperties().containsKey("complianceRuleSet"));
@@ -89,7 +105,7 @@ public class PartitionServiceImplTest {
     }
 
     @Test
-    public void should_ThrowNotFoundError_when_updatePartition_whenPartitionDoesnsExist() {
+    public void should_ThrowNotFoundError_when_updatePartition_whenPartitionDoesNotExist() {
         when(this.tableStore.partitionExists(PARTITION_ID)).thenReturn(false);
 
         try {
@@ -115,17 +131,29 @@ public class PartitionServiceImplTest {
     }
 
     @Test
-    public void should_returnPartition_when_partitionExists() {
-        when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(properties);
+    public void should_returnPartition_when_partitionExistsInCache() {
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(this.partitionInfo);
 
         PartitionInfo partitionInfo = this.sut.getPartition(PARTITION_ID);
+
         assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
         assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
         assertTrue(partitionInfo.getProperties().containsKey("id"));
     }
 
     @Test
-    public void should_throwNotFoundException_when_partitionDoesntExist() {
+    public void should_returnPartition_when_partitionExists() {
+        when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(properties);
+
+        PartitionInfo partitionInfo = this.sut.getPartition(PARTITION_ID);
+
+        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
+        assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
+        assertTrue(partitionInfo.getProperties().containsKey("id"));
+    }
+
+    @Test
+    public void should_throwNotFoundException_when_partitionDoesNotExist() {
         when(this.tableStore.getPartition(PARTITION_ID)).thenReturn(new HashMap<>());
 
         try {
@@ -162,9 +190,41 @@ public class PartitionServiceImplTest {
     @Test
     public void should_returnEmptyList_when_no_partitions() {
         when(this.tableStore.getAllPartitions()).thenReturn(new ArrayList<>());
+
         List<String> partitions = sut.getAllPartitions();
+
         assertNotNull(partitions);
         assertTrue(partitions.isEmpty());
+    }
 
+    @Test
+    public void should_returnEmptyList_when_partitionsIsNull() {
+        when(this.tableStore.getAllPartitions()).thenReturn(null);
+
+        List<String> partitions = sut.getAllPartitions();
+
+        assertNull(partitions);
+    }
+
+    @Test
+    public void should_returnPartitionList_when_partitionsExistsInCache() {
+        List<String> partitionsList = Arrays.asList("partition1", "partition2");
+        when(this.partitionListCache.get("getAllPartitions")).thenReturn(partitionsList);
+
+        List<String> partitions = sut.getAllPartitions();
+
+        assertNotNull(partitions);
+        assertEquals(partitionsList, partitions);
+    }
+
+    @Test
+    public void should_returnPartitionList_when_partitionsExists() {
+        List<String> partitionsList = Arrays.asList("partition1", "partition2");
+        when(this.tableStore.getAllPartitions()).thenReturn(partitionsList);
+
+        List<String> partitions = sut.getAllPartitions();
+
+        assertNotNull(partitions);
+        assertEquals(partitionsList, partitions);
     }
 }
