@@ -135,9 +135,10 @@ public class PartitionServiceImplCacheTest {
     @Test
     public void getAllPartitions() {
         List<String> partitions = new ArrayList<>();
-
         when(tableStore.getAllPartitions()).thenReturn(partitions);
+
         partitionService.getAllPartitions();
+
         String partKey = "getAllPartitions";
         verify(partitionListCache, times(1)).get(partKey);
         verify(tableStore, times(1)).getAllPartitions();

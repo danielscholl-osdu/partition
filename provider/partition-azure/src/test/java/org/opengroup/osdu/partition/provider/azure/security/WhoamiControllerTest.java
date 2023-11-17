@@ -16,9 +16,9 @@ package org.opengroup.osdu.partition.provider.azure.security;
 
 import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 import com.azure.spring.autoconfigure.aad.UserPrincipalManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,7 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {WhoamiController.class, AADSecurityConfig.class,
     AADAppRoleStatelessAuthenticationFilter.class})
 @WebAppConfiguration
@@ -46,10 +46,11 @@ public class WhoamiControllerTest {
 
     @Autowired
     private WebApplicationContext context;
+
     @MockBean
     private UserPrincipalManager userPrincipalManager;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
