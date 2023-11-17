@@ -18,20 +18,23 @@ import com.azure.core.exception.HttpResponseException;
 import com.azure.core.http.HttpResponse;
 import com.google.gson.Gson;
 import com.microsoft.applicationinsights.TelemetryClient;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AzureExceptionMapperTest {
     private static final Gson gson = new Gson();
 
@@ -52,7 +55,9 @@ public class AzureExceptionMapperTest {
         when(httpResponse.getStatusCode()).thenReturn(HttpStatus.TOO_MANY_REQUESTS.value());
         when(exception.getMessage()).thenReturn("Too many reqeusts");
         when(exception.getLocalizedMessage()).thenReturn("Too many reqeusts");
+
         ResponseEntity<Object> response = sut.handleHttpResponseException(exception);
+
         assertEquals(429, response.getStatusCodeValue());
         assertEquals(gson.toJson("Too many reqeusts"), response.getBody());
     }
@@ -65,15 +70,18 @@ public class AzureExceptionMapperTest {
         when(httpResponse.getStatusCode()).thenReturn(430);
 
         ResponseEntity<?> response = sut.handleHttpResponseException(exception);
+
         assertEquals(500, response.getStatusCodeValue());
         assertEquals(gson.toJson("An unknown error has occurred."), response.getBody());
     }
 
     @Test
     public void should_getErrorResponseEntityWhenPassedAppException() {
-        Mockito.doNothing().when(telemetryClient).trackException(ArgumentMatchers.any(Exception.class));
+        doNothing().when(telemetryClient).trackException(ArgumentMatchers.any(Exception.class));
         AppException appException = new AppException(404, "partition not found", "given partition not found");
+
         ResponseEntity<Object> responseEntity = sut.getErrorResponse(appException);
-        Assert.assertEquals(responseEntity.getStatusCodeValue(), 404);
+
+        assertEquals(404, responseEntity.getStatusCodeValue());
     }
 }

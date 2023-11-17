@@ -16,9 +16,9 @@ package org.opengroup.osdu.partition.provider.azure.di;
 
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -35,7 +35,7 @@ public class AzureBootstrapConfigTest {
         doReturn(secret).when(kv).getSecret("tbl-storage");
 
         String secretValue = bootstrapConfig.storageAccountName(kv);
-        assertEquals("Secret value was incorrect", "tbl-storage-secret", secretValue);
+        assertEquals("tbl-storage-secret", secretValue, "Secret value was incorrect");
     }
 
     @Test
@@ -45,6 +45,6 @@ public class AzureBootstrapConfigTest {
         doReturn(secret).when(kv).getSecret("tbl-storage-key");
 
         String secretValue = bootstrapConfig.storageAccountKey(kv);
-        assertEquals("Secret value was incorrect", "tbl-storage-key-secret", secretValue);
+        assertEquals("tbl-storage-key-secret", secretValue, "Secret value was incorrect");
     }
 }
