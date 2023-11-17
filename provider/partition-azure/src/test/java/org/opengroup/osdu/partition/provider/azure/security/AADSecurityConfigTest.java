@@ -16,10 +16,9 @@ package org.opengroup.osdu.partition.provider.azure.security;
 
 import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 import com.azure.spring.autoconfigure.aad.UserPrincipalManager;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opengroup.osdu.partition.api.PartitionApi;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opengroup.osdu.partition.controller.PartitionController;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
@@ -27,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,7 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {
         PartitionController.class,
         AADSecurityConfig.class,
@@ -58,8 +57,8 @@ public class AADSecurityConfigTest {
     @Autowired
     private WebApplicationContext context;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    public  void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 

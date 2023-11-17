@@ -15,29 +15,33 @@
 package org.opengroup.osdu.partition.provider.azure.persistence;
 
 import com.azure.data.tables.models.TableEntity;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PartitionTableStoreTest {
 
     @InjectMocks
@@ -48,6 +52,7 @@ public class PartitionTableStoreTest {
 
     private static final String PARTITION_ID = "partitionId";
     private static final String PARTITION_KEY = "PartitionKey";
+    private static final String ROW_KEY = "RowKey";
 
     @Test
     public void should_returnFalse_whenPartitionNotExists() {
@@ -56,13 +61,43 @@ public class PartitionTableStoreTest {
     }
 
     @Test
+    public void should_returnTrue_whenPartitionExists() {
+        Collection<TableEntity> list = new ArrayList<>();
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, ROW_KEY);
+        list.add(tableEntity);
+        when(this.dataTableStore.queryByCompoundKey(any(), any(), any(), any())).thenReturn(list);
+
+        boolean exist = sut.partitionExists(PARTITION_ID);
+
+        assertTrue(exist);
+    }
+
+    @Test
     public void should_get_partitionInfo() {
         Collection<TableEntity> list = new ArrayList<>();
-        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, ROW_KEY);
         list.add(tableEntity);
-        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
+        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn(list);
 
         Map<String, Property> partition = sut.getPartition(PARTITION_ID);
+
+        assertNotNull(partition);
+        assertEquals(1, partition.size());
+    }
+
+    @Test
+    public void should_get_partitionInfoWithProperties() {
+        Collection<TableEntity> list = new ArrayList<>();
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, ROW_KEY);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("sensitive", true);
+        properties.put("value", "shared");
+        tableEntity.setProperties(properties);
+        list.add(tableEntity);
+        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn(list);
+
+        Map<String, Property> partition = sut.getPartition(PARTITION_ID);
+
         assertNotNull(partition);
         assertEquals(1, partition.size());
     }
@@ -70,13 +105,26 @@ public class PartitionTableStoreTest {
     @Test
     public void should_returnEmpty_when_partitionNotFound() {
         Map<String, Property> partition = sut.getPartition(PARTITION_ID);
+
         assertNotNull(partition);
         assertEquals(0, partition.size());
     }
 
     @Test
     public void should_addPartition_whenPartitionProvided() {
-        sut.addPartition(PARTITION_ID, new PartitionInfo());
+        PartitionInfo partitionInfo = new PartitionInfo();
+        Map<String, Property> properties = new HashMap<>();
+        properties.put("storageAccount", Property.builder()
+                .value("storage-account")
+                .sensitive(true).build());
+        properties.put("complianceRuleSet", Property.builder()
+                .value("compliance-rule-set")
+                .sensitive(false).build());
+        partitionInfo.setProperties(properties);
+
+        sut.addPartition(PARTITION_ID, partitionInfo);
+
+        verify(this.dataTableStore, times(1)).insertBatchEntities(any());
     }
 
     @Test
@@ -94,21 +142,25 @@ public class PartitionTableStoreTest {
     @Test
     public void should_getAll_partitions() {
         Collection<TableEntity> list = new ArrayList<>();
-        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        TableEntity tableEntity = new TableEntity(PARTITION_ID, ROW_KEY);
         list.add(tableEntity);
-        when(dataTableStore.queryByKey("RowKey", "id")).thenReturn((Iterable) list);
+        when(dataTableStore.queryByKey("RowKey", "id")).thenReturn(list);
 
         List<String> partitions = sut.getAllPartitions();
+
         assertNotNull(partitions);
         assertEquals(1, partitions.size());
     }
 
     @Test
-    public void delete_partition() {
+    public void should_delete_partition() {
         Collection<TableEntity> list = new ArrayList<>();
-        TableEntity tableEntity = new TableEntity(PARTITION_ID, "name");
+        TableEntity tableEntity = new TableEntity(PARTITION_KEY, ROW_KEY);
         list.add(tableEntity);
-        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn((Iterable) list);
+        when(dataTableStore.queryByKey(PARTITION_KEY, PARTITION_ID)).thenReturn(list);
+
         sut.deletePartition(PARTITION_ID);
+
+        verify(dataTableStore, times(1)).deleteCloudTableEntity(PARTITION_KEY, ROW_KEY);
     }
 }

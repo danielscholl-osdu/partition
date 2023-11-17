@@ -25,13 +25,13 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.impl.DefaultJws;
 import lombok.Getter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +43,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AuthorizationServiceTest {
 
     @Mock
@@ -55,7 +55,7 @@ public class AuthorizationServiceTest {
     @InjectMocks
     private AuthorizationService authorizationService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         securityContext = Mockito.mock(SecurityContext.class);
         auth = Mockito.mock(Authentication.class);
@@ -117,6 +117,18 @@ public class AuthorizationServiceTest {
     @Test
     public void shouldReturnFalseWhenAADTokenIsSetInContext_AndIssuerIsNotAAD() {
         createAADUserPrincipalSetSecurityContext(TestUtils.APPID, TestUtils.getAppId(), TestUtils.getNonAadIssuer());
+        assertFalse(authorizationService.isDomainAdminServiceAccount());
+    }
+
+    @Test
+    public void shouldReturnFalseWhenAADTokenIsSetInContext_AndUserTypeIsGuestUser() {
+        createAADUserPrincipalSetSecurityContext("upn", "test-upn", TestUtils.getNonAadIssuer());
+        assertFalse(authorizationService.isDomainAdminServiceAccount());
+    }
+
+    @Test
+    public void shouldReturnFalseWhenAADTokenIsSetInContext_AndUserTypeIsRegularUser() {
+        createAADUserPrincipalSetSecurityContext("unique_name", "test_unique_name", TestUtils.getNonAadIssuer());
         assertFalse(authorizationService.isDomainAdminServiceAccount());
     }
 
