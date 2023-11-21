@@ -39,7 +39,7 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /api/service/v1/actuator/health
+              path: /api/partition/v1/liveness_check
               port: 8080
             initialDelaySeconds: 250
             periodSeconds: 10
