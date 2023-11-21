@@ -36,6 +36,13 @@ spec:
             runAsNonRoot: true
           ports:
             - containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/service/v1/actuator/health
+              port: 8080
+            initialDelaySeconds: 250
+            periodSeconds: 10
           resources:
             requests:
               cpu: {{ .Values.data.requestsCpu | quote }}
