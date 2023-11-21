@@ -68,14 +68,13 @@ public class OsmDatastoreDestinationResolver implements DsDestinationResolver {
     }
 
     private Datastore getDatastoreFor(Destination destination, String key, String projectId) {
-        return datastoreCache.computeIfAbsent(key, k ->
-            DatastoreOptions.newBuilder()
+        return DatastoreOptions.newBuilder()
                 .setRetrySettings(RETRY_SETTINGS)
                 .setTransportOptions(TRANSPORT_OPTIONS)
                 .setProjectId(projectId)
                 .setNamespace(destination.getNamespace().getName())
                 .build()
-                .getService());
+                .getService();
     }
 
     @Override
