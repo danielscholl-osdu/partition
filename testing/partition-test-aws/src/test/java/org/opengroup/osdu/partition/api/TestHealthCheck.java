@@ -17,9 +17,16 @@
 
 package org.opengroup.osdu.partition.api;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.opengroup.osdu.partition.util.AwsTestUtils;
+import org.opengroup.osdu.partition.util.TestUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestHealthCheck extends HealthCheckApiTest {
   @Before
@@ -32,5 +39,12 @@ public class TestHealthCheck extends HealthCheckApiTest {
   @Override
   public void tearDown() throws Exception {
     this.testUtils = null;
+  }
+  @Override
+  @Test
+  public void should_returnOk() throws Exception {
+    CloseableHttpResponse response =
+            TestUtils.send("api/partition/v1/liveness_check", HttpMethod.GET.name(), testUtils.getAccessToken(), "", "", false);
+    assertEquals(HttpStatus.OK.value(), response.getCode());
   }
 }
