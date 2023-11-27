@@ -142,6 +142,22 @@ baremetal_system_partition_data() {
     "obm.minio.external.endpoint": {
       "sensitive": false,
       "value": "${MINIO_EXTERNAL_ENDPOINT}"
+    },
+    "entitlements.datasource.url": {
+      "sensitive": true,
+      "value": "ENT_PG_URL_${DATA_PARTITION_ID_UPPER}"
+    },
+    "entitlements.datasource.username": {
+      "sensitive": true,
+      "value": "ENT_PG_USER_${DATA_PARTITION_ID_UPPER}"
+    },
+    "entitlements.datasource.password": {
+      "sensitive": true,
+      "value": "ENT_PG_PASS_${DATA_PARTITION_ID_UPPER}"
+    },
+    "entitlements.datasource.schema": {
+      "sensitive": true,
+      "value": "ENT_PG_SCHEMA_${DATA_PARTITION_ID_UPPER}"
     }
   }
 }
