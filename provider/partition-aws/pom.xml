@@ -27,12 +27,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>partition-aws</artifactId>
-    <version>0.25.0-SNAPSHOT</version>
     <description>Partition service on AWS</description>
     <packaging>jar</packaging>
 
     <properties>
-        <aws.version>1.11.1018</aws.version>
+        <aws.version>1.12.261</aws.version>
         <deployment.environment>dev</deployment.environment>
         <spring-webmvc.version>5.3.24</spring-webmvc.version>
         <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
@@ -80,6 +79,11 @@
 
         <!-- Third party Apache 2.0 license packages -->
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.8.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring-webmvc.version}</version>
@@ -87,18 +91,15 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>2.7.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
-            <version>2.7.12</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>2.7.8</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -146,7 +147,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.3.30</version>
         </dependency>
     </dependencies>
 
