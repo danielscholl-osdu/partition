@@ -9,12 +9,32 @@ spec:
       app: {{ .Values.conf.appName | quote }}
   action: ALLOW
   rules:
+  {{- if .Values.istio.partitionEditors }}
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ .Release.Namespace }}/sa/*
+    to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /api/partition/v1/*
+  - to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /api/partition/v1/info
+  {{- else }}
   - to:
     - operation:
         methods:
         - GET
         paths:
         - /api/partition/v1/*
+  {{- end }}
+
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
@@ -35,3 +55,12 @@ spec:
     - operation:
         paths:
         - /api/partition/v1/*
+  {{- if .Values.istio.partitionEditors }}
+  - to:
+    - operation:
+        paths:
+        - /api/partition/v1/*
+    when:
+    - key: request.auth.claims[email]
+      values: {{ .Values.istio.partitionEditors | toYaml | nindent 6}}
+  {{- end }}
