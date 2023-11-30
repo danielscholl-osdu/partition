@@ -152,6 +152,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
 **istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | 100m | yes
 **istio.sidecarInject** | whether Istio sidecar will be injected. Setting to "false" reduces security, because disables authorization policy. | boolean | true | yes
+**istio.partitionEditors** | list of users who can edit partitions. If it is empty, the service allows all external GET requests and POST/PUT/PATCH for bootstrap k8s service account. It accepts gc accounts only | list | - | no
 
 ### Install the helm chart
 

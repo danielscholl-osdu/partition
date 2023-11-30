@@ -48,3 +48,4 @@ istio:
   bootstrapProxyCPU: "5m"
   bootstrapProxyCPULimit: "100m"
   sidecarInject: "true"
+  partitionEditors: []
