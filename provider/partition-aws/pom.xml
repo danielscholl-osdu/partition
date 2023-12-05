@@ -31,9 +31,10 @@
     <packaging>jar</packaging>
 
     <properties>
-        <aws.version>1.12.261</aws.version>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>    
         <deployment.environment>dev</deployment.environment>
-        <spring-webmvc.version>5.3.24</spring-webmvc.version>
+        <spring-webmvc.version>5.3.22</spring-webmvc.version>
         <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
         <junit.version>4.13.2</junit.version>
     </properties>
@@ -56,13 +57,9 @@
     <dependencies>
         <!-- Internal packages -->
         <dependency>
-            <groupId>org.opengroup.osdu</groupId>
-            <artifactId>os-core-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>0.25.1-SNAPSHOT</version>
+            <version>0.25.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
@@ -95,11 +92,13 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
+            <version>2.7.12</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>2.7.8</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -147,6 +146,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>5.3.30</version>
         </dependency>
     </dependencies>
 
