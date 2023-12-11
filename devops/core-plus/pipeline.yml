@@ -22,11 +22,11 @@ gc-containerize-gitlab:core-plus:
       when: on_success
 
 gc-baremetal-test:
-  tags: [ "osdu-medium" ]
+  tags: ["osdu-medium"]
   extends:
     - .maven
   stage: integration
-  needs: [ "compile-and-unit-test", "gc-containerize-gitlab:core-plus" ]
+  needs: ["compile-and-unit-test", "gc-containerize-gitlab:core-plus"]
   retry: 1
   services:
     - name: postgres
@@ -35,7 +35,7 @@ gc-baremetal-test:
     - name: $CI_REGISTRY_IMAGE/partition-core-plus:$CI_COMMIT_SHORT_SHA
       alias: partition-service-image
   variables:
-    PARTITION_POSTGRESQL_DB_NAME: partition_db  #Used from bootstrapping script
+    PARTITION_POSTGRESQL_DB_NAME: partition_db #Used from bootstrapping script
     PARTITION_POSTGRESQL_USERNAME: usr_partition_pg #Used from bootstrapping script
     PARTITION_POSTGRESQL_PASSWORD: partition_pg #Used from bootstrapping script
     POSTGRESQL_PORT: 5432 #used from the docker script
@@ -76,6 +76,10 @@ gc-baremetal-test:
       - test-results.log
     expire_in: 1 days
   rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
     - if: "$PROTECTED == '1'"
       when: on_success
 

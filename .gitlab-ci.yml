@@ -173,15 +173,20 @@ download_plugins:
   variables:
     OSM_PACKAGE_REGISTRY_URL: "https://community.opengroup.org/api/v4/projects/1448/packages/maven"
     OSM_VERSION: "0.25.0-rc2"
-
   artifacts:
     paths:
       - ./tmp/*.jar
     when: always
     expire_in: 1 days
-
   script:
     - mvn dependency:copy -DrepoUrl=$OSM_PACKAGE_REGISTRY_URL -Dartifact="org.opengroup.osdu:os-osm-postgres:$OSM_VERSION:jar:plugin" -Dtransitive=false -DoutputDirectory="./tmp"
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: "$PROTECTED == '1'"
+      when: on_success
 
 gemnasium-maven-dependency_scanning:
   variables:
