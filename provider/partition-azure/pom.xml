@@ -14,9 +14,10 @@
   <packaging>jar</packaging>
 
   <properties>
-    <osdu.corelibazure.version>0.24.0</osdu.corelibazure.version>
+    <osdu.corelibazure.version>0.25.0-rc2</osdu.corelibazure.version>
     <junit.version>4.13.2</junit.version>
     <spring-webmvc.version>5.3.22</spring-webmvc.version>
+    <reactor-netty-http.version>1.1.13</reactor-netty-http.version>
   </properties>
 
   <dependencyManagement>
@@ -83,12 +84,6 @@
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-azure</artifactId>
       <version>${osdu.corelibazure.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.microsoft.azure</groupId>
-          <artifactId>documentdb-bulkexecutor</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -116,6 +111,11 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-jose</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-http</artifactId>
+      <version>${reactor-netty-http.version}</version>
     </dependency>
 
     <!-- Azure dependencies -->
