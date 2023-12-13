@@ -69,6 +69,10 @@ gc_system_partition_data() {
     "entitlements.datasource.schema": {
       "sensitive": true,
       "value": "ENT_PG_SCHEMA_${DATA_PARTITION_ID_UPPER}"
+    },
+    "reservoir-connection": {
+      "sensitive": true,
+      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
     }
   }
 }
@@ -90,10 +94,6 @@ gc_additional_partition_data() {
     "index-augmenter-enabled": {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
-    },
-    "reservoir-connection": {
-      "sensitive": true,
-      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
     }
   }
 }
