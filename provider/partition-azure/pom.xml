@@ -17,7 +17,10 @@
     <osdu.corelibazure.version>0.25.0</osdu.corelibazure.version>
     <junit.version>4.13.2</junit.version>
     <spring-webmvc.version>5.3.22</spring-webmvc.version>
-    <reactor-netty-http.version>1.1.13</reactor-netty-http.version>
+    <reactor-core.version>3.4.19</reactor-core.version>
+    <reactor-netty.version>1.1.14</reactor-netty.version>
+    <nimbus-jose-jwt.version>9.30.2</nimbus-jose-jwt.version>
+    <okhttp.version>4.12.0</okhttp.version>
   </properties>
 
   <dependencyManagement>
@@ -112,12 +115,33 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-jose</artifactId>
     </dependency>
+    <!-- reactor-netty related dependencies -->
     <dependency>
       <groupId>io.projectreactor.netty</groupId>
       <artifactId>reactor-netty-http</artifactId>
-      <version>${reactor-netty-http.version}</version>
+      <version>${reactor-netty.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-core</artifactId>
+      <version>${reactor-netty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-http-brave</artifactId>
+      <version>${reactor-netty.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty</artifactId>
+      <version>${reactor-netty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor</groupId>
+      <artifactId>reactor-core</artifactId>
+      <version>${reactor-core.version}</version>
+    </dependency>
     <!-- Azure dependencies -->
     <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-blob -->
     <dependency>
@@ -142,6 +166,18 @@
       <artifactId>lombok</artifactId>
       <version>1.18.26</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>${nimbus-jose-jwt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okhttp.version}</version>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
