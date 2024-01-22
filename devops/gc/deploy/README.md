@@ -100,6 +100,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | true | yes
 **global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
+**global.dataPartitionId** | data partition id | string | - | yes
 
 ### Configmap variables
 
@@ -111,7 +112,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
 **data.partitionHost** | partition host | string | partition | yes
 **data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
-**data.dataPartitionId** | data partition id | string | - | yes
 **data.datafierSa** | datafier service account | string | datafier | yes
 **data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
