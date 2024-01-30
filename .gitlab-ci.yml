@@ -68,7 +68,10 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "publishing/pages.yml"
 
-  - local: "devops/core-plus/pipeline.yml"
+  - project: "osdu/platform/ci-cd-pipelines"
+    file: "cloud-providers/core-global.yml"
+
+  - local: "devops/core-plus/pipeline/override-stages.yml"
 
 .maven:
   image: maven:3.9.3-eclipse-temurin-17
