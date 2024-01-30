@@ -85,6 +85,99 @@ gc-verified-deploy: # verified deploy after tests
     # GC_HELM_SETS is blanked since values from gc-deploy is not compatible
     GC_HELM_SETS: ""
 
+# Baremetal jobs
+gc-baremetal-deploy-test-env: #infra deploy for on-prem install
+  environment:
+    name: GC_Baremetal
+  extends: .gc-baremetal-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
+  tags: ["osdu-small"]
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  stage: deploy
+  needs: ["gc-containerize-bootstrap-env-gitlab", "compile-and-unit-test"]
+  retry: 1
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
+  script:
+    - !reference [.gc_obtain_credentials, script]
+    - !reference [.gc_common_config, script]
+    - export PASSWORD=$(</dev/urandom tr -dc _A-Z-a-z-0-9 | head -c10)
+    - cd $GC_HELM_ENV_DIR
+    - helm dependency update
+    - >
+      helm upgrade $GC_SERVICE-env .
+      --install
+      --create-namespace
+      --namespace=$GC_HELM_NAMESPACE
+      --wait
+      --history-max=3
+      --set postgresql.global.postgresql.auth.postgresPassword=$PASSWORD
+      --set bootstrap.postgres.image=$CI_REGISTRY_IMAGE/gc-bootstrap-$GC_SERVICE-env:$CI_COMMIT_SHORT_SHA
+      $GC_HELM_TIMEOUT
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: on_success
+
+gc-baremetal-deploy: # reuse common deploy job for test deployment
+  needs: ["gc-baremetal-deploy-test-env", "gc-containerize-gitlab"]
+  variables:
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_TENANT: test
+    GC_HELM_SETS: >-
+      --set istio.sidecarInject=false
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
+
+gc-baremetal-test:
+  variables:
+    GC_VENDOR: baremetal
+    PARTITION_BASE_URL: https://test.ref.gcp.gnrg-osdu.projects.epam.com/
+
+gc-baremetal-cleanup-env: # clean-up env after tests
+  environment:
+    name: GC_Baremetal
+  stage: cleanup
+  extends: .gc-baremetal-variables
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://iam.googleapis.com/projects/${GC_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GC_POOL_ID}/providers/${GC_PROVIDER_ID}
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
+  needs: ["gc-baremetal-test"]
+  tags: ["osdu-small"]
+  variables:
+    PARTITION_NAMESPACE: partition-test
+    GC_HELM_NAMESPACE: partition-int-test
+    GC_SA_EMAIL: $GC_SA_GKE_EMAIL
+  script:
+    - !reference [.gc_obtain_credentials, script]
+    - !reference [.gc_common_config, script]
+    - !reference [.gc_common_cleanup, script]
+    - chmod +x devops/gc/tests/clean_up/clean_up.sh && devops/gc/tests/clean_up/clean_up.sh --cluster
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^release/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: '$GC == "1"'
+      when: always
+
+gc-baremetal-verified-deploy: # verified deploy after tests
+  extends: gc-baremetal-deploy
+  stage: verified-deploy
+  needs: ["gc-baremetal-test"]
+  variables:
+    GC_HELM_NAMESPACE: default
+    GC_TENANT: osdu
+    # if parameter is not necessary define the GC_HELM_SETS as blank
+    GC_HELM_SETS: "--set data.indexerAugmenterEnabled=true"
+
+# Dev2 jobs
 gc-dev2-deploy: # reuse common deploy job for test deployment
   variables:
     GC_HELM_NAMESPACE: partition-int-test

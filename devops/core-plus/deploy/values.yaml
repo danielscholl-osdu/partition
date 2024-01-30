@@ -1,0 +1,33 @@
+global:
+  domain: "arom.osdu.fun"
+  useHttps: true
+  limitsEnabled: true
+
+data:
+  # configmaps
+  logLevel: "ERROR"
+  # deployments
+  requestsCpu: "5m"
+  requestsMemory: "350Mi"
+  limitsCpu: "500m"
+  limitsMemory: "1G"
+  serviceAccountName: "partition"
+  imagePullPolicy: "IfNotPresent"
+  image: ""
+
+conf:
+  appName: "partition"
+  configmap: "partition-config"
+  secret: "partition-postgres-secret"
+  replicas: 1
+
+auth:
+  realm: "osdu"
+  localUrl: "keycloak"
+
+istio:
+  proxyCPU: "5m"
+  proxyCPULimit: "500m"
+  proxyMemory: "64Mi"
+  proxyMemoryLimit: "512Mi"
+  sidecarInject: "true"
