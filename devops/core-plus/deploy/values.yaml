@@ -1,5 +1,5 @@
 global:
-  domain: "arom.osdu.fun"
+  domain: ""
   useHttps: true
   limitsEnabled: true
 
