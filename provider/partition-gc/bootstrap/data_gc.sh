@@ -73,6 +73,10 @@ gc_system_partition_data() {
     "reservoir-connection": {
       "sensitive": true,
       "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
+    },
+    "wellbore-dms-bucket": {
+      "sensitive": false,
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-logstore"
     }
   }
 }
