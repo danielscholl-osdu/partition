@@ -56,15 +56,15 @@ gc_system_partition_data() {
     },
     "entitlements.datasource.url": {
       "sensitive": true,
-      "value": "ENT_PG_URL_${DATA_PARTITION_ID_UPPER}"
+      "value": "ENT_PG_URL${PARTITION_SUFFIX}"
     },
     "entitlements.datasource.username": {
       "sensitive": true,
-      "value": "ENT_PG_USER_${DATA_PARTITION_ID_UPPER}"
+      "value": "ENT_PG_USER${PARTITION_SUFFIX}"
     },
     "entitlements.datasource.password": {
       "sensitive": true,
-      "value": "ENT_PG_PASS_${DATA_PARTITION_ID_UPPER}"
+      "value": "ENT_PG_PASS${PARTITION_SUFFIX}"
     },
     "entitlements.datasource.schema": {
       "sensitive": true,

@@ -9,6 +9,7 @@ data:
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
   ENVIRONMENT: {{ .Values.data.springProfilesActive | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
+  PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   {{- if .Values.global.onPremEnabled }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
   DATA_PARTITION_ID_LIST: ""
