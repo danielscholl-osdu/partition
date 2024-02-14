@@ -13,6 +13,7 @@ data:
   dataProjectId: ""
   partitionHost: "partition"
   partitionNamespace: "partition"
+  partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
   bucketPrefix: "refi"
   minioExternalEndpoint: "" # use only if external minio is configured
