@@ -117,19 +117,19 @@ baremetal_system_partition_data() {
     },
     "elasticsearch.host": {
       "sensitive": true,
-      "value": "ELASTIC_HOST"
+      "value": "ELASTIC_HOST${PARTITION_SUFFIX}"
     },
     "elasticsearch.port": {
       "sensitive": true,
-      "value": "ELASTIC_PORT"
+      "value": "ELASTIC_PORT${PARTITION_SUFFIX}"
     },
     "elasticsearch.user": {
       "sensitive": true,
-      "value": "ELASTIC_USER"
+      "value": "ELASTIC_USER${PARTITION_SUFFIX}"
     },
     "elasticsearch.password": {
       "sensitive": true,
-      "value": "ELASTIC_PASS"
+      "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
     },
     "index-augmenter-enabled": {
       "sensitive": false,
