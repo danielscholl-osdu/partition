@@ -74,7 +74,7 @@ public class AwsKmsEncryptionClient {
         // grab key arn from K8s
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
 
-        if (!provider.getLocalMode()) {
+        if (Boolean.FALSE.equals(provider.getLocalMode())) {
             keyArn = provider.getParameterAsStringOrDefault("KEY_ARN", keyArn);
         }
 
