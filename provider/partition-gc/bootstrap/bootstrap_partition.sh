@@ -42,6 +42,7 @@ bootstrap_partition() {
 
 # Bootstrap system partition
 if [[ "${ENVIRONMENT}" == "gcp" ]]; then
+  export DATA_PARTITION_ID="system"
   export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
   bootstrap_partition "${DATA_PARTITION_ID}" "$(gc_system_partition_data)"
 elif [[ "${ENVIRONMENT}" == "anthos" ]]; then

@@ -25,7 +25,6 @@ data:
   {{- end }}
   MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
   {{- else }}
-  DATA_PARTITION_ID: {{ "system" }}
   DATA_PARTITION_ID_LIST: {{ .Values.global.dataPartitionId | quote }}
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
