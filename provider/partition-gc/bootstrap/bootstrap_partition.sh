@@ -42,31 +42,18 @@ bootstrap_partition() {
 
 # Bootstrap system partition
 if [[ "${ENVIRONMENT}" == "gcp" ]]; then
-  export DATA_PARTITION_ID="system"
+  # Specifying "system" partition for GC installation 
+  export SYSTEM_PARTITION_ID="system"
+  export DATA_PARTITION_ID_VALUE="${SYSTEM_PARTITION_ID}"
+  bootstrap_partition "${SYSTEM_PARTITION_ID}" "$(gc_system_partition_data)"
+  
+  # Bootstrap additional partition
   export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
-  bootstrap_partition "${DATA_PARTITION_ID}" "$(gc_system_partition_data)"
+  additional_partition_data=$(merge "gc_system_partition_data" "gc_additional_partition_data")
+  bootstrap_partition "${DATA_PARTITION_ID}" "$additional_partition_data"
 elif [[ "${ENVIRONMENT}" == "anthos" ]]; then
   export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
   bootstrap_partition "${DATA_PARTITION_ID}" "$(baremetal_system_partition_data)"
-fi
-
-# Bootstrap additional partitions
-if [[ "${ENVIRONMENT}" == "gcp" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
-  IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
-
-  for PARTITION in "${PARTITIONS[@]}"; do
-    export DATA_PARTITION_ID_VALUE="${PARTITION}"
-    additional_partition_data=$(merge "gc_system_partition_data" "gc_additional_partition_data")
-    bootstrap_partition "${PARTITION}" "$additional_partition_data"
-  done
-elif [[ "${ENVIRONMENT}" == "anthos" && "${DATA_PARTITION_ID_LIST}" != "" ]]; then
-  IFS=',' read -ra PARTITIONS <<< "${DATA_PARTITION_ID_LIST}"
-
-  for PARTITION in "${PARTITIONS[@]}"; do
-    export DATA_PARTITION_ID_VALUE="${PARTITION}"
-    additional_partition_data=$(merge "baremetal_system_partition_data" "baremetal_additional_partition_data")
-    bootstrap_partition "${PARTITION}" "$additional_partition_data"
-  done
 fi
 
 touch /tmp/bootstrap_ready
