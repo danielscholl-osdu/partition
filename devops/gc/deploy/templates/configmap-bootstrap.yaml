@@ -10,9 +10,8 @@ data:
   ENVIRONMENT: {{ .Values.data.springProfilesActive | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
-  {{- if .Values.global.onPremEnabled }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
-  DATA_PARTITION_ID_LIST: ""
+  {{- if .Values.global.onPremEnabled }}
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
   DOMAIN: "{{ .Values.global.domain }}"
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
@@ -25,7 +24,6 @@ data:
   {{- end }}
   MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
   {{- else }}
-  DATA_PARTITION_ID_LIST: {{ .Values.global.dataPartitionId | quote }}
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
   {{- else }}
