@@ -12,8 +12,8 @@ bootstrap_partition() {
   echo "sleep to prevent 500 response from the Partition service, due to timeout of creation for Workload Identity"
   sleep 20
 
-  DATA_PARTITION_ID=$1
-  BOOTSTRAP_DATA=$2
+  local DATA_PARTITION_ID=$1
+  local BOOTSTRAP_DATA=$2
   
   echo "Bootstrapping partition: $DATA_PARTITION_ID"
   echo "$BOOTSTRAP_DATA" | jq
