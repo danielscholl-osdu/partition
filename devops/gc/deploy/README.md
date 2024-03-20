@@ -107,13 +107,12 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **data.logLevel** | logging level | string | INFO | yes
-**data.springProfilesActive** | active spring profile | string | gcp | yes
 **data.projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
 **data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
 **data.partitionHost** | partition host | string | partition | yes
 **data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
 **data.datafierSa** | datafier service account | string | datafier | yes
-**data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _springProfilesActive_ is set to "_anthos_"
+**data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _onPremEnabled_ is set to "_true_"
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
 **data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
 **data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no

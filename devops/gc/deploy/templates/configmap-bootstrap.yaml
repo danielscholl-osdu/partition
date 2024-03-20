@@ -7,11 +7,11 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
-  ENVIRONMENT: {{ .Values.data.springProfilesActive | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
   {{- if .Values.global.onPremEnabled }}
+  ENVIRONMENT: "anthos"
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
   DOMAIN: "{{ .Values.global.domain }}"
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
@@ -24,6 +24,7 @@ data:
   {{- end }}
   MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
   {{- else }}
+  ENVIRONMENT: "gcp"
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
   {{- else }}

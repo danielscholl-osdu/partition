@@ -7,9 +7,11 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 data:
   LOG_LEVEL: {{ .Values.data.logLevel | quote }}
-  SPRING_PROFILES_ACTIVE: {{ .Values.data.springProfilesActive | quote }}
   {{- if not .Values.global.onPremEnabled }}
   GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
   PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
-  SYSTEM_PARTITION_ID: "system" 
+  SYSTEM_PARTITION_ID: "system"
+  SPRING_PROFILES_ACTIVE: "gcp"
+  {{- else }}
+  SPRING_PROFILES_ACTIVE: "anthos"
   {{- end }}
