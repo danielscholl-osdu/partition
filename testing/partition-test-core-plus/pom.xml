@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.opengroup.osdu</groupId>
         <artifactId>os-partition-testing</artifactId>
-        <version>0.26.0-SNAPSHOT</version>
+        <version>0.27.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.opengroup.osdu.partition</groupId>
     <artifactId>partition-test-core-plus</artifactId>
-    <version>0.26.0-SNAPSHOT</version>
+    <version>0.27.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -42,12 +42,12 @@
         <dependency>
             <groupId>org.opengroup.osdu.partition</groupId>
             <artifactId>partition-test-core</artifactId>
-            <version>0.26.0-SNAPSHOT</version>
+            <version>0.27.0-SNAPSHOT</version>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.opengroup.osdu</groupId>-->
 <!--            <artifactId>apd-openid</artifactId>-->
-<!--            <version>0.26.0-SNAPSHOT</version>-->
+<!--            <version>0.27.0-SNAPSHOT</version>-->
 <!--        </dependency>-->
         <dependency>
             <groupId>com.nimbusds</groupId>
