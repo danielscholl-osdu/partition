@@ -14,7 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.azure.utils;
 
-import com.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipal;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
