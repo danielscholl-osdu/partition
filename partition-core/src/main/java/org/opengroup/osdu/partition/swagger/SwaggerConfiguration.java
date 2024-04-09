@@ -12,7 +12,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.Collections;
 import java.util.Map;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import io.swagger.v3.oas.models.tags.Tag;
 import org.opengroup.osdu.partition.model.Property;

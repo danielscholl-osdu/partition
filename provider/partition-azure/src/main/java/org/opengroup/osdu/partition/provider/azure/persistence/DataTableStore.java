@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 @Component
 public class DataTableStore {
