@@ -14,8 +14,8 @@
 
 package org.opengroup.osdu.partition.provider.azure.security;
 
-import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
-import com.azure.spring.autoconfigure.aad.UserPrincipalManager;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.AadAppRoleStatelessAuthenticationFilter;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipalManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {WhoamiController.class, AADSecurityConfig.class,
-    AADAppRoleStatelessAuthenticationFilter.class})
+        AadAppRoleStatelessAuthenticationFilter.class})
 @WebAppConfiguration
 public class WhoamiControllerTest {
 

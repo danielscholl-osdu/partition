@@ -22,6 +22,7 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.middleware.GlobalExceptionMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,7 +37,7 @@ public class GcpExceptionMapper extends GlobalExceptionMapper {
 
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+          MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
     StringBuilder errors = new StringBuilder();
 

@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

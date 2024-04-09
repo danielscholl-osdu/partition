@@ -14,7 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.azure.utils;
 
-import com.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipal;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

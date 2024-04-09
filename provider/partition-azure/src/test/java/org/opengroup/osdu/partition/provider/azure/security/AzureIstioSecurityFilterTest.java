@@ -1,6 +1,6 @@
 package org.opengroup.osdu.partition.provider.azure.security;
 
-import com.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,11 +11,10 @@ import org.opengroup.osdu.core.common.model.http.AppException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Base64;

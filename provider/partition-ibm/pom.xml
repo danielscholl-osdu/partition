@@ -20,8 +20,8 @@
 
     <properties>
         <version.keycloak>9.0.2</version.keycloak>
-        <spring-webmvc.version>5.3.22</spring-webmvc.version>
-        <os-core-lib-ibm.version>0.25.0</os-core-lib-ibm.version>
+        <spring-webmvc.version>6.1.5</spring-webmvc.version>
+        <os-core-lib-ibm.version>0.26.0-rc8</os-core-lib-ibm.version>
     </properties>
 
     <dependencyManagement>
@@ -29,12 +29,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.4.2</version>
+                <version>2.15.2</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>5.3.23</version>
+                <version>6.1.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>6.2.0</version>
+            <version>6.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -86,9 +86,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -131,11 +131,6 @@
 		    <artifactId>okhttp</artifactId>
 		    <version>4.9.2</version>
 		</dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.13.4.2</version>
-        </dependency>
          <!-- Keycloak  -->
       <!--   <dependency>
             <groupId>org.keycloak</groupId>

@@ -26,7 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.core.common.model.http.AppException;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
