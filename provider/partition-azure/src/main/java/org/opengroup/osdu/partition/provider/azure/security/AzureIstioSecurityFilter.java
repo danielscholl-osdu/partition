@@ -1,6 +1,6 @@
 package org.opengroup.osdu.partition.provider.azure.security;
 
-import com.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipal;
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.slf4j.Logger;
@@ -10,15 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
-
+import java.util.Base64;
+import java.util.Collections;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component

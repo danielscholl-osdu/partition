@@ -17,28 +17,32 @@
 
 package org.opengroup.osdu.partition.provider.gcp.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfigGcp extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SecurityConfigGcp {
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.httpBasic().disable()
-        .csrf().disable();
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+            .httpBasic(withDefaults());
+    return http.build();
   }
 
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/api-docs")
-        .antMatchers("/index")
-        .antMatchers("/swagger");
-  }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+      return (web) -> web.ignoring().requestMatchers("/index", "/swagger");
+    }
 }

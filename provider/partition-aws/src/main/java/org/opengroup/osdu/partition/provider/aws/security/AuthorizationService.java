@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import org.opengroup.osdu.core.aws.entitlements.Authorizer;
 import org.opengroup.osdu.core.aws.ssm.SSMUtil;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Map;
 
 @Component

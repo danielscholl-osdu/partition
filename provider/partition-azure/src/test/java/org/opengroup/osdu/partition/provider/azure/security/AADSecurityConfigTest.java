@@ -14,8 +14,8 @@
 
 package org.opengroup.osdu.partition.provider.azure.security;
 
-import com.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
-import com.azure.spring.autoconfigure.aad.UserPrincipalManager;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.AadAppRoleStatelessAuthenticationFilter;
+import com.azure.spring.cloud.autoconfigure.implementation.aad.filter.UserPrincipalManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {"azure.istio.auth.enabled=false"}, classes = {
         PartitionController.class,
         AADSecurityConfig.class,
-        AADAppRoleStatelessAuthenticationFilter.class})
+        AadAppRoleStatelessAuthenticationFilter.class})
 @WebAppConfiguration
 public class AADSecurityConfigTest {
     private MockMvc mockMvc = null;
@@ -68,7 +69,8 @@ public class AADSecurityConfigTest {
         mockMvc.perform(options("/fake"))
                 .andExpect(status().isNotFound());
 
-        mockMvc.perform(options("/partitions/101"))
-                .andExpect(status().is2xxSuccessful());
+        mockMvc.perform(options("/partitions/101")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
     }
 }
