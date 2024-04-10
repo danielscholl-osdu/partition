@@ -21,7 +21,7 @@
     <properties>
         <version.keycloak>9.0.2</version.keycloak>
         <spring-webmvc.version>6.1.5</spring-webmvc.version>
-        <os-core-lib-ibm.version>0.26.0-rc8</os-core-lib-ibm.version>
+        <os-core-lib-ibm.version>0.26.0</os-core-lib-ibm.version>
     </properties>
 
     <dependencyManagement>
