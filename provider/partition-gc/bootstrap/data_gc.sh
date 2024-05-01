@@ -72,7 +72,7 @@ gc_system_partition_data() {
     },
     "reservoir-connection": {
       "sensitive": true,
-      "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
+      "value": "RESERVOIR_POSTGRES_CONN_STRING${PARTITION_SUFFIX}"
     },
     "wellbore-dms-bucket": {
       "sensitive": false,
