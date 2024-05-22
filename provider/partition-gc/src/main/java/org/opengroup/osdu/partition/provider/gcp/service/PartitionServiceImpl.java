@@ -115,17 +115,14 @@ public class PartitionServiceImpl implements IPartitionService {
     PartitionInfo pi = partitionServiceCache.get(partitionId);
 
     if (Objects.isNull(pi)) {
-      pi = getEncryptedPartition(partitionId);
-
-      if (Objects.nonNull(pi)) {
-        partitionServiceCache.put(partitionId, pi);
-      }
+      pi = getPartitionFromRepo(partitionId);
+      partitionServiceCache.put(partitionId, pi);
     }
 
     return pi;
   }
 
-  private PartitionInfo getEncryptedPartition(String partitionId) {
+  private PartitionInfo getPartitionFromRepo(String partitionId) {
     Optional<List<PartitionPropertyEntity>> partitionPropertyEntitiesOptional = partitionPropertyEntityRepository
             .findByPartitionId(partitionId);
     if (!partitionPropertyEntitiesOptional.isPresent()) {
@@ -166,12 +163,8 @@ public class PartitionServiceImpl implements IPartitionService {
     List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
 
     if (Objects.isNull(partitions)) {
-      List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions()
-              .stream()
-              .filter(partitionId -> !partitionId.equals(propertiesConfiguration.getSystemPartitionId()))
-              .toList();
+      List<String> allPartitions = this.partitionPropertyEntityRepository.getAllPartitions();
       partitions = (allPartitions.isEmpty() ? Collections.emptyList() : allPartitions);
-
       if (!CollectionUtils.isEmpty(partitions)) {
         partitionListCache.put(PARTITION_LIST_KEY, partitions);
       }

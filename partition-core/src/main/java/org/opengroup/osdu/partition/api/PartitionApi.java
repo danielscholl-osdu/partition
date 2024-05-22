@@ -29,7 +29,6 @@ import org.opengroup.osdu.partition.model.Property;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -41,7 +40,6 @@ import java.util.Map;
 @RequestMapping(path = "/partitions", produces = "application/json")
 @Tag(name = "partition-api", description = "Partition API")
 public interface PartitionApi {
-
     @Operation(summary = "${partitionApi.create.summary}", description = "${partitionApi.create.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
     @ApiResponses(value = {

@@ -24,6 +24,7 @@ Defined in default application property file but possible to override:
 | `PARTITION_NAMESPACE`       | ex `partition`         | Namespace for database.            | no         | -      |
 | `PARTITION_NAMESPACE`       | ex `partition`         | Namespace for database.            | no         | -      |
 | `SYSTEM_PARTITION_ID`       | ex `syspartition`      | Name of system partition.          | yes        | -      |
+| `SYSTEM_TENANT_API`         | ex `true`              | Enables system API                 | no         | -      |
 
 These variables define service behavior, and are used to switch between `baremetal` or `gcp` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
