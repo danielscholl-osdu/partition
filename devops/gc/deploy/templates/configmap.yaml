@@ -7,6 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 data:
   LOG_LEVEL: {{ .Values.data.logLevel | quote }}
+  SYSTEM_TENANT_API: "true"
   {{- if not .Values.global.onPremEnabled }}
   GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
   PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
