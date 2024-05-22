@@ -17,6 +17,16 @@
 
 package org.opengroup.osdu.partition.provider.gcp.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,196 +41,157 @@ import org.opengroup.osdu.partition.provider.gcp.config.PropertiesConfiguration;
 import org.opengroup.osdu.partition.provider.gcp.model.PartitionPropertyEntity;
 import org.opengroup.osdu.partition.provider.gcp.osm.repository.OsmPartitionPropertyRepository;
 
-import java.util.*;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
-public class PartitionServiceImplTest {
+class PartitionServiceImplTest {
 
-    private static final String PARTITION_ID = "newPartition";
-    private static final boolean SENSITIVE = false;
-    private static final String NAME = "new-key";
-    private static final String VALUE = "new-value";
-    public static final String SYSTEM_PARTITION_ID = "systemPartitionId";
+  private static final String PARTITION_ID = "newPartition";
+  private static final boolean SENSITIVE = false;
+  private static final String NAME = "new-key";
+  private static final String VALUE = "new-value";
+  static final String SYSTEM_PARTITION_ID = "systemPartitionId";
 
-    @Mock
-    private ICache<String, PartitionInfo> partitionServiceCache;
+  @Mock
+  private ICache<String, PartitionInfo> partitionServiceCache;
 
-    @Mock
-    private ICache<String, List<String>> partitionListCache;
+  @Mock
+  private ICache<String, List<String>> partitionListCache;
 
-    @Mock
-    private OsmPartitionPropertyRepository partitionPropertyEntityRepository;
+  @Mock
+  private OsmPartitionPropertyRepository partitionPropertyEntityRepository;
 
-    @Mock
-    private AuditLogger auditLogger;
+  @Mock
+  private AuditLogger auditLogger;
 
-    private PartitionServiceImpl partitionServiceImpl;
+  private PartitionServiceImpl partitionServiceImpl;
 
-    private PartitionInfo expectedPartitionInfo;
-    private PartitionPropertyEntity partitionPropertyEntity;
-    private Optional<List<PartitionPropertyEntity>> partitionPropertyEntityList;
-    private Optional<List<PartitionPropertyEntity>> emptyList;
+  private PartitionInfo expectedPartitionInfo;
+  private PartitionPropertyEntity partitionPropertyEntity;
+  private Optional<List<PartitionPropertyEntity>> partitionPropertyEntityList;
+  private Optional<List<PartitionPropertyEntity>> emptyList;
 
-    @Mock
-    private PropertiesConfiguration propertiesConfiguration;
+  @Mock
+  private PropertiesConfiguration propertiesConfiguration;
 
-    @BeforeEach
-    public void setup() {
-        partitionServiceImpl = new PartitionServiceImpl(
-                partitionPropertyEntityRepository,
-                auditLogger,
-                partitionServiceCache,
-                partitionListCache,
-                propertiesConfiguration
+  @BeforeEach
+  void setup() {
+    partitionServiceImpl = new PartitionServiceImpl(
+        partitionPropertyEntityRepository,
+        auditLogger,
+        partitionServiceCache,
+        partitionListCache,
+        propertiesConfiguration
 
-        );
+    );
 
-        expectedPartitionInfo = new PartitionInfo();
+    expectedPartitionInfo = new PartitionInfo();
 
-        Property property = new Property();
-        property.setSensitive(SENSITIVE);
-        property.setValue(VALUE);
+    Property property = new Property();
+    property.setSensitive(SENSITIVE);
+    property.setValue(VALUE);
 
-        Map<String, Property> properties = new HashMap<>();
-        properties.put(NAME, property);
+    Map<String, Property> properties = new HashMap<>();
+    properties.put(NAME, property);
 
-        expectedPartitionInfo.setProperties(properties);
+    expectedPartitionInfo.setProperties(properties);
 
-        partitionPropertyEntity = new PartitionPropertyEntity(PARTITION_ID, NAME, property);
+    partitionPropertyEntity = new PartitionPropertyEntity(PARTITION_ID, NAME, property);
 
-        List<PartitionPropertyEntity> entities = new ArrayList<>();
-        entities.add(partitionPropertyEntity);
-        partitionPropertyEntityList = Optional.of(entities);
+    List<PartitionPropertyEntity> entities = new ArrayList<>();
+    entities.add(partitionPropertyEntity);
+    partitionPropertyEntityList = Optional.of(entities);
 
-        emptyList = Optional.empty();
-    }
+    emptyList = Optional.empty();
+  }
 
-    @Test
-    public void should_createPartition_when_partitionDoesNotExist() {
-        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                .thenReturn(emptyList, partitionPropertyEntityList);
+  @Test
+  void should_createPartition_when_partitionDoesNotExist() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+        .thenReturn(emptyList, partitionPropertyEntityList);
 
-        PartitionInfo actualPartitionInfo = partitionServiceImpl
-                .createPartition(PARTITION_ID, expectedPartitionInfo);
+    PartitionInfo actualPartitionInfo = partitionServiceImpl
+        .createPartition(PARTITION_ID, expectedPartitionInfo);
 
-        assertEquals(expectedPartitionInfo, actualPartitionInfo);
-    }
+    assertEquals(expectedPartitionInfo, actualPartitionInfo);
+  }
 
-    @Test
-    public void should_throwAnException_when_createPartitionWhichAlreadyExists() {
-        assertThrows(AppException.class, () -> {
-            when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                    .thenReturn(emptyList);
+  @Test
+  void should_throwAnException_when_createPartitionWhichAlreadyExists() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID)).thenReturn(emptyList);
+     PartitionInfo partitionInfo = new PartitionInfo();
+    assertThrows(AppException.class, () -> {
+       partitionServiceImpl.createPartition(PARTITION_ID, partitionInfo);
+    });
+  }
 
-            partitionServiceImpl.createPartition(PARTITION_ID, new PartitionInfo());
-        });
-    }
+  @Test
+  void should_updatePartition_when_partitionExists() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+        .thenReturn(partitionPropertyEntityList);
+    when(partitionPropertyEntityRepository.findByPartitionIdAndName(PARTITION_ID, NAME))
+        .thenReturn(null);
 
-    @Test
-    public void should_updatePartition_when_partitionExists() {
-        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                .thenReturn(partitionPropertyEntityList);
-        when(partitionPropertyEntityRepository.findByPartitionIdAndName(PARTITION_ID, NAME))
-                .thenReturn(null);
+    PartitionInfo actualPartitionInfo = partitionServiceImpl
+        .updatePartition(PARTITION_ID, expectedPartitionInfo);
 
-        PartitionInfo actualPartitionInfo = partitionServiceImpl
-                .updatePartition(PARTITION_ID, expectedPartitionInfo);
+    assertEquals(expectedPartitionInfo, actualPartitionInfo);
+  }
 
-        assertEquals(expectedPartitionInfo, actualPartitionInfo);
-    }
+  @Test
+  void should_throwAnException_when_updatePartitionWhichDoesNotExist() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID)).thenReturn(emptyList);
+     PartitionInfo partitionInfo = new PartitionInfo();
+     assertThrows(AppException.class, () -> {
+      partitionServiceImpl.createPartition(PARTITION_ID, partitionInfo);
+    });
+  }
 
-    @Test
-    public void should_throwAnException_when_updatePartitionWhichDoesNotExist() {
-        assertThrows(AppException.class, () -> {
-            when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                    .thenReturn(emptyList);
-            partitionServiceImpl.createPartition(PARTITION_ID, new PartitionInfo());
-        });
-    }
+  @Test
+  void should_getPartition_when_partitionExists() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+        .thenReturn(partitionPropertyEntityList);
 
-    @Test
-    public void should_getPartition_when_partitionExists() {
-        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                .thenReturn(partitionPropertyEntityList);
+    PartitionInfo actualPartitionInfo = partitionServiceImpl.getPartition(PARTITION_ID);
 
-        PartitionInfo actualPartitionInfo = partitionServiceImpl.getPartition(PARTITION_ID);
+    assertEquals(expectedPartitionInfo, actualPartitionInfo);
+  }
 
-        assertEquals(expectedPartitionInfo, actualPartitionInfo);
-    }
+  @Test
+  void should_throwAnException_when_getPartitionWhichDoesNotExist() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID)).thenReturn(emptyList);
+    assertThrows(AppException.class, () -> {
+      partitionServiceImpl.getPartition(PARTITION_ID);
+    });
+  }
 
-    @Test
-    public void should_throwAnException_when_getPartitionWhichDoesNotExist() {
-        assertThrows(AppException.class, () -> {
-            when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                    .thenReturn(emptyList);
-            partitionServiceImpl.getPartition(PARTITION_ID);
-        });
-    }
+  @Test
+  void should_deletePartition_when_partitionExists() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+        .thenReturn(partitionPropertyEntityList);
+    doNothing().when(partitionPropertyEntityRepository).deleteByPartitionId(PARTITION_ID);
 
-    @Test
-    public void should_deletePartition_when_partitionExists() {
-        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                .thenReturn(partitionPropertyEntityList);
-        doNothing().when(partitionPropertyEntityRepository).deleteByPartitionId(PARTITION_ID);
+    boolean expected = true;
+    boolean actual = partitionServiceImpl.deletePartition(PARTITION_ID);
 
-        boolean expected = true;
-        boolean actual = partitionServiceImpl.deletePartition(PARTITION_ID);
+    assertEquals(expected, actual);
+  }
 
-        assertEquals(expected, actual);
-    }
+  @Test
+  void should_throwAnException_when_deletePartitionWhichDoesNotExist() {
+    when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID)).thenReturn(emptyList);
+    assertThrows(AppException.class, () -> {
+      partitionServiceImpl.deletePartition(PARTITION_ID);
+    });
+  }
 
-    @Test
-    public void should_throwAnException_when_deletePartitionWhichDoesNotExist() {
-        assertThrows(AppException.class, () -> {
-            when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
-                    .thenReturn(emptyList);
-            partitionServiceImpl.deletePartition(PARTITION_ID);
-        });
-    }
+  @Test
+  void should_getAllPartitions() {
+    List<String> expectedPartitions = new ArrayList<>();
+    expectedPartitions.add(PARTITION_ID);
 
-    @Test
-    public void should_getAllPartitions() {
-        List<String> expectedPartitions = new ArrayList<>();
-        expectedPartitions.add(PARTITION_ID);
+    when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
 
-        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
+    List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
 
-        List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
-
-        assertEquals(expectedPartitions, actualPartitions);
-    }
-
-    @Test
-    public void should_getAllPartitionsExceptEmptySystemPartition() {
-        var expectedPartitions = new ArrayList<String>();
-        expectedPartitions.add(PARTITION_ID);
-        expectedPartitions.add(SYSTEM_PARTITION_ID);
-
-        when(propertiesConfiguration.getSystemPartitionId()).thenReturn("");
-        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
-
-        var actualPartitions = partitionServiceImpl.getAllPartitions();
-
-        assertEquals(expectedPartitions, actualPartitions);
-    }
-
-    @Test
-    public void should_getAllPartitionsExceptSystemPartition() {
-        var expectedPartitions = new ArrayList<String>();
-        expectedPartitions.add(PARTITION_ID);
-        expectedPartitions.add(SYSTEM_PARTITION_ID);
-
-        when(propertiesConfiguration.getSystemPartitionId()).thenReturn(SYSTEM_PARTITION_ID);
-        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(expectedPartitions);
-
-        var actualPartitions= partitionServiceImpl.getAllPartitions();
-
-        assertTrue(!actualPartitions.contains(SYSTEM_PARTITION_ID));
-    }
+    assertEquals(expectedPartitions, actualPartitions);
+  }
 }

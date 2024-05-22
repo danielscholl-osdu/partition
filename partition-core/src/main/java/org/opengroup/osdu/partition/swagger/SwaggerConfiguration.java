@@ -10,11 +10,10 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.tags.Tag;
+import jakarta.servlet.ServletContext;
 import java.util.Collections;
 import java.util.Map;
-import jakarta.servlet.ServletContext;
-
-import io.swagger.v3.oas.models.tags.Tag;
 import org.opengroup.osdu.partition.model.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

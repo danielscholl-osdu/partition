@@ -36,5 +36,4 @@ public class PropertiesConfiguration {
 
   private String partitionNamespace;
 
-  private String systemPartitionId;
 }
