@@ -16,7 +16,7 @@
   <properties>
     <osdu.corelibazure.version>0.26.0</osdu.corelibazure.version>
     <junit.version>4.13.2</junit.version>
-    <spring-webmvc.version>6.1.5</spring-webmvc.version>
+    <spring-framework-bom.version>6.1.6</spring-framework-bom.version>
     <reactor-core.version>3.6.4</reactor-core.version>
     <reactor-netty.version>1.1.17</reactor-netty.version>
     <nimbus-jose-jwt.version>9.30.2</nimbus-jose-jwt.version>
@@ -33,9 +33,16 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring-framework-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-dependencies</artifactId>
-	    <version>3.2.4</version>
+	    <version>3.2.5</version>
 	    <type>pom</type>
 	    <scope>import</scope>
 	  </dependency>
@@ -87,11 +94,6 @@
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-azure-spring6</artifactId>
       <version>${osdu.corelibazure.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring-webmvc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
