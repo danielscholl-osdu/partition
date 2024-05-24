@@ -200,6 +200,7 @@ gc-dev2-cleanup-env: # clean-up env after tests
     PARTITION_NAMESPACE: partition-test
     GC_HELM_NAMESPACE: partition-int-test
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
+    PIP_BREAK_SYSTEM_PACKAGES: 1
   script:
     - !reference [.gc_obtain_credentials, script]
     - !reference [.gc_common_config, script]
