@@ -158,6 +158,14 @@ baremetal_system_partition_data() {
     "entitlements.datasource.schema": {
       "sensitive": true,
       "value": "ENT_PG_SCHEMA_${DATA_PARTITION_ID_UPPER}"
+    },
+    "system.schema.bucket.name": {
+      "sensitive": false,
+      "value": "${BUCKET_PREFIX}-system-schema"
+    },
+    "schema.bucket.name": {
+      "sensitive": false,
+      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-schema"
     }
   }
 }
@@ -180,6 +188,10 @@ baremetal_additional_partition_data() {
     "obm.minio.external.endpoint": {
       "sensitive": false,
       "value": "${MINIO_EXTERNAL_ENDPOINT}"
+    },
+    "wellbore-dms-bucket": {
+      "sensitive": false,
+      "value": "${BUCKET_PREFIX}-logstore-osdu"
     }
   }
 }
