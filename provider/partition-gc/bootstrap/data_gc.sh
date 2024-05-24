@@ -74,9 +74,9 @@ gc_system_partition_data() {
       "sensitive": true,
       "value": "RESERVOIR_POSTGRES_CONN_STRING${PARTITION_SUFFIX}"
     },
-    "wellbore-dms-bucket": {
+    "system.schema.bucket.name": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-logstore"
+      "value": "${PROJECT_ID}-system-schema"
     }
   }
 }
@@ -98,6 +98,14 @@ gc_additional_partition_data() {
     "index-augmenter-enabled": {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
+    },
+    "wellbore-dms-bucket": {
+      "sensitive": false,
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-logstore"
+    },
+    "schema.bucket.name": {
+      "sensitive": false,
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-schema"
     }
   }
 }
