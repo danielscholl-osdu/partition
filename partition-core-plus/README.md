@@ -47,9 +47,20 @@ CREATE INDEX IF NOT EXISTS PartitionProperty_datagin ON partition."PartitionProp
 
 * For this command to work, create a file with below data in the same folder from where you're executing the above command (variables are in sync with what was created in point number 2):
 
-`PARTITION_POSTGRES_URL=jdbc:postgresql://172.17.0.1:5432/partition_db
-PARTITION_POSTGRESQL_USERNAME=usr_partition_pg
-PARTITION_POSTGRESQL_PASSWORD=partition_pg
-dataPartitionId=test-partition`
+Must have
+
+| name                            | value                                               | description | sensitive? | source |
+|---------------------------------|-----------------------------------------------------|-------------|------------|--------|
+| `PARTITION_POSTGRES_URL`        | ex `jdbc:postgresql://172.17.0.1:5432/partition_db` |             |            |        |
+| `PARTITION_POSTGRESQL_USERNAME` | ex `usr_partition_pg`                               |             |            |        |
+| `PARTITION_POSTGRESQL_PASSWORD` | ex `partition_pg`                                   |             |            |        |
+| `dataPartitionId`               | ex `test-partition`                                 |             |            |        |
+
+Defined in default application property file but possible to override:
+
+| name                              | value             | description              | sensitive? | source        |
+|-----------------------------------|-------------------|--------------------------|------------|---------------|
+| `MANAGEMENT_ENDPOINTS_WEB_BASE`   | ex `/`            | Web base for Actuator    | no         | -             |
+| `MANAGEMENT_SERVER_PORT`          | ex `8081`         | Port for Actuator        | no         | -             |
 
 * Now, you can hit the Partition service from Postman to work on partition service locally.

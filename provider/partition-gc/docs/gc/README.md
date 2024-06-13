@@ -13,15 +13,17 @@ Must have:
 
 Defined in default application property file but possible to override:
 
-| name                        | value                  | description                        | sensitive? | source |
-|-----------------------------|------------------------|------------------------------------|------------|--------|
-| `LOG_LEVEL`                 | `****`                 | Logging level                      | no         | -      |
-| `LOG_PREFIX`                | `service`              | Logging prefix                     | no         | -      |
-| `SERVER_SERVLET_CONTEXPATH` | `/api/partition/v1`    | Servlet context path               | no         | -      |
-| `PARTITION_PROPERTY_KIND`   | ex `PartitionProperty` | Kind name to store the properties. | no         | -      |
-| `PARTITION_NAMESPACE`       | ex `partition`         | Namespace for database.            | no         | -      |
-| `SYSTEM_PARTITION_ID`       | ex `syspartition`      | Name of system partition.          | yes        | -      |
-| `SYSTEM_TENANT_API`         | ex `true`              | Enables system API                 | no         | -      |
+| name                            | value                   | description                        | sensitive? | source |
+|---------------------------------|-------------------------|------------------------------------|------------|--------|
+| `LOG_LEVEL`                     | `****`                  | Logging level                      | no         | -      |
+| `LOG_PREFIX`                    | `service`               | Logging prefix                     | no         | -      |
+| `SERVER_SERVLET_CONTEXPATH`     | `/api/partition/v1`     | Servlet context path               | no         | -      |
+| `PARTITION_PROPERTY_KIND`       | ex `PartitionProperty`  | Kind name to store the properties. | no         | -      |
+| `PARTITION_NAMESPACE`           | ex `partition`          | Namespace for database.            | no         | -      |
+| `SYSTEM_PARTITION_ID`           | ex `syspartition`       | Name of system partition.          | yes        | -      |
+| `SYSTEM_TENANT_API`             | ex `true`               | Enables system API                 | no         | -      |
+| `MANAGEMENT_ENDPOINTS_WEB_BASE` | ex `/`                  | Web base for Actuator              | no         | -      |
+| `MANAGEMENT_SERVER_PORT`        | ex `8081`               | Port for Actuator                  | no         | -      |
 
 These variables define service behavior, and are used to switch between `baremetal` or `gc` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
