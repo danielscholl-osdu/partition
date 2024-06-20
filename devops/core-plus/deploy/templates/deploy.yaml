@@ -41,9 +41,15 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /api/partition/v1/liveness_check
-              port: 8080
+              path: /health/livenessState
+              port: 8081
             initialDelaySeconds: 250
+            periodSeconds: 10
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /health/readinessState
+              port: 8081
             periodSeconds: 10
           resources:
             requests:
