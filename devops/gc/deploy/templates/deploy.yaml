@@ -43,14 +43,14 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /health/livenessState
+              path: /health/liveness
               port: 8081
             initialDelaySeconds: 250
             periodSeconds: 10
           readinessProbe:
             failureThreshold: 2
             httpGet:
-              path: /health/readinessState
+              path: /health/readiness
               port: 8081
             periodSeconds: 10
           resources:
