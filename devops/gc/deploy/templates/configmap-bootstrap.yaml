@@ -8,6 +8,8 @@ metadata:
 data:
   PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
+  EDS_ENABLED: {{ .Values.data.edsEnabled | quote }}
+  POLICY_SERVICE_ENABLED: {{ .Values.data.policyServiceEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
   {{- if .Values.global.onPremEnabled }}
