@@ -77,6 +77,10 @@ gc_system_partition_data() {
     "system.schema.bucket.name": {
       "sensitive": false,
       "value": "${PROJECT_ID}-system-schema"
+    },
+    "system.eds.enabled": {
+      "sensitive": false,
+      "value": "${EDS_ENABLED}"
     }
   }
 }
@@ -89,7 +93,7 @@ gc_additional_partition_data() {
   "properties": {
     "policy-service-enabled": {
       "sensitive": false,
-      "value": "false"
+      "value": "${POLICY_SERVICE_ENABLED}"
     },
     "kubernetes-secret-name": {
       "sensitive": false,
@@ -106,6 +110,10 @@ gc_additional_partition_data() {
     "schema.bucket.name": {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-schema"
+    },
+    "eds.enabled": {
+      "sensitive": false,
+      "value": "${EDS_ENABLED}"
     }
   }
 }

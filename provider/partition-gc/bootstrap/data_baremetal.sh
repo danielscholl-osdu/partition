@@ -137,7 +137,7 @@ baremetal_system_partition_data() {
     },
     "policy-service-enabled": {
       "sensitive": false,
-      "value": "false"
+      "value": "${POLICY_SERVICE_ENABLED}"
     },
     "obm.minio.external.endpoint": {
       "sensitive": false,
@@ -183,7 +183,7 @@ baremetal_additional_partition_data() {
     },
     "policy-service-enabled": {
       "sensitive": false,
-      "value": "false"
+      "value": "${POLICY_SERVICE_ENABLED}"
     },
     "obm.minio.external.endpoint": {
       "sensitive": false,
