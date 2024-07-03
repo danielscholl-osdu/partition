@@ -99,33 +99,32 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **global.domain** | your domain | string | - | yes
 **global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | true | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
+**global.dataPartitionId** | data partition id | string | - | yes
 
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **data.logLevel** | logging level | string | INFO | yes
-**data.partitionHost** | partition host | string | partition | yes
-**data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
-**data.dataPartitionId** | data partition id | string | - | yes
+**data.partitionSuffix** | suffix for partition secret values | string | _SYSTEM | yes
 **data.datafierSa** | datafier service account | string | datafier | yes
 **data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _onPremEnabled_ is set to "_true_"
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
 **data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
-**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
 **data.minioUIEndpoint** | UI endpoint for gathering minio versions | string | `http://minio:9001` | yes
+**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
 
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.requestsCpu** | amount of requests CPU | string | 10m | yes
-**data.requestsMemory** | amount of requests memory | string | 400Mi | yes
+**data.requestsCpu** | amount of requests CPU | string | 5m | yes
+**data.requestsMemory** | amount of requests memory | string | 350Mi | yes
 **data.limitsCpu** | CPU limit | string | 500m | only if `global.limitsEnabled` is true
 **data.limitsMemory** | memory limit | string | 1G | only if `global.limitsEnabled` is true
 **data.serviceAccountName** | name of your service account | string | partition | yes
-**data.image** | path to the image in a registry | string | - | yes
 **data.imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
+**data.image** | path to the image in a registry | string | - | yes
 **data.bootstrapImage** | name of the bootstrap image | string | - | yes
 
 ### Configuration variables
@@ -142,14 +141,13 @@ First you need to set variables in **values.yaml** file using any code editor. S
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**istio.proxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
+**istio.proxyCPU** | CPU request for Envoy sidecars | string | 5m | yes
 **istio.proxyCPULimit** | CPU limit for Envoy sidecars | string | 500m | yes
-**istio.proxyMemory** | memory request for Envoy sidecars | string | 100Mi | yes
+**istio.proxyMemory** | memory request for Envoy sidecars | string | 64Mi | yes
 **istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | 512Mi | yes
-**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
+**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 5m | yes
 **istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | 100m | yes
 **istio.sidecarInject** | whether Istio sidecar will be injected. Setting to "false" reduces security, because disables authorization policy. | boolean | true | yes
-**istio.partitionEditors** | list of users who can edit partitions. If it is empty, the service allows all external GET requests and POST/PUT/PATCH for bootstrap k8s service account. It accepts gc accounts only | list | - | no
 
 ### Install the helm chart
 

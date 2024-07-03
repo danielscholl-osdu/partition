@@ -2,11 +2,19 @@ global:
   domain: ""
   useHttps: true
   limitsEnabled: true
+  dataPartitionId: ""
 
 data:
   # configmaps
   logLevel: "ERROR"
   # deployments
+  partitionSuffix: "_SYSTEM"
+  datafierSa: "datafier"
+  bucketPrefix: "refi"
+  minioExternalEndpoint: "" # use only if external minio is configured
+  minioIgnoreCertCheck: "false"
+  minioUIEndpoint: "http://minio:9001"
+  indexerAugmenterEnabled: "false"
   requestsCpu: "5m"
   requestsMemory: "350Mi"
   limitsCpu: "500m"
@@ -14,6 +22,7 @@ data:
   serviceAccountName: "partition"
   imagePullPolicy: "IfNotPresent"
   image: ""
+  bootstrapImage: ""
 
 conf:
   appName: "partition"
@@ -30,4 +39,6 @@ istio:
   proxyCPULimit: "500m"
   proxyMemory: "64Mi"
   proxyMemoryLimit: "512Mi"
+  bootstrapProxyCPU: "5m"
+  bootstrapProxyCPULimit: "100m"
   sidecarInject: "true"
