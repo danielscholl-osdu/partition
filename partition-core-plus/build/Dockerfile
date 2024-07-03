@@ -19,6 +19,5 @@ CMD java -Djava.security.egd=file:/dev/./urandom \
          -Dserver.port=${PORT} \
          -Dlog4j.formatMsgNoLookups=true \
          -Dloader.path=plugins/ \
-         -Dloader.debug=true \
          -Dloader.main=org.opengroup.osdu.partition.coreplus.PartitionApplication \
          -jar /app/partition-${PROVIDER_NAME}.jar
