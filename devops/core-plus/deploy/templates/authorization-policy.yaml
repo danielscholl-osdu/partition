@@ -9,6 +9,14 @@ spec:
       app: {{ .Values.conf.appName | quote }}
   action: ALLOW
   rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/{{ $.Release.Namespace }}/sa/{{ printf "%s-bootstrap" .Values.data.serviceAccountName }}
+    to:
+    - operation:
+        paths:
+        - /api/partition/v1/*
   - to:
     - operation:
         methods:
@@ -26,7 +34,7 @@ spec:
         - /api/partition/v1/*
     when:
     - key: request.auth.claims[iss]
-      values: 
+      values:
       - https://keycloak.{{ .Values.global.domain }}/realms/{{ .Values.auth.realm }}
       - http://keycloak.{{ .Values.global.domain }}/realms/{{ .Values.auth.realm }}
       - http://keycloak/realms/{{ .Values.auth.realm }}

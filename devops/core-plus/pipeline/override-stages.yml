@@ -1,5 +1,13 @@
 variables:
   CORE_SERVICE: partition
+  CORE_ENABLE_BOOTSTRAP: "true"
+  CORE_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap/Dockerfile"
+
+core-containerize-bootstrap-gitlab:
+  tags: ["osdu-medium"]
+  variables:
+    CORE_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-partition"
+
 
 core-containerize-gitlab:
   stage: containerize
