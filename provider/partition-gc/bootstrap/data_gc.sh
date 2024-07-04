@@ -81,6 +81,10 @@ gc_system_partition_data() {
     "system.eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
+    },
+    "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${OPA_ENABLED}"
     }
   }
 }
@@ -114,6 +118,10 @@ gc_additional_partition_data() {
     "eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
+    },
+    "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${OPA_ENABLED}"
     }
   }
 }
