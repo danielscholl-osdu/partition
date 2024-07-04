@@ -166,6 +166,10 @@ baremetal_system_partition_data() {
     "schema.bucket.name": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-schema"
+    },
+    "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${OPA_ENABLED}"
     }
   }
 }
@@ -192,6 +196,10 @@ baremetal_additional_partition_data() {
     "wellbore-dms-bucket": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-logstore-osdu"
+    },
+    "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${OPA_ENABLED}"
     }
   }
 }
