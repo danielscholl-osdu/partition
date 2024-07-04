@@ -21,6 +21,7 @@ data:
   policyServiceEnabled: "false"
   edsEnabled: "true"
   minioUIEndpoint: "http://minio:9001"
+  opaEnabled: "true"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
