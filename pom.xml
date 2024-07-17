@@ -27,7 +27,9 @@
     <maven.compiler.source>17</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <os-core-common.version>0.26.0</os-core-common.version>
-    <org.springframework.boot.version>3.2.4</org.springframework.boot.version>
+    <spring-boot.version>3.3.1</spring-boot.version>
+    <spring-security.version>6.3.1</spring-security.version>
+    <spring-framework.version>6.1.10</spring-framework.version>
     <log4j.version>2.21.1</log4j.version>
     <guava.version>32.1.2-jre</guava.version>
     <netty-version>4.1.107.Final</netty-version>
@@ -38,6 +40,27 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-framework-bom</artifactId>
+        <version>${spring-framework.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-bom</artifactId>
+        <version>${spring-security.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-bom</artifactId>
@@ -104,7 +127,7 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${org.springframework.boot.version}</version>
+          <version>${spring-boot.version}</version>
           <executions>
             <execution>
               <id>build-info</id>
