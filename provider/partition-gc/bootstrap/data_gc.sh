@@ -109,7 +109,7 @@ gc_additional_partition_data() {
     },
     "wellbore-dms-bucket": {
       "sensitive": false,
-      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-logstore"
+      "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-wellbore"
     },
     "schema.bucket.name": {
       "sensitive": false,
