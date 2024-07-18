@@ -170,36 +170,10 @@ baremetal_system_partition_data() {
     "featureFlag.opa.enabled": {
       "sensitive": false,
       "value": "${OPA_ENABLED}"
-    }
-  }
-}
-EOF
-}
-
-baremetal_additional_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
-  cat <<EOF
-{
-  "properties": {
-    "index-augmenter-enabled": {
-      "sensitive": false,
-      "value": "${INDEXER_AUGMENTER_ENABLED}"
-    },
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "${POLICY_SERVICE_ENABLED}"
-    },
-    "obm.minio.external.endpoint": {
-      "sensitive": false,
-      "value": "${MINIO_EXTERNAL_ENDPOINT}"
     },
     "wellbore-dms-bucket": {
       "sensitive": false,
-      "value": "${BUCKET_PREFIX}-logstore-osdu"
-    },
-    "featureFlag.opa.enabled": {
-      "sensitive": false,
-      "value": "${OPA_ENABLED}"
+      "value": "${BUCKET_PREFIX}-wellbore"
     }
   }
 }
