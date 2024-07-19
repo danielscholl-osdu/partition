@@ -173,7 +173,7 @@ baremetal_system_partition_data() {
     },
     "wellbore-dms-bucket": {
       "sensitive": false,
-      "value": "${BUCKET_PREFIX}-wellbore"
+      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-wellbore"
     }
   }
 }
