@@ -11,6 +11,10 @@ baremetal_system_partition_data() {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}"
     },
+    "eds.enabled": {
+      "sensitive": false,
+      "value": "${EDS_ENABLED}"
+    },
     "serviceAccount": {
       "sensitive": false,
       "value": "${SERVICE_ACCOUNT}"
@@ -169,7 +173,7 @@ baremetal_system_partition_data() {
     },
     "featureFlag.opa.enabled": {
       "sensitive": false,
-      "value": "${OPA_ENABLED}"
+      "value": "${POLICY_SERVICE_ENABLED}"
     },
     "wellbore-dms-bucket": {
       "sensitive": false,

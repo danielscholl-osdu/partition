@@ -84,7 +84,7 @@ gc_system_partition_data() {
     },
     "featureFlag.opa.enabled": {
       "sensitive": false,
-      "value": "${OPA_ENABLED}"
+      "value": "${POLICY_SERVICE_ENABLED}"
     }
   }
 }
@@ -121,7 +121,7 @@ gc_additional_partition_data() {
     },
     "featureFlag.opa.enabled": {
       "sensitive": false,
-      "value": "${OPA_ENABLED}"
+      "value": "${POLICY_SERVICE_ENABLED}"
     }
   }
 }

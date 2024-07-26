@@ -12,7 +12,6 @@ data:
   POLICY_SERVICE_ENABLED: {{ .Values.data.policyServiceEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
-  OPA_ENABLED: {{ .Values.data.opaEnabled | quote }}
   {{- if .Values.global.onPremEnabled }}
   ENVIRONMENT: "anthos"
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
