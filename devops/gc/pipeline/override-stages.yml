@@ -34,6 +34,7 @@ gc-deploy: # reuse common deploy job for test deployment
       --set data.dataPartitionId=test
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
+      --set data.edsEnabled=true
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-test:
@@ -77,7 +78,8 @@ gc-verified-deploy: # verified deploy after tests
     GC_HELM_NAMESPACE: default
     GC_TENANT: osdu
     # GC_HELM_SETS is blanked since values from gc-deploy is not compatible
-    GC_HELM_SETS: ""
+    GC_HELM_SETS: >-
+      --set data.edsEnabled=true
 
 # Baremetal jobs
 gc-baremetal-deploy-test-env: #infra deploy for on-prem install

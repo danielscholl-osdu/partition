@@ -18,10 +18,9 @@ data:
   minioExternalEndpoint: "" # use only if external minio is configured
   minioIgnoreCertCheck: "false"
   indexerAugmenterEnabled: "false"
-  policyServiceEnabled: "false"
-  edsEnabled: "true"
+  policyServiceEnabled: "true"
+  edsEnabled: "false"
   minioUIEndpoint: "http://minio:9001"
-  opaEnabled: "true"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
