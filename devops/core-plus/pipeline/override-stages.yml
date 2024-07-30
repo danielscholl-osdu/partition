@@ -8,7 +8,6 @@ core-containerize-bootstrap-gitlab:
   variables:
     CORE_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-partition"
 
-
 core-containerize-gitlab:
   stage: containerize
   needs: ["compile-and-unit-test", "download_plugins"]
@@ -28,9 +27,9 @@ core-containerize-gitlab:
     - docker push $CI_REGISTRY_IMAGE/$TEST_IMAGE
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: never
+      when: on_success
     - if: "$CI_COMMIT_TAG"
-      when: never
+      when: on_success
     - if: "$CORE == '1'"
       when: on_success
 
@@ -90,8 +89,8 @@ core-test:
     expire_in: 1 days
   rules:
     - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: never
+      when: on_success
     - if: "$CI_COMMIT_TAG"
-      when: never
+      when: on_success
     - if: "$CORE == '1'"
       when: on_success
