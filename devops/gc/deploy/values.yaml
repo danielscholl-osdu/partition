@@ -21,6 +21,7 @@ data:
   policyServiceEnabled: "true"
   edsEnabled: "false"
   minioUIEndpoint: "http://minio:9001"
+  autocompleteEnabled: "false"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
