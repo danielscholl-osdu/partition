@@ -10,6 +10,7 @@ data:
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   EDS_ENABLED: {{ .Values.data.edsEnabled | quote }}
   POLICY_SERVICE_ENABLED: {{ .Values.data.policyServiceEnabled | quote }}
+  AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
   {{- if .Values.global.onPremEnabled }}

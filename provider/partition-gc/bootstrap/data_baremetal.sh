@@ -175,6 +175,10 @@ baremetal_system_partition_data() {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
     },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
+    },
     "wellbore-dms-bucket": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-wellbore"
