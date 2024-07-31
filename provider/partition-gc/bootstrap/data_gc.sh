@@ -85,6 +85,10 @@ gc_system_partition_data() {
     "featureFlag.opa.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
     }
   }
 }
@@ -122,6 +126,10 @@ gc_additional_partition_data() {
     "featureFlag.opa.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
     }
   }
 }
