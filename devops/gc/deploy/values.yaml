@@ -37,7 +37,7 @@ conf:
   appName: "partition"
   configmap: "partition-config"
   secret: "partition-postgres-secret"
-  replicas: 1
+  replicas: 2
 
 auth:
   realm: "osdu"
