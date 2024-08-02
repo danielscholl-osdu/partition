@@ -180,6 +180,7 @@ gc-dev2-deploy: # reuse common deploy job for test deployment
       --set data.dataPartitionId=test
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
+      --set data.edsEnabled=true
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-dev2-test:
@@ -222,7 +223,8 @@ gc-dev2-verified-deploy: # verified deploy after tests
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
     GC_HELM_NAMESPACE: default
     GC_TENANT: devtwo
-    GC_HELM_SETS: ""
+    GC_HELM_SETS: >-
+      --set data.edsEnabled=true
 
 gc-preship-deploy:
   extends: .gc-preship-variables
@@ -230,3 +232,7 @@ gc-preship-deploy:
   image: gcr.io/google.com/cloudsdktool/cloud-sdk:alpine
   stage: deploy_preship
   needs: ["gc-dev2-verified-deploy", "gc-dev2-test"]
+  variables:
+    GC_HELM_SETS: >-
+      --set data.dataPartitionId=m19
+      --set data.edsEnabled=true
