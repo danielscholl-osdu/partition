@@ -14,7 +14,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <core-lib-azure-spring6.version>0.27.0-rc4</core-lib-azure-spring6.version>
+    <core-lib-azure-spring6.version>0.27.0-rc6</core-lib-azure-spring6.version>
     <junit.version>4.13.2</junit.version>
     <reactor-core.version>3.6.4</reactor-core.version>
     <reactor-netty.version>1.1.17</reactor-netty.version>
@@ -78,6 +78,12 @@
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-azure-spring6</artifactId>
       <version>${core-lib-azure-spring6.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>redisson</artifactId>
+          <groupId>org.redisson</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -141,7 +147,11 @@
       <artifactId>okhttp</artifactId>
       <version>${okhttp.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <version>3.33.0</version>
+    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
