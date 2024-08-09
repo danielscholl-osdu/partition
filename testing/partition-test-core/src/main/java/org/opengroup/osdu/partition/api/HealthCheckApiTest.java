@@ -34,4 +34,11 @@ public abstract class HealthCheckApiTest extends TestBase {
         TestUtils.send("api/partition/v1/liveness_check", HttpMethod.GET.name(), null, "", "", false);
     assertEquals(HttpStatus.OK.value(), response.getCode());
   }
+
+  @Test
+  public void should_returnTrailingOk() throws Exception {
+    CloseableHttpResponse response =
+            TestUtils.send("api/partition/v1/liveness_check/", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "", "", false);
+    assertEquals(HttpStatus.OK.value(), response.getCode());
+  }
 }
