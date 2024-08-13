@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.azure.config.AzureConfig;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 
 import java.util.ArrayList;
@@ -50,6 +51,10 @@ public class PartitionServiceImplCacheTest {
 
     @InjectMocks
     private PartitionServiceImpl partitionService;
+
+    @Mock
+    private AzureConfig azureConfig;
+
 
     @Test
     public void createPartitionSucceed() {
