@@ -14,10 +14,17 @@
 
 package org.opengroup.osdu.partition.api;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.util.AzureTestUtils;
+import org.opengroup.osdu.partition.util.RestDescriptor;
+import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.assertTrue;
 
 public class TestListPartitions extends ListPartitionsApitTest {
 
@@ -50,4 +57,34 @@ public class TestListPartitions extends ListPartitionsApitTest {
     public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
         // revisit this later -- Istio is changing the response code
     }
+
+    @Test
+    public void should_notReturnSystemPartition_when_listPartitionIsCalled() throws Exception {
+        //check by creation of system partition should give either 201, or 409
+        CloseableHttpResponse createResponse = createPartition("system");
+
+        assertTrue(createResponse.getCode()== HttpStatus.CREATED.value() || createResponse.getCode() == HttpStatus.CONFLICT.value());
+
+        CloseableHttpResponse listPartitionsResponse = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+
+        String responseBody = EntityUtils.toString(listPartitionsResponse.getEntity());
+        assertTrue(!responseBody.contains("system"));
+    }
+
+    private CloseableHttpResponse createPartition(String partitionId) throws Exception {
+        CreatePartitionDescriptor createPartition = new CreatePartitionDescriptor();
+
+        createPartition.setPartitionId(partitionId);
+
+        RestDescriptor oldDescriptor = this.descriptor;
+
+        this.descriptor = createPartition;
+
+        CloseableHttpResponse createResponse = this.descriptor.run(partitionId, this.testUtils.getAccessToken());
+
+
+        this.descriptor = oldDescriptor;
+        return createResponse;
+    }
+
 }
