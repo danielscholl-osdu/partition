@@ -3,7 +3,7 @@
 # FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
 # FIXME (GONRG-7696): Move rabbitmq properties to additional partition when resolved
 baremetal_system_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
+  DATA_PARTITION_ID_UPPER=$(echo "${DATA_PARTITION_ID_VALUE//-/_}" | tr '[:lower:]' '[:upper:]')
   cat <<EOF
 {
   "properties": {
