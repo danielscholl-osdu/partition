@@ -184,6 +184,11 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.7.36</version>
     </dependency>
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <version>3.34.1</version>
+    </dependency>
   </dependencies>
 
   <build>
