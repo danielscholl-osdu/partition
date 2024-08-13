@@ -14,6 +14,7 @@
 
 package org.opengroup.osdu.partition.provider.azure.service;
 
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,12 @@ import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.azure.config.AzureConfig;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +55,8 @@ public class PartitionServiceImplTest {
     private PartitionTableStore tableStore;
     @InjectMocks
     private PartitionServiceImpl sut;
-
+    @Mock
+    private AzureConfig azureConfig;
     private final PartitionInfo partitionInfo = new PartitionInfo();
 
     private final static String PARTITION_ID = "my-tenant";
@@ -188,6 +192,14 @@ public class PartitionServiceImplTest {
     }
 
     @Test
+    public void should_throwException_when_deletingSystemPartition() {
+        when(azureConfig.isReservedPartition("system")).thenReturn(true);
+        AppException exception = assertThrows(AppException.class, () -> sut.deletePartition("system"));
+
+        assertEquals(HttpStatus.SC_FORBIDDEN, exception.getError().getCode());
+    }
+
+    @Test
     public void should_returnEmptyList_when_no_partitions() {
         when(this.tableStore.getAllPartitions()).thenReturn(new ArrayList<>());
 
@@ -226,5 +238,18 @@ public class PartitionServiceImplTest {
 
         assertNotNull(partitions);
         assertEquals(partitionsList, partitions);
+    }
+
+    @Test
+    public void should_returnPartitionListExceptSystemPartition_when_partitionsExists() {
+        List<String> partitionsList = Arrays.asList("partition1", "system");
+        when(this.tableStore.getAllPartitions()).thenReturn(partitionsList);
+        when(azureConfig.isReservedPartition("system")).thenReturn(true);
+        when(azureConfig.isReservedPartition("partition1")).thenReturn(false);
+
+        List<String> partitions = sut.getAllPartitions();
+
+        assertNotNull(partitions);
+        assertEquals(Collections.singletonList("partition1"), partitions);
     }
 }

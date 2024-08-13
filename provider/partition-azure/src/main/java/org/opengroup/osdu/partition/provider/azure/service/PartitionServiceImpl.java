@@ -19,6 +19,7 @@ import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
+import org.opengroup.osdu.partition.provider.azure.config.AzureConfig;
 import org.opengroup.osdu.partition.provider.azure.persistence.PartitionTableStore;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ import java.util.Optional;
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
+    private static final String SYSTEM_PARTITION_DELETE_ERROR = "System partition is reserved for system and shared usage, currently it cannot Deleted";
+    private static final String NOT_ALLOWED = "Not Allowed";
     static final String PARTITION_LIST_KEY = "getAllPartitions";
     static final String PARTITION_NOT_FOUND = "partition not found";
 
@@ -47,6 +50,9 @@ public class PartitionServiceImpl implements IPartitionService {
     @Inject
     @Qualifier("partitionListCache")
     private ICache<String, List<String>> partitionListCache;
+
+    @Autowired
+    private AzureConfig azureConfig;
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
@@ -107,6 +113,9 @@ public class PartitionServiceImpl implements IPartitionService {
 
     @Override
     public boolean deletePartition(String partitionId) {
+        if(azureConfig.isReservedPartition(partitionId))
+            throw new AppException(HttpStatus.SC_FORBIDDEN, NOT_ALLOWED, SYSTEM_PARTITION_DELETE_ERROR);
+
         if (!tableStore.partitionExists(partitionId)) {
             throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
         }
@@ -131,6 +140,13 @@ public class PartitionServiceImpl implements IPartitionService {
                 partitionListCache.put(PARTITION_LIST_KEY, partitions);
             }
         }
+
+        if(partitions != null) {
+            partitions = partitions.stream()
+                    .filter(item-> !azureConfig.isReservedPartition(item))
+                    .toList();
+        }
+
         return partitions;
     }
 }
