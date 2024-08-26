@@ -24,6 +24,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.impl.DefaultClaims;
 import io.jsonwebtoken.impl.DefaultJws;
+import io.jsonwebtoken.impl.DefaultJwsHeader;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ public class AuthorizationServiceTest {
         map.put("email", email);
         map.put("appcode", appcode);
         map.put("iss", "sauth-preview.slb.com");
-        Jws<Claims> jws = new DefaultJws<>(null, new DefaultClaims(map), null);
+        Jws<Claims> jws = new DefaultJws<>(new DefaultJwsHeader(map), new DefaultClaims(map), "sig");
         return new DummyAuthToken(jws);
     }
 
