@@ -4,10 +4,11 @@ global:
   onPremEnabled: false
   limitsEnabled: true
   dataPartitionId: ""
+  logLevel: "ERROR"
 
 data:
   # configmaps
-  logLevel: "ERROR"
+  logLevel: ""
   projectId: ""
   dataProjectId: ""
   partitionHost: "partition"

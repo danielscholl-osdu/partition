@@ -97,60 +97,61 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain | string | - | yes
-**global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | true | yes
-**global.onPremEnabled** | whether on-prem is enabled | boolean | false | yes
-**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | true | yes
+**global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | `true` | yes
+**global.onPremEnabled** | whether on-prem is enabled | boolean | `false` | yes
+**global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | `true` | yes
 **global.dataPartitionId** | data partition id | string | - | yes
+**global.logLevel** | severity of logging level | string | `ERROR` | yes
 
 ### Configmap variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.logLevel** | logging level | string | INFO | yes
+**data.logLevel** | logging severity level for this service only  | string | - | yes, only if differs from the `global.logLevel`
 **data.projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
 **data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
-**data.partitionHost** | partition host | string | partition | yes
-**data.partitionNamespace** | datastore namespace where partition will store the data | string | partition | yes
-**data.datafierSa** | datafier service account | string | datafier | yes
-**data.bucketPrefix** | minio bucket name prefix | string | refi | only in case of Reference installation when _onPremEnabled_ is set to "_true_"
+**data.partitionHost** | partition host | string | `partition` | yes
+**data.partitionNamespace** | datastore namespace where partition will store the data | string | `partition` | yes
+**data.datafierSa** | datafier service account | string | `datafier` | yes
+**data.bucketPrefix** | minio bucket name prefix | string | `refi` | only in case of Reference installation when _onPremEnabled_ is set to `true`
 **data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
-**data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
-**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
+**data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | `false` | no
+**data.indexerAugmenterEnabled** | enable indexer Augmenter | string | `false` | no
 **data.minioUIEndpoint** | UI endpoint for gathering minio versions | string | `http://minio:9001` | yes
 
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**data.requestsCpu** | amount of requests CPU | string | 10m | yes
-**data.requestsMemory** | amount of requests memory | string | 400Mi | yes
-**data.limitsCpu** | CPU limit | string | 500m | only if `global.limitsEnabled` is true
-**data.limitsMemory** | memory limit | string | 1G | only if `global.limitsEnabled` is true
-**data.serviceAccountName** | name of your service account | string | partition | yes
+**data.requestsCpu** | amount of requests CPU | string | `10m` | yes
+**data.requestsMemory** | amount of requests memory | string | `400Mi` | yes
+**data.limitsCpu** | CPU limit | string | `500m` | only if `global.limitsEnabled` is true
+**data.limitsMemory** | memory limit | string | `1G` | only if `global.limitsEnabled` is true
+**data.serviceAccountName** | name of your service account | string | `partition` | yes
 **data.image** | path to the image in a registry | string | - | yes
-**data.imagePullPolicy** | when to pull the image | string | IfNotPresent | yes
+**data.imagePullPolicy** | when to pull the image | string | `IfNotPresent` | yes
 **data.bootstrapImage** | name of the bootstrap image | string | - | yes
 
 ### Configuration variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**conf.appName** | name of the app | string | partition | yes
-**conf.configmap** | configmap to be used | string | partition-config | yes
-**conf.secret** | secret for postgres | string | partition-postgres-secret | yes
-**auth.realm** | realm in keycloak | string | osdu | yes
+**conf.appName** | name of the app | string | `partition` | yes
+**conf.configmap** | configmap to be used | string | `partition-config` | yes
+**conf.secret** | secret for postgres | string | `partition-postgres-secret` | yes
+**auth.realm** | realm in keycloak | string | `osdu` | yes
 
 ### ISTIO variables
 
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
-**istio.proxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
-**istio.proxyCPULimit** | CPU limit for Envoy sidecars | string | 500m | yes
-**istio.proxyMemory** | memory request for Envoy sidecars | string | 100Mi | yes
-**istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | 512Mi | yes
-**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | 10m | yes
-**istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | 100m | yes
-**istio.sidecarInject** | whether Istio sidecar will be injected. Setting to "false" reduces security, because disables authorization policy. | boolean | true | yes
+**istio.proxyCPU** | CPU request for Envoy sidecars | string | `10m` | yes
+**istio.proxyCPULimit** | CPU limit for Envoy sidecars | string | `500m` | yes
+**istio.proxyMemory** | memory request for Envoy sidecars | string | `100Mi` | yes
+**istio.proxyMemoryLimit** | memory limit for Envoy sidecars | string | `512Mi` | yes
+**istio.bootstrapProxyCPU** | CPU request for Envoy sidecars | string | `10m` | yes
+**istio.bootstrapProxyCPULimit** | CPU limit for Envoy sidecars | string | `100m` | yes
+**istio.sidecarInject** | whether Istio sidecar will be injected. Setting to `false` reduces security, because disables authorization policy. | boolean | `true` | yes
 **istio.partitionEditors** | list of users who can edit partitions. If it is empty, the service allows all external GET requests and POST/PUT/PATCH for bootstrap k8s service account. It accepts gc accounts only | list | - | no
 
 ### Install the helm chart
