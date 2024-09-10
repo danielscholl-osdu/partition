@@ -78,15 +78,19 @@ gc_system_partition_data() {
       "sensitive": false,
       "value": "${PROJECT_ID}-system-schema"
     },
-    "system.eds.enabled": {
+    "system.featureFlag.eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
     },
-    "featureFlag.opa.enabled": {
+    "system.featureFlag.opa.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
     },
-    "featureFlag.autocomplete.enabled": {
+    "system.featureFlag.policy.enabled": {
+      "sensitive": false,
+      "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "system.featureFlag.autocomplete.enabled": {
       "sensitive": false,
       "value": "${AUTOCOMPLETE_ENABLED}"
     }
@@ -99,10 +103,6 @@ gc_additional_partition_data() {
   cat <<EOF
 {
   "properties": {
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "${POLICY_SERVICE_ENABLED}"
-    },
     "kubernetes-secret-name": {
       "sensitive": false,
       "value": "eds-${DATA_PARTITION_ID_VALUE}"
@@ -119,11 +119,15 @@ gc_additional_partition_data() {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-schema"
     },
-    "eds.enabled": {
+    "featureFlag.eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
     },
     "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.policy.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
     },
