@@ -139,7 +139,7 @@ baremetal_system_partition_data() {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
     },
-    "policy-service-enabled": {
+    "featureFlag.policy.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
     },
