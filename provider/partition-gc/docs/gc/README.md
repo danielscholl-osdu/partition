@@ -35,14 +35,14 @@ Usage of spring profiles is preferred.
 
 You will need to have the following environment variables defined.
 
-| name                    | value                       | description                                                                      | sensitive? | source                                                       |
-|-------------------------|-----------------------------|----------------------------------------------------------------------------------|------------|--------------------------------------------------------------|
-| `ENVIRONMENT`           | ex `dev`                    |                                                                                  | no         |                                                              |
-| `PARTITION_BASE_URL`    | ex `http://localhost:8080/` | service base URL                                                                 | yes        |                                                              |
-| `CLIENT_TENANT`         | ex `opendes`                | name of the client partition                                                     | yes        |                                                              |
-| `MY_TENANT`             | ex `opendes`                | name of the OSDU partition                                                       | yes        |                                                              |
-| `INTEGRATION_TESTER`    | `********`                  | Service account for API calls. Note: this user must be `PARTITION_ADMIN_ACCOUNT` | yes        | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
-| `NO_DATA_ACCESS_TESTER` | `********`                  | Service account base64 encoded string without data access                        | yes        | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
+| name                    | value                                    | description                                                                                                              | sensitive? | source                                                       |
+|-------------------------|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|------------|--------------------------------------------------------------|
+| `ENVIRONMENT`           | ex `dev`                                 |                                                                                                                          | no         |                                                              |
+| `PARTITION_BASE_URL`    | ex `http://localhost:8080/`              | service base URL                                                                                                         | yes        |                                                              |
+| `CLIENT_TENANT`         | ex `opendes`                             | name of the client partition                                                                                             | yes        |                                                              |
+| `MY_TENANT`             | ex `opendes`                             | name of the OSDU partition                                                                                               | yes        |                                                              |
+| `INTEGRATION_TESTER`    | `ewogICJ0....` or `tmp/service-acc.json` | Service account base64 encoded string or path to a file for API calls. Note: this user must be `PARTITION_ADMIN_ACCOUNT` | yes        | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
+| `NO_DATA_ACCESS_TESTER` | `ewogICJ0....` or `tmp/service-acc.json` | Service account base64 encoded string or path to a file for API calls. Without data access                               | yes        | <https://console.cloud.google.com/iam-admin/serviceaccounts> |
 
 Execute following command to build code and run all the integration tests:
 
