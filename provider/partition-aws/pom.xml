@@ -32,9 +32,7 @@
 
     <properties>
         <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>    
-        <deployment.environment>dev</deployment.environment>
-        <spring-webmvc.version>6.1.5</spring-webmvc.version>
+        <maven.compiler.source>17</maven.compiler.source>
         <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
         <junit.version>4.13.2</junit.version>
     </properties>
@@ -54,7 +52,7 @@
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>0.26.0-spring6-rc2</version>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
