@@ -192,6 +192,10 @@ core_additional_partition_data() {
     "wellbore-dms-bucket": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-logstore-osdu"
+    },
+    "sd.ksd.k8s.namespace": {
+        "sensitive": false,
+        "value": "secret-admin"
     }
   }
 }
