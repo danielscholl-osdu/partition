@@ -134,6 +134,10 @@ gc_additional_partition_data() {
     "featureFlag.autocomplete.enabled": {
       "sensitive": false,
       "value": "${AUTOCOMPLETE_ENABLED}"
+    },
+    "sd.ksd.k8s.namespace": {
+        "sensitive": false,
+        "value": "secret-admin"
     }
   }
 }

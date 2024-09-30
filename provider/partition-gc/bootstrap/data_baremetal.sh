@@ -182,6 +182,10 @@ baremetal_system_partition_data() {
     "wellbore-dms-bucket": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-wellbore"
+    },
+    "sd.ksd.k8s.namespace": {
+        "sensitive": false,
+        "value": "secret-admin"
     }
   }
 }
