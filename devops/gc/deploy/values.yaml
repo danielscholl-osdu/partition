@@ -1,7 +1,6 @@
 global:
   domain: ""
   useHttps: true
-  onPremEnabled: false
   limitsEnabled: true
   dataPartitionId: ""
   logLevel: "ERROR"
@@ -16,12 +15,9 @@ data:
   partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
   bucketPrefix: "refi"
-  minioExternalEndpoint: "" # use only if external minio is configured
-  minioIgnoreCertCheck: "false"
   indexerAugmenterEnabled: "false"
   policyServiceEnabled: "true"
   edsEnabled: "false"
-  minioUIEndpoint: "http://minio:9001"
   autocompleteEnabled: "false"
   # deployments
   requestsCpu: "5m"
@@ -32,16 +28,12 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-partition:latest"
   bootstrapImage: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-bootstrap-partition:latest"
-  # bootstrap onprem
 
 conf:
   appName: "partition"
   configmap: "partition-config"
   secret: "partition-postgres-secret"
   replicas: 2
-
-auth:
-  realm: "osdu"
 
 istio:
   proxyCPU: "5m"
