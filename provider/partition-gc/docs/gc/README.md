@@ -28,7 +28,6 @@ Defined in default application property file but possible to override:
 These variables define service behavior, and are used to switch between `baremetal` or `gc` environments, their overriding and usage in mixed mode was not tested.
 Usage of spring profiles is preferred.
 
-| `OSMDRIVER` | ex `postgres` or `datastore` | Osm driver mode that defines which storage will be used | no | - |
 | `ENVIRONMENT` | `gcp` or `anthos` | If `anthos` then authorization is disabled | no | - |
 
 ### Running E2E Tests
@@ -57,8 +56,8 @@ $ (cd testing/partition-test-gc/ && mvn clean test)
 TBD
 
 | Required roles |
-| ---    |
-| - |
+|----------------|
+| -              |
 
 ## License
 

@@ -19,25 +19,17 @@ package org.opengroup.osdu.partition.provider.gcp.config;
 
 import static org.opengroup.osdu.partition.provider.gcp.config.SystemApiConfiguration.PARTITION_SYSTEM_TENANT_API;
 
-import org.opengroup.osdu.core.di.GcpPartitionClientFactory;
-import org.opengroup.osdu.core.gcp.osm.translate.datastore.DsTenantOsmDestinationResolver;
-import org.opengroup.osdu.core.gcp.osm.translate.postgresql.PgTenantOsmDestinationResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 
 /**
  * Configuration that loads default PartitionController, used when SystemPartitionApi is disabled.
  */
 @Configuration
-@ConditionalOnProperty(name = PARTITION_SYSTEM_TENANT_API, havingValue = "false", matchIfMissing = true)
-@ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
-@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-    GcpPartitionClientFactory.class,
-    PgTenantOsmDestinationResolver.class,
-    DsTenantOsmDestinationResolver.class})
-)
-public class DefaultApiConfiguration {
-
-}
+@ConditionalOnProperty(
+    name = PARTITION_SYSTEM_TENANT_API,
+    havingValue = "false",
+    matchIfMissing = true)
+@ComponentScan(basePackages = {"org.opengroup.osdu"})
+public class DefaultApiConfiguration {}

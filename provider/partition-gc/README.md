@@ -37,10 +37,6 @@ Pre-requisites
 * Lombok 1.18 or later
 * [Maven 3.8.0+](https://maven.apache.org/download.cgi)
 
-### Baremetal Service Configuration
-
-[Baremetal service configuration](docs/baremetal/README.md)
-
 ### Google Cloud Service Configuration
 
 [Google Cloud service configuration](docs/gc/README.md)
@@ -134,9 +130,6 @@ $ (cd testing/partition-test-core/ && mvn clean install)
 
 This section describes how to run cloud OSDU E2E tests.
 
-### Baremetal test configuration
-
-[Baremetal service configuration](docs/baremetal/README.md)
 
 ### Google Cloud test configuration
 
@@ -144,7 +137,7 @@ This section describes how to run cloud OSDU E2E tests.
 
 ## Deployment
 
-Partition Service is compatible with App Engine Flexible Environment and Cloud Run.
+Partition Service is compatible with App Engine Flexible Environment, Cloud Run, K8s.
 
 * To deploy into Cloud run, please, use this documentation:
   <https://cloud.google.com/run/docs/quickstarts/build-and-deploy>
