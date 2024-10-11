@@ -5,6 +5,8 @@ global:
   limitsEnabled: true
   dataPartitionId: ""
   logLevel: "ERROR"
+  tier: ""
+  autoscaling: true
 
 data:
   # configmaps
@@ -52,3 +54,20 @@ istio:
   bootstrapProxyCPULimit: "100m"
   sidecarInject: "true"
   partitionEditors: []
+
+hpa:
+  minReplicas: 6
+  maxReplicas: 15
+  targetType: "AverageValue" #Could be AverageValue or Value
+  targetValue: 400 #200 rps
+  behaviorScaleUpStabilizationWindowSeconds: 10
+  behaviorScaleUpPoliciesValue: 50
+  behaviorScaleUpPoliciesPeriodSeconds: 15
+  behaviorScaleDownStabilizationWindowSeconds: 60
+  behaviorScaleDownPoliciesValue: 25
+  behaviorScaleDownPoliciesPeriodSeconds: 60
+
+limits:
+  maxTokens: 250
+  tokensPerFill: 250
+  fillInterval: "1s"
