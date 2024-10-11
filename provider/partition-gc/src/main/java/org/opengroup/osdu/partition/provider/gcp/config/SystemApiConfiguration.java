@@ -19,48 +19,41 @@ package org.opengroup.osdu.partition.provider.gcp.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.opengroup.osdu.core.di.GcpPartitionClientFactory;
-import org.opengroup.osdu.core.gcp.osm.translate.datastore.DsTenantOsmDestinationResolver;
-import org.opengroup.osdu.core.gcp.osm.translate.postgresql.PgTenantOsmDestinationResolver;
+import org.opengroup.osdu.partition.coreplus.PartitionApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 /**
- * Configuration that will not load original PartitionController into context, allowing its override in PartitionControllerV2
+ * Configuration that will not load original PartitionController into context, allowing its override
+ * in PartitionControllerV2
  */
 @Getter
 @Setter
 @Configuration
 @ConfigurationProperties
-@ConditionalOnProperty(name = SystemApiConfiguration.PARTITION_SYSTEM_TENANT_API, havingValue = "true")
+@ConditionalOnProperty(
+    name = SystemApiConfiguration.PARTITION_SYSTEM_TENANT_API,
+    havingValue = "true")
 @PropertySource({"classpath:swaggerV2.properties"})
-@ComponentScan(basePackages = {"org.opengroup.osdu"}, excludeFilters =
-    {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        GcpPartitionClientFactory.class,
-        PgTenantOsmDestinationResolver.class,
-        DsTenantOsmDestinationResolver.class,
-    }),
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.opengroup.osdu.partition.controller.PartitionController")}
-)
+@ComponentScan(
+    basePackages = {"org.opengroup.osdu"},
+    excludeFilters = {
+      @ComponentScan.Filter(
+          type = FilterType.ASSIGNABLE_TYPE,
+          classes = {PartitionApplication.class}),
+      @ComponentScan.Filter(
+          type = FilterType.REGEX,
+          pattern = "org.opengroup.osdu.partition.controller.PartitionController")
+    })
 public class SystemApiConfiguration {
 
-  /**
-   * The name of the property to enable the partition system tenant API.
-   */
+  /** The name of the property to enable the partition system tenant API. */
   public static final String PARTITION_SYSTEM_TENANT_API = "system.tenant.api";
 
-  /**
-   * The identifier of the system partition.
-   */
+  /** The identifier of the system partition. */
   private String systemPartitionId = "system";
 
-  /**
-   * Indicates whether the system partition is listable and its resources are ready.
-   */
+  /** Indicates whether the system partition is listable and its resources are ready. */
   private boolean systemPartitionListableAndResourceReady = false;
-
 }

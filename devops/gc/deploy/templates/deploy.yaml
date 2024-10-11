@@ -31,10 +31,6 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Values.conf.configmap | quote }}
-          {{- if .Values.global.onPremEnabled }}
-          - secretRef:
-              name: {{ .Values.conf.secret | quote }}
-          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true

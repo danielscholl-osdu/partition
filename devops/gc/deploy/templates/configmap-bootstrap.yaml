@@ -13,20 +13,6 @@ data:
   AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
-  {{- if .Values.global.onPremEnabled }}
-  ENVIRONMENT: "anthos"
-  SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
-  DOMAIN: "{{ .Values.global.domain }}"
-  BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
-  MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
-  MINIO_UI_ENDPOINT: {{ .Values.data.minioUIEndpoint | quote }}
-  {{- if .Values.global.useHttps }}
-  MINIO_EXTERNAL_ENDPOINT: {{ default (printf "https://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
-  {{- else }}
-  MINIO_EXTERNAL_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
-  {{- end }}
-  MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
-  {{- else }}
   ENVIRONMENT: "gcp"
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
@@ -34,5 +20,3 @@ data:
   PROJECT_ID: "{{ .Values.data.projectId }}"
   {{- end }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
-  {{- end }}
-

@@ -8,11 +8,7 @@ metadata:
 data:
   LOG_LEVEL: {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
   SYSTEM_TENANT_API: "true"
-  {{- if not .Values.global.onPremEnabled }}
   GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
   PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
   SYSTEM_PARTITION_ID: "system"
   SPRING_PROFILES_ACTIVE: "gcp"
-  {{- else }}
-  SPRING_PROFILES_ACTIVE: "anthos"
-  {{- end }}
