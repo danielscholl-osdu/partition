@@ -17,10 +17,10 @@ data:
   partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
   bucketPrefix: "refi"
-  indexerAugmenterEnabled: "false"
+  indexerAugmenterEnabled: "true"
   policyServiceEnabled: "true"
   edsEnabled: "false"
-  autocompleteEnabled: "false"
+  autocompleteEnabled: "true"
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
