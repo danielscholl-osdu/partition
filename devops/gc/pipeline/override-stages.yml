@@ -28,18 +28,6 @@ gc-containerize-gitlab:
 gc-containerize-gcr:
   needs: ["compile-and-unit-test", "download_gc_plugins"]
 
-gc-baremetal-deploy:
-  rules:
-    - when: never
-
-gc-baremetal-test:
-  rules:
-    - when: never
-
-gc-baremetal-osdutest:
-  rules:
-    - when: never
-
 gc-deploy: # reuse common deploy job for test deployment
   variables:
     GC_HELM_NAMESPACE: partition-int-test
