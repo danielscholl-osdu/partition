@@ -10,15 +10,6 @@ variables:
   AWS_DEPLOY_TARGET: TF
   AWS_EKS_DEPLOYMENT_NAME: os-partition
 
-  MONGODB_AWS_BUILD_SUBDIR: provider/partition-aws/build-aws
-  MONGODB_AWS_TEST_SUBDIR: testing/partition-test-aws
-  MONGODB_AWS_CHART_SUBDIR: devops/aws/chart
-  MONGODB_AWS_SERVICE: partition
-  MONGODB_AWS_SERVICE_GATEWAY: osdu-gateway
-  MONGODB_AWS_ENVIRONMENT: dev
-  MONGODB_AWS_DEPLOY_TARGET: TF
-  MONGODB_AWS_EKS_DEPLOYMENT_NAME: os-partition
-
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
   AZURE_TEST_SUBDIR: testing/partition-test-azure
@@ -47,12 +38,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/aws-maven.yml"
-
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/aws-mongodb-global.yml"
-
-  # - project: "osdu/platform/ci-cd-pipelines"
-  #   file: "cloud-providers/aws-mongodb-maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure.yml"
@@ -197,12 +182,6 @@ azure_containerize:
 azure_test:
   image: community.opengroup.org:5555/osdu/platform/deployment-and-operations/base-containers-azure/azure-maven17:v0.0.1
 
-aws-test-java:
-  image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-maven/aws-maven:v2.0
-
-# aws-mongodb-test-java:
-#   image: $CI_REGISTRY/osdu/platform/deployment-and-operations/base-containers-aws/aws-maven/aws-maven:v2.0
-
 fossa-analyze:
   image: $CI_REGISTRY/divido/fossa-with-cache:v0.9-jdk17
 fossa-check-notice:
@@ -217,8 +196,10 @@ stages:
   - deploy
   - bootstrap
   - integration
+  - acceptance
   - cleanup
   - verified-deploy
   - performance-testing
   - publish
   - deploy_preship
+
