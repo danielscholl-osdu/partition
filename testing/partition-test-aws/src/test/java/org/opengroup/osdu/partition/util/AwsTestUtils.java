@@ -33,7 +33,6 @@ import java.util.Date;
 
 public class AwsTestUtils extends TestUtils {
 
-
     String client_credentials_secret;
     String client_credentials_clientid;
     ServicePrincipal sp;
@@ -42,13 +41,9 @@ public class AwsTestUtils extends TestUtils {
     private final static String IDP_NAME = "IDP_NAME";
     private final static String REGION = "AWS_REGION";
 
-
-
-
     private AWSCredentialsProvider amazonAWSCredentials;
     private AWSSimpleSystemsManagement ssmManager;
     String sptoken=null;
-
 
     @Override
     public synchronized String getAccessToken() throws Exception {
@@ -83,16 +78,12 @@ public class AwsTestUtils extends TestUtils {
         }
 
         return sptoken;
-
-
-
     }
 
 
     @Override
     public synchronized String getNoAccessToken() throws Exception {
         if (Strings.isNullOrEmpty(noAccessToken)) {
-
             noAccessToken = createInvalidToken("baduser@example.com");
         }
         return "Bearer " + noAccessToken;
@@ -122,8 +113,6 @@ public class AwsTestUtils extends TestUtils {
         catch (NoSuchAlgorithmException ex) {            
             return null;
         }
-        
-
     }
 
     private String getSsmParameter(String parameterKey) {
