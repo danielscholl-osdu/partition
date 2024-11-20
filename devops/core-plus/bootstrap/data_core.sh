@@ -2,7 +2,7 @@
 
 # FIXME (GONRG-7695): Move elastic properties to additional partition when resolved
 # FIXME (GONRG-7696): Move rabbitmq properties to additional partition when resolved
-core_system_partition_data() {
+core_partition_data() {
   DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
   cat <<EOF
 {
@@ -115,33 +115,25 @@ core_system_partition_data() {
       "sensitive": true,
       "value": "RABBITMQ_ADMIN_PASSWORD"
     },
-    "elasticsearch.host": {
+    "elasticsearch.8.host": {
       "sensitive": true,
       "value": "ELASTIC_HOST${PARTITION_SUFFIX}"
     },
-    "elasticsearch.port": {
+    "elasticsearch.8.port": {
       "sensitive": true,
       "value": "ELASTIC_PORT${PARTITION_SUFFIX}"
     },
-    "elasticsearch.user": {
+    "elasticsearch.8.user": {
       "sensitive": true,
       "value": "ELASTIC_USER${PARTITION_SUFFIX}"
     },
-    "elasticsearch.password": {
+    "elasticsearch.8.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
     },
     "index-augmenter-enabled": {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
-    },
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "false"
-    },
-    "obm.minio.external.endpoint": {
-      "sensitive": false,
-      "value": "${MINIO_EXTERNAL_ENDPOINT}"
     },
     "entitlements.datasource.url": {
       "sensitive": true,
@@ -166,24 +158,6 @@ core_system_partition_data() {
     "schema.bucket.name": {
       "sensitive": false,
       "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-schema"
-    }
-  }
-}
-EOF
-}
-
-core_additional_partition_data() {
-  DATA_PARTITION_ID_UPPER="${DATA_PARTITION_ID_VALUE^^}"
-  cat <<EOF
-{
-  "properties": {
-    "index-augmenter-enabled": {
-      "sensitive": false,
-      "value": "${INDEXER_AUGMENTER_ENABLED}"
-    },
-    "policy-service-enabled": {
-      "sensitive": false,
-      "value": "false"
     },
     "obm.minio.external.endpoint": {
       "sensitive": false,
@@ -191,11 +165,27 @@ core_additional_partition_data() {
     },
     "wellbore-dms-bucket": {
       "sensitive": false,
-      "value": "${BUCKET_PREFIX}-logstore-osdu"
+      "value": "${BUCKET_PREFIX}-${DATA_PARTITION_ID_VALUE}-wellbore"
     },
     "sd.ksd.k8s.namespace": {
         "sensitive": false,
         "value": "secret-admin"
+    },
+    "featureFlag.eds.enabled": {
+      "sensitive": false,
+      "value": "${EDS_ENABLED}"
+    },
+    "featureFlag.opa.enabled": {
+      "sensitive": false,
+      "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.policy.enabled": {
+      "sensitive": false,
+      "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
     }
   }
 }

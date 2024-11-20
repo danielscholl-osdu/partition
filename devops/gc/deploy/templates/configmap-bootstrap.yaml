@@ -13,7 +13,6 @@ data:
   AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
-  ENVIRONMENT: "gcp"
   {{- if .Values.data.dataProjectId }}
   PROJECT_ID: "{{ .Values.data.dataProjectId }}"
   {{- else }}
