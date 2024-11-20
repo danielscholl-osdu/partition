@@ -2,7 +2,6 @@
 
 set -ex
 
-source ./helpers.sh
 source ./data_core.sh
 
 DATA_PARTITION_URL="http://${PARTITION_HOST}/api/partition/v1/partitions/${DATA_PARTITION_ID}"
@@ -40,7 +39,6 @@ bootstrap_partition() {
 
 # Bootstrap additional partition
 export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
-additional_partition_data=$(merge "core_system_partition_data" "core_additional_partition_data")
-bootstrap_partition "${DATA_PARTITION_ID}" "$additional_partition_data" "${DATA_PARTITION_URL}"
+bootstrap_partition "${DATA_PARTITION_ID}" "$(core_partition_data)" "${DATA_PARTITION_URL}"
 
 touch /tmp/bootstrap_ready
