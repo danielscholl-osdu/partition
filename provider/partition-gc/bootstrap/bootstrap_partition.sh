@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
+#  Copyright 2024 Google LLC
+#  Copyright 2024 EPAM
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License. 
 
 set -ex
 
-source ./helpers.sh
-source ./data_baremetal.sh
+source ./system_gc.sh
 source ./data_gc.sh
 
 DATA_PARTITION_URL="http://${PARTITION_HOST}/api/partition/v1/partitions/${DATA_PARTITION_ID}"
@@ -43,21 +56,15 @@ bootstrap_partition() {
   fi
 }
 
-# Bootstrap system partition
-if [[ "${ENVIRONMENT}" == "gcp" ]]; then
-  # Specifying "system" partition for GC installation 
-  export SYSTEM_PARTITION_ID="system"
-  export SYSTEM_PARTITION_URL="http://${PARTITION_HOST}/api/partition/v1/partition/${SYSTEM_PARTITION_ID}"
-  export DATA_PARTITION_ID_VALUE="${SYSTEM_PARTITION_ID}"
-  bootstrap_partition "${SYSTEM_PARTITION_ID}" "$(gc_system_partition_data)" "${SYSTEM_PARTITION_URL}"
-  
-  # Bootstrap additional partition
-  export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
-  additional_partition_data=$(merge "gc_system_partition_data" "gc_additional_partition_data")
-  bootstrap_partition "${DATA_PARTITION_ID}" "$additional_partition_data" "${DATA_PARTITION_URL}"
-elif [[ "${ENVIRONMENT}" == "anthos" ]]; then
-  export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
-  bootstrap_partition "${DATA_PARTITION_ID}" "$(baremetal_system_partition_data)" "${DATA_PARTITION_URL}"
-fi
+# Bootstrap system and data partitions
+# Specifying "system" partition for GC installation 
+export SYSTEM_PARTITION_ID="system"
+export SYSTEM_PARTITION_URL="http://${PARTITION_HOST}/api/partition/v1/partition/${SYSTEM_PARTITION_ID}"
+export DATA_PARTITION_ID_VALUE="${SYSTEM_PARTITION_ID}"
+bootstrap_partition "${SYSTEM_PARTITION_ID}" "$(gc_system_partition_data)" "${SYSTEM_PARTITION_URL}"
+
+# Bootstrap additional partition
+export DATA_PARTITION_ID_VALUE="${DATA_PARTITION_ID}"
+bootstrap_partition "${DATA_PARTITION_ID}" "$(gc_partition_data)" "${DATA_PARTITION_URL}"
 
 touch /tmp/bootstrap_ready
