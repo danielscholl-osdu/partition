@@ -16,7 +16,6 @@ data:
   partitionNamespace: "partition"
   partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
-  bucketPrefix: "refi"
   indexerAugmenterEnabled: "true"
   policyServiceEnabled: "true"
   edsEnabled: "false"
@@ -34,7 +33,6 @@ data:
 conf:
   appName: "partition"
   configmap: "partition-config"
-  secret: "partition-postgres-secret"
   replicas: 2
 
 istio:
