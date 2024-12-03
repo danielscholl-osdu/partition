@@ -98,7 +98,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **global.domain** | your domain | string | - | yes
 **global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | `true` | yes
-**global.onPremEnabled** | whether on-prem is enabled | boolean | `false` | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | `true` | yes
 **global.dataPartitionId** | data partition id | string | - | yes
 **global.logLevel** | severity of logging level | string | `ERROR` | yes
@@ -110,16 +109,12 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **data.logLevel** | logging severity level for this service only  | string | - | yes, only if differs from the `global.logLevel`
-**data.projectId** | your Google Cloud project id | string | - | only in case of Google Cloud installation
+**data.projectId** | your Google Cloud project id | string | - | yes
 **data.dataProjectId** | in case of multiproject cloud installation (services and data stored in different project) the name of data project | string | - | only in case of multiproject installation
 **data.partitionHost** | partition host | string | `partition` | yes
 **data.partitionNamespace** | datastore namespace where partition will store the data | string | `partition` | yes
 **data.datafierSa** | datafier service account | string | `datafier` | yes
-**data.bucketPrefix** | minio bucket name prefix | string | `refi` | only in case of Reference installation when _onPremEnabled_ is set to `true`
-**data.minioExternalEndpoint** | api url for external minio, if external minio is configured - this value will be set for MINIO_ENDPOINT and MINIO_EXTERNAL_ENDPOINT in bootstrap configmap | string | - | no
-**data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | `false` | no
 **data.indexerAugmenterEnabled** | enable indexer Augmenter | string | `false` | no
-**data.minioUIEndpoint** | UI endpoint for gathering minio versions | string | `http://minio:9001` | yes
 
 ### Deployment variables
 
@@ -140,8 +135,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **conf.appName** | name of the app | string | `partition` | yes
 **conf.configmap** | configmap to be used | string | `partition-config` | yes
-**conf.secret** | secret for postgres | string | `partition-postgres-secret` | yes
-**auth.realm** | realm in keycloak | string | `osdu` | yes
 
 ### ISTIO variables
 
