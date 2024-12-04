@@ -61,6 +61,10 @@ gc_partition_data() {
       "sensitive": false,
       "value": "${INDEXER_AUGMENTER_ENABLED}"
     },
+    "osm.datastore.database.id": {
+      "sensitive": false,
+      "value": "${DATABASE_ID}"
+    },
     "wellbore-dms-bucket": {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-wellbore"

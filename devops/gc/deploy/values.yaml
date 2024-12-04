@@ -20,6 +20,7 @@ data:
   policyServiceEnabled: "true"
   edsEnabled: "false"
   autocompleteEnabled: "true"
+  databaseId: ""
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
