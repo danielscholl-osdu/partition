@@ -29,6 +29,10 @@ gc_system_partition_data() {
       "sensitive": false,
       "value": "[${DATA_PARTITION_ID_VALUE},${DATA_PARTITION_ID_VALUE}]"
     },
+    "osm.datastore.database.id": {
+      "sensitive": false,
+      "value": "${DATABASE_ID}"
+    },
     "entitlements.datasource.url": {
       "sensitive": true,
       "value": "ENT_PG_URL${PARTITION_SUFFIX}"
