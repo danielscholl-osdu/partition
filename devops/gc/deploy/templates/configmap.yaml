@@ -1,3 +1,12 @@
+{{- $databaseId := "" -}}
+{{- if eq .Values.data.databaseId "" }}
+  {{- fail "ERROR Add databaseId value" }}
+{{- else if eq .Values.data.databaseId "(default)" }}
+  {{- $databaseId = "" -}}
+{{- else }}
+  {{- $databaseId = .Values.data.databaseId -}}
+{{- end }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,3 +21,4 @@ data:
   PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
   SYSTEM_PARTITION_ID: "system"
   SPRING_PROFILES_ACTIVE: "gcp"
+  DATABASE_ID: "{{ $databaseId }}"

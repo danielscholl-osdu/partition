@@ -36,6 +36,7 @@ gc-deploy: # reuse common deploy job for test deployment
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
       --set data.edsEnabled=true
+      --set data.databaseId=\(default\)
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-test:
@@ -81,6 +82,7 @@ gc-verified-deploy: # verified deploy after tests
     # GC_HELM_SETS is blanked since values from gc-deploy is not compatible
     GC_HELM_SETS: >-
       --set data.edsEnabled=true
+      --set data.databaseId=\(default\)
 
 # Dev2 jobs
 gc-dev2-deploy: # reuse common deploy job for test deployment
@@ -91,6 +93,7 @@ gc-dev2-deploy: # reuse common deploy job for test deployment
       --set data.partitionNamespace=partition-test
       --set istio.sidecarInject=false
       --set data.edsEnabled=true
+      --set data.databaseId=\(default\)
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-dev2-test:
@@ -135,6 +138,7 @@ gc-dev2-verified-deploy: # verified deploy after tests
     GC_TENANT: devtwo
     GC_HELM_SETS: >-
       --set data.edsEnabled=true
+      --set data.databaseId=\(default\)
 
 gc-preship-deploy:
   extends: .gc-preship-variables
@@ -146,3 +150,4 @@ gc-preship-deploy:
     GC_HELM_SETS: >-
       --set global.dataPartitionId=m19
       --set data.edsEnabled=true
+      --set data.databaseId=\(default\)
