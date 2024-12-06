@@ -190,6 +190,7 @@ fossa-check-notice:
 stages:
   - review
   - build
+  - csp-build
   - coverage
   - containerize
   - scan
