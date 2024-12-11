@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright © Microsoft Corporation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>partition-azure</artifactId>
+  <description>Partition service on Azure</description>
+  <packaging>jar</packaging>
+
   <parent>
     <artifactId>partition</artifactId>
     <groupId>org.opengroup.osdu</groupId>
@@ -8,30 +29,16 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>partition-azure</artifactId>
-  <description>Partition service on Azure</description>
-  <packaging>jar</packaging>
-
   <properties>
-    <core-lib-azure.version>1.2.0</core-lib-azure.version>
-    <junit.version>4.13.2</junit.version>
-    <reactor-core.version>3.6.4</reactor-core.version>
-    <reactor-netty.version>1.1.17</reactor-netty.version>
-    <nimbus-jose-jwt.version>9.30.2</nimbus-jose-jwt.version>
-    <okhttp.version>4.12.0</okhttp.version>
+    <core-lib-azure.version>2.0.0</core-lib-azure.version>
+    <!-- Plugin Versions -->
+    <surefire-plugin.version>2.22.2</surefire-plugin.version>
+    <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-dependencies</artifactId>
-	    <version>${spring-boot.version}</version>
-	    <type>pom</type>
-	    <scope>import</scope>
-	  </dependency>
-      <!-- Inherit managed dependencies from core-lib-azure -->
+      <!-- Core Azure Library -->
       <dependency>
         <groupId>org.opengroup.osdu</groupId>
         <artifactId>core-lib-azure</artifactId>
@@ -39,55 +46,28 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-slf4j-impl</artifactId>
-          <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-to-slf4j</artifactId>
-          <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-jul</artifactId>
-          <version>${log4j.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
-    <!-- OSDU dependencies -->
+    <!-- OSDU Dependencies -->
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>partition-core</artifactId>
-      <version>0.28.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opengroup.osdu</groupId>
       <artifactId>core-lib-azure</artifactId>
       <version>${core-lib-azure.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>redisson</artifactId>
-          <groupId>org.redisson</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
+
+    <!-- Spring Dependencies -->
+    <!-- Versions managed by parent pom or os-core-lib-azure pom-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+      <version>${spring-boot.version}</version>
       <exclusions>
         <exclusion>
           <groupId>ch.qos.logback</groupId>
@@ -100,79 +80,35 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>oauth2-oidc-sdk</artifactId>
-          <groupId>com.nimbusds</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-jose</artifactId>
-    </dependency>
-    <!-- Azure dependencies -->
-    <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-blob -->
-    <dependency>
-      <groupId>com.azure</groupId>
-      <artifactId>azure-data-tables</artifactId>
-      <version>12.3.20</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.azure/azure-core -->
+
+    <!-- Azure Dependencies -->
+    <!-- Versions managed by azure core library -->
     <dependency>
       <groupId>com.azure</groupId>
       <artifactId>azure-core</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-data-tables</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-spring-data-cosmos</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.azure.spring</groupId>
       <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-      <version>5.13.0</version>
     </dependency>
-    <!-- Other dependencies -->
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.26</version>
-    </dependency>
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>${nimbus-jose-jwt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>${okhttp.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>3.33.0</version>
-    </dependency>
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
+
+    <!-- Test Scoped Dependencies -->
+    <!-- Versions managed by parent pom unless otherwise specified -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -180,19 +116,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.36</version>
-    </dependency>
-    <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>3.34.1</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
+  <!-- Build Configuration -->
   <build>
     <plugins>
+      <!-- Spring Boot Maven Plugin -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -208,18 +141,22 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Surefire Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
+        <version>${surefire-plugin.version}</version>
         <configuration>
-          <argLine>@{argLine} --add-opens java.base/java.lang=ALL_UNNAMED</argLine>
+          <argLine>@{argLine} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
         </configuration>
       </plugin>
+
+      <!-- JaCoCo Plugin -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>${jacoco-plugin.version}</version>
         <configuration>
           <excludes>
             <exclude>org/opengroup/osdu/partition/provider/azure/PartitionApplication.class</exclude>
@@ -229,18 +166,18 @@
           </excludes>
         </configuration>
         <executions>
-        <execution>
+          <execution>
             <goals>
-            <goal>prepare-agent</goal>
+              <goal>prepare-agent</goal>
             </goals>
-        </execution>
-        <execution>
+          </execution>
+          <execution>
             <id>report</id>
             <phase>prepare-package</phase>
             <goals>
-            <goal>report</goal>
+              <goal>report</goal>
             </goals>
-        </execution>
+          </execution>
         </executions>
       </plugin>
     </plugins>
