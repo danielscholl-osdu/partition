@@ -112,6 +112,14 @@ gc_partition_data() {
     "elasticsearch.8.password": {
       "sensitive": true,
       "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
+    },
+    "elasticsearch.8.https": {
+      "sensitive": false,
+      "value": "${ELASTIC_HTTPS}"
+    },
+    "elasticsearch.8.tls": {
+      "sensitive": false,
+      "value": "${ELASTIC_HTTPS}"
     }
   }
 }
