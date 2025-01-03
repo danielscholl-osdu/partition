@@ -29,3 +29,4 @@ data:
   {{- end }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   DATABASE_ID: "{{ $databaseId }}"
+  ELASTIC_HTTPS: {{ .Values.data.elasticHttps | quote}}

@@ -115,6 +115,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.partitionNamespace** | datastore namespace where partition will store the data | string | `partition` | yes
 **data.datafierSa** | datafier service account | string | `datafier` | yes
 **data.indexerAugmenterEnabled** | enable indexer Augmenter | string | `false` | no
+**data.elasticHttps** | Configuration of the communication protocol for search and indexer services | boolean | - | yes |
 
 ### Deployment variables
 
