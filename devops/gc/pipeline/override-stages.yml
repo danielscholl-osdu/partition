@@ -37,6 +37,7 @@ gc-deploy: # reuse common deploy job for test deployment
       --set istio.sidecarInject=false
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
+      --set data.elasticHttps=true
     GC_SA_EMAIL: $GC_SA_GKE_EMAIL
 
 gc-test:
@@ -83,6 +84,7 @@ gc-verified-deploy: # verified deploy after tests
     GC_HELM_SETS: >-
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
+      --set data.elasticHttps=true
 
 # Dev2 jobs
 gc-dev2-deploy: # reuse common deploy job for test deployment
@@ -139,6 +141,7 @@ gc-dev2-verified-deploy: # verified deploy after tests
     GC_HELM_SETS: >-
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
+      --set data.elasticHttps=true
 
 gc-preship-deploy:
   extends: .gc-preship-variables
@@ -151,3 +154,4 @@ gc-preship-deploy:
       --set global.dataPartitionId=m19
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
+      --set data.elasticHttps=true
