@@ -21,6 +21,7 @@ data:
   edsEnabled: "false"
   autocompleteEnabled: "true"
   databaseId: ""
+  elasticHttps: ""
   # deployments
   requestsCpu: "5m"
   requestsMemory: "350Mi"
