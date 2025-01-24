@@ -34,7 +34,7 @@ export MY_TENANT=opendes
 export ENVIRONMENT=dev
 
 #### RUN INTEGRATION TEST #########################################################################
-export JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'
+export JAVA_HOME=$JAVA17_HOME
 
 mvn -ntp test -f "$SCRIPT_SOURCE_DIR"/../pom.xml
 TEST_EXIT_CODE=$?
