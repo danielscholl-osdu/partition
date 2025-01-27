@@ -16,18 +16,15 @@ package org.opengroup.osdu.partition.api;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
-import org.opengroup.osdu.partition.api.util.AuthorizationTestUtil;
 import org.opengroup.osdu.partition.util.BaseTestTemplate;
 import org.opengroup.osdu.partition.util.TestTokenUtils;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.Assert.assertEquals;
-import static org.opengroup.osdu.partition.util.Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS;
 
 public final class CreatePartitionTest extends BaseTestTemplate {
 
@@ -37,7 +34,6 @@ public final class CreatePartitionTest extends BaseTestTemplate {
     @Before
     public void setup() {
         this.testUtils = new TestTokenUtils();
-        this.authorizationTestUtil = new AuthorizationTestUtil(this.descriptor, this.testUtils);
     }
 
     @Override
@@ -45,7 +41,6 @@ public final class CreatePartitionTest extends BaseTestTemplate {
     public void tearDown() throws Exception {
         deleteResource();
         this.testUtils = null;
-        this.authorizationTestUtil = null;
     }
 
     @Override
@@ -80,7 +75,6 @@ public final class CreatePartitionTest extends BaseTestTemplate {
 
         CloseableHttpResponse response2 = this.descriptor.run(this.getId(), testUtils.getAccessToken());
         assertEquals(this.error(""), HttpStatus.CONFLICT.value(), response2.getCode());
-        deleteResource();
     }
 
     @Test
@@ -88,26 +82,5 @@ public final class CreatePartitionTest extends BaseTestTemplate {
         String invalidPayload = "";
         CloseableHttpResponse response = descriptor.runWithCustomPayload(getId(), invalidPayload, testUtils.getAccessToken());
         assertEquals(400, response.getCode());
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
     }
 }

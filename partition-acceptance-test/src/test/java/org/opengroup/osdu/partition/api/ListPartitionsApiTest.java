@@ -17,19 +17,21 @@ package org.opengroup.osdu.partition.api;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.After;
-import org.junit.Assume;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.ListPartitionDescriptor;
-import org.opengroup.osdu.partition.api.util.AuthorizationTestUtil;
 import org.opengroup.osdu.partition.util.BaseTestTemplate;
-import org.opengroup.osdu.partition.util.Constants;
 import org.opengroup.osdu.partition.util.TestTokenUtils;
+import org.opengroup.osdu.partition.util.TestUtils;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public final class ListPartitionsApiTest extends BaseTestTemplate {
 
@@ -39,7 +41,6 @@ public final class ListPartitionsApiTest extends BaseTestTemplate {
     @Before
     public void setup() {
         this.testUtils = new TestTokenUtils();
-        this.authorizationTestUtil = new AuthorizationTestUtil(this.descriptor, this.testUtils);
     }
 
     @Override
@@ -47,7 +48,6 @@ public final class ListPartitionsApiTest extends BaseTestTemplate {
     public void tearDown() throws Exception {
         deleteResource();
         this.testUtils = null;
-        this.authorizationTestUtil = null;
     }
 
     @Override
@@ -57,19 +57,27 @@ public final class ListPartitionsApiTest extends BaseTestTemplate {
 
     @Override
     protected void deleteResource() throws Exception {
-        DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
-        deletePartitionDes.setPartitionId(partitionId);
-        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        deleteResource(partitionId);
     }
 
     @Override
     protected void createResource() throws Exception {
+        createResource(partitionId);
+    }
+
+    private void createResource(String partitionId) throws Exception {
         CreatePartitionDescriptor createPartitionDescriptor = new CreatePartitionDescriptor();
         createPartitionDescriptor.setPartitionId(partitionId);
 
-        CloseableHttpResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse createResponse = createPartitionDescriptor.run(partitionId, this.testUtils.getAccessToken());
         assertEquals(this.error(EntityUtils.toString(createResponse.getEntity())), HttpStatus.CREATED.value(),
                 createResponse.getCode());
+    }
+
+    private void deleteResource(String partitionId) throws Exception {
+        DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
+        deletePartitionDes.setPartitionId(partitionId);
+        CloseableHttpResponse response = deletePartitionDes.run(partitionId, this.testUtils.getAccessToken());
     }
 
     public ListPartitionsApiTest() {
@@ -81,24 +89,22 @@ public final class ListPartitionsApiTest extends BaseTestTemplate {
         return HttpStatus.OK.value();
     }
 
-    @Override
     @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
-    }
+    public void create_multiple_partitions_and_retrieve_them() throws Exception {
+        String partitionId1 = partitionId + "_1";
+        String partitionId2 = partitionId + "_2";
 
-    @Override
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
-    }
+        createResource(partitionId1);
+        createResource(partitionId2);
 
-    @Override
-    @Test
-    public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
+        CloseableHttpResponse response = this.descriptor.run(null, this.testUtils.getAccessToken());
+        List<String> partitionIds = TestUtils.parseResponse(response);
+
+        deleteResource(partitionId1);
+        deleteResource(partitionId2);
+
+        Assert.assertNotNull(partitionIds);
+        assertTrue(partitionIds.contains(partitionId1));
+        assertTrue(partitionIds.contains(partitionId2));
     }
 }

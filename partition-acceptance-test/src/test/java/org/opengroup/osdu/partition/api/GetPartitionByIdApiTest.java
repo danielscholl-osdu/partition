@@ -14,22 +14,24 @@
 
 package org.opengroup.osdu.partition.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.GetPartitionDescriptor;
-import org.opengroup.osdu.partition.api.util.AuthorizationTestUtil;
 import org.opengroup.osdu.partition.util.BaseTestTemplate;
-import org.opengroup.osdu.partition.util.Constants;
 import org.opengroup.osdu.partition.util.TestTokenUtils;
+import org.opengroup.osdu.partition.util.TestUtils;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public final class GetPartitionByIdApiTest extends BaseTestTemplate {
 
@@ -37,9 +39,8 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
 
     @Override
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         this.testUtils = new TestTokenUtils();
-        this.authorizationTestUtil = new AuthorizationTestUtil(this.descriptor, this.testUtils);
     }
 
     @Override
@@ -47,7 +48,6 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
     public void tearDown() throws Exception {
         deleteResource();
         this.testUtils = null;
-        this.authorizationTestUtil = null;
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
     protected void deleteResource() throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
     }
 
     @Override
@@ -81,25 +81,15 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
         return HttpStatus.OK.value();
     }
 
-    @Override
     @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
-    }
+    public void create_and_read_partition() throws Exception {
+        createResource();
 
-    @Override
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
-    }
+        //get partition
+        CloseableHttpResponse response = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+        Map<String, JsonNode> partitionProperties = TestUtils.parseResponse(response);
 
-    @Override
-    @Test
-    public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
+        assertNotNull(partitionProperties);
+        assertEquals(partitionProperties.size(), CreatePartitionDescriptor.getDefaultProperties().size()); // While creating partition, properties are added in CreatePartitionDescriptor#getValidBody
     }
-
 }

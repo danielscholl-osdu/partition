@@ -16,6 +16,8 @@
 
 package org.opengroup.osdu.partition.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -23,9 +25,10 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
-import java.io.Console;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -119,5 +122,18 @@ public abstract class TestUtils {
 		cm.setConnectionConfig(connConfig);
 		return cm;
 	}
+
+    public static <T> T parseResponse(CloseableHttpResponse response) throws IOException {
+        String jsonString;
+        try {
+            jsonString = EntityUtils.toString(response.getEntity());
+        } catch (ParseException e) {
+            return null;
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonString, new TypeReference<>() {
+        });
+    }
 
 }

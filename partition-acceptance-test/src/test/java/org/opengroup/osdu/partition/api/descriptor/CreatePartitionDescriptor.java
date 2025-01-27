@@ -14,12 +14,19 @@
 
 package org.opengroup.osdu.partition.api.descriptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opengroup.osdu.partition.util.RestDescriptor;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreatePartitionDescriptor extends RestDescriptor {
 
     private String partitionId;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String getPath() {
@@ -34,13 +41,12 @@ public class CreatePartitionDescriptor extends RestDescriptor {
     @Override
     public String getValidBody() {
         StringBuffer sb = new StringBuffer();
-        sb.append("{\n");
-        sb.append("  \"properties\": {")
-                .append("\"elasticPassword\": {\"sensitive\":true,\"value\":\"test-password\"},")
-                .append("\"serviceBusConnection\": {\"sensitive\":true,\"value\":\"test-service-bus-connection\"},")
-                .append("\"complianceRuleSet\": {\"value\":\"shared\"}")
-                .append("}\n")
-                .append("}");
+        try {
+            sb = new StringBuffer();
+            sb.append("{\"properties\":" + objectMapper.writeValueAsString(getDefaultProperties()))
+                    .append("}");
+        } catch (JsonProcessingException e) {
+        }
         return sb.toString();
     }
 
@@ -50,5 +56,14 @@ public class CreatePartitionDescriptor extends RestDescriptor {
 
     public void setPartitionId(String partitionId) {
         this.partitionId = partitionId;
+    }
+
+    public static Map<String, JsonNode> getDefaultProperties() throws JsonProcessingException {
+        Map<String, JsonNode> propertyMap = new HashMap<>();
+
+        propertyMap.put("elasticPassword", objectMapper.readTree("{\"sensitive\":true,\"value\":\"test-password\"}"));
+        propertyMap.put("serviceBusConnection", objectMapper.readTree("{\"sensitive\":true,\"value\":\"test-service-bus-connection\"}"));
+        propertyMap.put("complianceRuleSet", objectMapper.readTree("{\"value\":\"shared\"}"));
+        return propertyMap;
     }
 }
