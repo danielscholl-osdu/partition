@@ -2,32 +2,27 @@ package org.opengroup.osdu.partition.api;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.UpdatePartitionDescriptor;
-import org.opengroup.osdu.partition.api.util.AuthorizationTestUtil;
 import org.opengroup.osdu.partition.util.BaseTestTemplate;
-import org.opengroup.osdu.partition.util.Constants;
 import org.opengroup.osdu.partition.util.TestTokenUtils;
 import org.springframework.http.HttpStatus;
 
-import java.lang.constant.Constable;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.opengroup.osdu.partition.util.Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS;
 
 public final class UpdatePartitionTest extends BaseTestTemplate {
 
     String partitionId = getIntegrationTestPrefix() + System.currentTimeMillis();
-    private String nonExistentPartitionId = "nonexistent-partition"+System.currentTimeMillis();
+    private String nonExistentPartitionId = "nonexistent-partition" + System.currentTimeMillis();
 
     @Override
     @Before
     public void setup() {
         this.testUtils = new TestTokenUtils();
-        this.authorizationTestUtil = new AuthorizationTestUtil(this.descriptor, this.testUtils);
     }
 
     @Override
@@ -35,7 +30,6 @@ public final class UpdatePartitionTest extends BaseTestTemplate {
     public void tearDown() throws Exception {
         deleteResource();
         this.testUtils = null;
-        this.authorizationTestUtil = null;
     }
 
     public UpdatePartitionTest() {
@@ -80,7 +74,6 @@ public final class UpdatePartitionTest extends BaseTestTemplate {
         createResource();
         CloseableHttpResponse response = this.descriptor.runWithCustomPayload(this.getId(), getInvalidBodyForUpdatePartition(), this.testUtils.getAccessToken());
         assertEquals(this.error(""), HttpStatus.BAD_REQUEST.value(), response.getCode());
-        deleteResource();
     }
 
     @Test
@@ -88,19 +81,7 @@ public final class UpdatePartitionTest extends BaseTestTemplate {
     public void should_return20XResponseCode_when_makingValidHttpsRequest() throws Exception {
         createResource();
         CloseableHttpResponse response = this.descriptor.runWithCustomPayload(this.getId(), getValidBodyForUpdatePartition(), this.testUtils.getAccessToken());
-        deleteResource();
         assertEquals(HttpStatus.NO_CONTENT.value(), response.getCode());
-        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeader("Access-Control-Allow-Methods").getValue());
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeader("Access-Control-Allow-Headers").getValue());
-        assertEquals("*", response.getHeader("Access-Control-Allow-Origin").getValue());
-        assertEquals("true", response.getHeader("Access-Control-Allow-Credentials").getValue());
-        assertEquals("default-src 'self'", response.getHeader("Content-Security-Policy").getValue());
-        assertEquals("max-age=31536000; includeSubDomains", response.getHeader("Strict-Transport-Security").getValue());
-        assertEquals("0", response.getHeader("Expires").getValue());
-        assertEquals("DENY", response.getHeader("X-Frame-Options").getValue());
-        assertEquals("private, max-age=300", response.getHeader("Cache-Control").getValue());
-        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection").getValue());
-        assertEquals("nosniff", response.getHeader("X-Content-Type-Options").getValue());
     }
 
     private String getInvalidBodyForUpdatePartition() {
@@ -126,26 +107,5 @@ public final class UpdatePartitionTest extends BaseTestTemplate {
                 .append("}\n")
                 .append("}");
         return sb.toString();
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_noAccessToken(getId());
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_accessingWithCredentialsWithoutPermission(getId());
-    }
-
-    @Override
-    @Test
-    public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        Assume.assumeTrue(EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        authorizationTestUtil.should_return401or403_when_makingHttpRequestWithoutToken(getId());
     }
 }

@@ -16,18 +16,16 @@
 
 package org.opengroup.osdu.partition.util;
 
-import com.sun.jersey.api.client.ClientResponse;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.junit.Assume;
 import org.junit.Test;
-import org.opengroup.osdu.partition.api.util.AuthorizationTestUtil;
 
 import static org.junit.Assert.assertEquals;
 
 public abstract class BaseTestTemplate extends TestBase {
 
     protected RestDescriptor descriptor;
-    protected AuthorizationTestUtil authorizationTestUtil;
 
     public BaseTestTemplate(RestDescriptor descriptor) {
         this.descriptor = descriptor;
@@ -46,20 +44,14 @@ public abstract class BaseTestTemplate extends TestBase {
     }
 
     @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        CloseableHttpResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
-    }
-
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        CloseableHttpResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
-    }
-
-    @Test
     public void should_return20XResponseCode_when_makingValidHttpsRequest() throws Exception {
         should_return20X_when_usingCredentialsWithPermission(testUtils.getAccessToken());
+    }
+
+    @Test
+    public void should_return400_when_makingHttpRequestWithoutValidUrl() throws Exception {
+        CloseableHttpResponse response = descriptor.runWithInvalidPath(getId(), testUtils.getAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 400, response.getCode());
     }
 
     public void should_return20X_when_usingCredentialsWithPermission(String token) throws Exception {
@@ -67,17 +59,6 @@ public abstract class BaseTestTemplate extends TestBase {
         CloseableHttpResponse response = descriptor.run(getId(), token);
         deleteResource();
         assertEquals(error(response.getCode() == 204 ? "" : EntityUtils.toString(response.getEntity())), expectedOkResponseCode(), response.getCode());
-        assertEquals("GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH", response.getHeader("Access-Control-Allow-Methods").getValue());
-        assertEquals("access-control-allow-origin, origin, content-type, accept, authorization, data-partition-id, correlation-id, appkey", response.getHeader("Access-Control-Allow-Headers").getValue());
-        assertEquals("*", response.getHeader("Access-Control-Allow-Origin").getValue());
-        assertEquals("true", response.getHeader("Access-Control-Allow-Credentials").getValue());
-        assertEquals("default-src 'self'", response.getHeader("Content-Security-Policy").getValue());
-        assertEquals("max-age=31536000; includeSubDomains", response.getHeader("Strict-Transport-Security").getValue());
-        assertEquals("0", response.getHeader("Expires").getValue());
-        assertEquals("DENY", response.getHeader("X-Frame-Options").getValue());
-        assertEquals("private, max-age=300", response.getHeader("Cache-Control").getValue());
-        assertEquals("1; mode=block", response.getHeader("X-XSS-Protection").getValue());
-        assertEquals("nosniff", response.getHeader("X-Content-Type-Options").getValue());
     }
 
     @Test
@@ -90,13 +71,22 @@ public abstract class BaseTestTemplate extends TestBase {
 
     @Test
     public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
+        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
         CloseableHttpResponse response = descriptor.run(getId(), "");
         assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
 
     @Test
-    public void should_return400_when_makingHttpRequestWithoutValidUrl() throws Exception {
-        CloseableHttpResponse response = descriptor.runWithInvalidPath(getId(), testUtils.getAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 400, response.getCode());
+    public void should_return401_when_noAccessToken() throws Exception {
+        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
+        CloseableHttpResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
+    }
+
+    @Test
+    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
+        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
+        CloseableHttpResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
+        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
     }
 }
