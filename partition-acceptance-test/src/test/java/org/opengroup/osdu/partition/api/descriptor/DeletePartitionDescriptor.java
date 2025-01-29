@@ -15,7 +15,6 @@
 package org.opengroup.osdu.partition.api.descriptor;
 
 import org.opengroup.osdu.partition.util.RestDescriptor;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 public class DeletePartitionDescriptor extends RestDescriptor implements PartitionServiceDescriptor {

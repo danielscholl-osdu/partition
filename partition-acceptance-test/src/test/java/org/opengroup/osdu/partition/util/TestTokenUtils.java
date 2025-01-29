@@ -26,9 +26,8 @@ public class TestTokenUtils extends TestUtils {
 
     public TestTokenUtils() {
         token = System.getProperty("PRIVILEGED_USER_TOKEN", System.getenv("PRIVILEGED_USER_TOKEN"));
-        noAccessToken = System.getProperty("NO_ACCESS_USER_TOKEN", System.getenv("NO_ACCESS_USER_TOKEN"));
 
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(noAccessToken)) {
+        if (StringUtils.isEmpty(token)) {
             tokenProvider = new OpenIDTokenProvider();
         }
     }
@@ -39,13 +38,5 @@ public class TestTokenUtils extends TestUtils {
             token = tokenProvider.getToken();
         }
         return "Bearer " + token;
-    }
-
-    @Override
-    public String getNoAccessToken() {
-        if (StringUtils.isEmpty(noAccessToken)) {
-            noAccessToken = tokenProvider.getNoAccessToken();
-        }
-        return "Bearer " + noAccessToken;
     }
 }

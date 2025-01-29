@@ -29,8 +29,6 @@
     <module>provider/partition-ibm</module>
     <module>provider/partition-gc</module>
     <module>partition-core-plus</module>
-    <module>testing</module>
-    <module>partition-acceptance-test</module>
   </modules>
 
   <properties>

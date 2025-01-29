@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class TestUtils {
 
 	protected static String token = null;
-	protected static String noAccessToken = null;
 
 	public static String getApiPath(String api, boolean enforceHttp) throws MalformedURLException {
 		String baseUrl = Config.Instance().hostUrl;
@@ -50,8 +49,6 @@ public abstract class TestUtils {
 	}
 
     public abstract String getAccessToken() throws Exception;
-
-    public abstract String getNoAccessToken() throws Exception;
 
 	public static Map<String, String> getOsduTenantHeaders() {
 		Map<String, String> headers = new HashMap<>();
