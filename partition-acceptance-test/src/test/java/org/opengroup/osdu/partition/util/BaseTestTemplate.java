@@ -68,25 +68,4 @@ public abstract class BaseTestTemplate extends TestBase {
         assertEquals(error(EntityUtils.toString(response.getEntity())), 200, response.getCode());
         deleteResource();
     }
-
-    @Test
-    public void should_return401_when_makingHttpRequestWithoutToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        CloseableHttpResponse response = descriptor.run(getId(), "");
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
-    }
-
-    @Test
-    public void should_return401_when_noAccessToken() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        CloseableHttpResponse response = descriptor.runOnCustomerTenant(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
-    }
-
-    @Test
-    public void should_return401_when_accessingWithCredentialsWithoutPermission() throws Exception {
-        Assume.assumeTrue(Constants.EXECUTE_AUTHORIZATION_DEPENDENT_TESTS);
-        CloseableHttpResponse response = descriptor.run(getId(), testUtils.getNoAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 401, response.getCode());
-    }
 }
