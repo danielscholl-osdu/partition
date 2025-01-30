@@ -3,94 +3,15 @@ variables:
   CORE_ENABLE_BOOTSTRAP: "true"
   CORE_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap/Dockerfile"
 
-core-containerize-bootstrap-gitlab:
-  tags: ["osdu-medium"]
-  variables:
-    CORE_IMAGE_BOOTSTRAP_NAME: "core-plus-bootstrap-partition"
-
-core-containerize-gitlab:
-  stage: containerize
-  needs: ["compile-and-unit-test", "download_plugins"]
-  tags: ["osdu-small"]
-  image: docker:19.03
-  cache: {}
-  variables:
-    BUILD_ARGS: "--build-arg PORT=$CORE_PORT"
-    BUILD_PATH: "devops/core-plus/build/Dockerfile"
-    TEST_IMAGE: "partition-core-plus-test"
-  script:
-    - !reference [.core_set_image_name, script]
-    - docker build $CORE_EXTRA_TAG -f $CORE_BUILD_PATH $CORE_BUILD_ARGS .
-    - docker build -t $CI_REGISTRY_IMAGE/$TEST_IMAGE:$CI_COMMIT_SHORT_SHA -f $CORE_BUILD_PATH $CORE_BUILD_ARGS .
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker push $CI_REGISTRY_IMAGE/$CORE_IMAGE_NAME
-    - docker push $CI_REGISTRY_IMAGE/$TEST_IMAGE
-  rules:
-    - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: on_success
-    - if: "$CI_COMMIT_TAG"
-      when: on_success
-    - if: "$CORE == '1'"
-      when: on_success
 
 core-test:
-  tags: ["osdu-medium"]
-  extends:
-    - .maven
-  stage: integration
-  needs: ["compile-and-unit-test", "core-containerize-gitlab"]
-  retry: 1
-  services:
-    - name: postgres
-      command:
-        ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
-    - name: $CI_REGISTRY_IMAGE/partition-core-plus-test:$CI_COMMIT_SHORT_SHA
-      alias: partition-service-image
   variables:
-    PARTITION_POSTGRESQL_DB_NAME: partition_db #Used from bootstrapping script
-    PARTITION_POSTGRESQL_USERNAME: usr_partition_pg #Used from bootstrapping script
-    PARTITION_POSTGRESQL_PASSWORD: partition_pg #Used from bootstrapping script
-    POSTGRESQL_PORT: 5432 #used from the docker script
-    POSTGRESQL_HOST: postgres #used from the docker script
-    POSTGRESQL_USERNAME: postgres #used from the docker script
-    POSTGRES_PASSWORD: $POSTGRES_PASSWORD #used to start the postgres service alongside the runner
-    POSTGRESQL_DATABASE: postgres #default postgres database for scripts to connect
-    POSTGRESQL_PASSWORD: $POSTGRES_PASSWORD #password for above db
-    TEST_OPENID_PROVIDER_CLIENT_ID: integration-tester #integration testing
-    TEST_OPENID_PROVIDER_CLIENT_SECRET: $GC_OPENID_PROVIDER_CLIENT_SECRET #integration testing
-    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_ID: no-access-tester #integration testing
-    TEST_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET: $GC_NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET #integration testing
-    TEST_OPENID_PROVIDER_URL: https://keycloak.ref.gcp.gnrg-osdu.projects.epam.com/realms/osdu #token provider for testing config, need to change it later
-    DATA_PARTITION_ID: test-partition #for default configs
-    CUSTOM_PROJECT_NAME: "partition-core-plus"
     #required for integration tests
-    CLIENT_TENANT: osdu #int tests
-    ENVIRONMENT: dev #if this is not specified, it just assumes that the service is running locally
-    PARTITION_BASE_URL: http://partition-service-image:8080/ #url where integration tests are hitting
-    #CI_DEBUG_SERVICES: "true" #flag for debugging the services in the runner
-    PARTITION_POSTGRES_URL: $PARTITION_POSTGRES_URL
+    PARTITION_BASE_URL: https://osdu.core-dev.gcp.gnrg-osdu.projects.epam.com/
+
   script:
-    - echo "--- Install psql ---"
-    - apt-get update && apt-get install -y postgresql-client libpq-dev jq
-    - echo "--- Bootstrap tables ---"
-    - chmod +x devops/core-plus/test/bootstrap.sh
-    - devops/core-plus/test/bootstrap.sh
-    - echo "--- Run integration tests ---"
-    - >
-      $MAVEN_BUILD . test-results.log
+    $MAVEN_BUILD . test-results.log
       verify -DdisableXmlReport=true
       --file testing/pom.xml
       --projects partition-test-core,partition-test-core-plus
       --update-snapshots
-  artifacts:
-    when: always
-    paths:
-      - test-results.log
-    expire_in: 1 days
-  rules:
-    - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: on_success
-    - if: "$CI_COMMIT_TAG"
-      when: on_success
-    - if: "$CORE == '1'"
-      when: on_success
