@@ -26,6 +26,7 @@ spec:
   - to:
     - operation:
         methods:
+        - OPTIONS
         - POST
         - PUT
         - PATCH
