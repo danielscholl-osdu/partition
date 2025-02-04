@@ -14,7 +14,6 @@ data:
   minioExternalEndpoint: "" # use only if external minio is configured
   minioIgnoreCertCheck: "false"
   minioUIEndpoint: "http://minio:9001"
-  indexerAugmenterEnabled: "false"
   requestsCpu: "5m"
   requestsMemory: "350Mi"
   limitsCpu: "500m"
@@ -23,6 +22,15 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: ""
   bootstrapImage: ""
+  # featureFlags
+  indexerAugmenterEnabled: "false"
+  asIngestedCoordinatesEnabled: "false"
+  keywordLowerEnabled: "false"
+  bagOfWordsEnabled: "false"
+  xCollaborationEnabled: "false"
+  autocompleteEnabled: "false"
+  policyServiceEnabled: "false"
+  edsEnabled: "false"
 
 conf:
   appName: "partition"

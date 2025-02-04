@@ -131,10 +131,6 @@ core_partition_data() {
       "sensitive": true,
       "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
     },
-    "index-augmenter-enabled": {
-      "sensitive": false,
-      "value": "${INDEXER_AUGMENTER_ENABLED}"
-    },
     "entitlements.datasource.url": {
       "sensitive": true,
       "value": "ENT_PG_URL${PARTITION_SUFFIX}"
@@ -171,6 +167,10 @@ core_partition_data() {
         "sensitive": false,
         "value": "secret-admin"
     },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
+    },
     "featureFlag.eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
@@ -182,6 +182,26 @@ core_partition_data() {
     "featureFlag.policy.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
+    },
+    "featureFlag.asIngestedCoordinates.enabled": {
+      "sensitive": false,
+      "value": "${AS_INGESTED_COORDINATES_ENABLED}"
+    },
+    "featureFlag.keywordLower.enabled": {
+      "sensitive": false,
+      "value": "${KEYWORD_LOWER_ENABLED}"
+    },
+    "featureFlag.bagOfWords.enabled": {
+      "sensitive": false,
+      "value": "${BAG_OF_WORDS_ENABLED}"
+    },
+    "featureFlag.xCollaboration.enabled": {
+      "sensitive": false,
+      "value": "${X_COLLABORATION_ENABLED}"
     },
     "featureFlag.autocomplete.enabled": {
       "sensitive": false,
