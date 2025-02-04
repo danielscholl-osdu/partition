@@ -68,6 +68,22 @@ gc_system_partition_data() {
     "system.featureFlag.autocomplete.enabled": {
       "sensitive": false,
       "value": "${AUTOCOMPLETE_ENABLED}"
+    },
+    "system.featureFlag.asIngestedCoordinates.enabled": {
+      "sensitive": false,
+      "value": "${AS_INGESTED_COORDINATES_ENABLED}"
+    },
+    "system.featureFlag.keywordLower.enabled": {
+      "sensitive": false,
+      "value": "${KEYWORD_LOWER_ENABLED}"
+    },
+    "system.featureFlag.bagOfWords.enabled": {
+      "sensitive": false,
+      "value": "${BAG_OF_WORDS_ENABLED}"
+    },
+    "system.featureFlag.xCollaboration.enabled": {
+      "sensitive": false,
+      "value": "${X_COLLABORATION_ENABLED}"
     }
   }
 }
