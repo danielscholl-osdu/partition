@@ -89,6 +89,22 @@ gc_partition_data() {
       "sensitive": false,
       "value": "${AUTOCOMPLETE_ENABLED}"
     },
+    "featureFlag.asIngestedCoordinates.enabled": {
+      "sensitive": false,
+      "value": "${AS_INGESTED_COORDINATES_ENABLED}"
+    },
+    "featureFlag.keywordLower.enabled": {
+      "sensitive": false,
+      "value": "${KEYWORD_LOWER_ENABLED}"
+    },
+    "featureFlag.bagOfWords.enabled": {
+      "sensitive": false,
+      "value": "${BAG_OF_WORDS_ENABLED}"
+    },
+    "featureFlag.xCollaboration.enabled": {
+      "sensitive": false,
+      "value": "${X_COLLABORATION_ENABLED}"
+    },
     "sd.ksd.k8s.namespace": {
         "sensitive": false,
         "value": "secret-admin"

@@ -16,10 +16,6 @@ data:
   partitionNamespace: "partition"
   partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
-  indexerAugmenterEnabled: "true"
-  policyServiceEnabled: "true"
-  edsEnabled: "false"
-  autocompleteEnabled: "true"
   databaseId: ""
   elasticHttps: ""
   # deployments
@@ -31,6 +27,15 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-partition:latest"
   bootstrapImage: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-bootstrap-partition:latest"
+  # featureFlags
+  indexerAugmenterEnabled: "true"
+  policyServiceEnabled: "true"
+  edsEnabled: "false"
+  autocompleteEnabled: "true"
+  asIngestedCoordinatesEnabled: "true"
+  keywordLowerEnabled: "true"
+  bagOfWordsEnabled: "true"
+  xCollaborationEnabled: "false"
 
 conf:
   appName: "partition"
