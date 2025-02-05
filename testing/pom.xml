@@ -72,6 +72,7 @@
 				<repo.releases.url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</repo.releases.url>
 				<publish.snapshots.url>https://community.opengroup.org/api/v4/projects/221/packages/maven</publish.snapshots.url>
 				<publish.releases.url>https://community.opengroup.org/api/v4/projects/221/packages/maven</publish.releases.url>
+				<maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
 			</properties>
 		</profile>
 	</profiles>
