@@ -19,6 +19,7 @@ package org.opengroup.osdu.partition.provider.gcp.api;
 
 import static org.opengroup.osdu.partition.provider.gcp.config.SystemApiConfiguration.PARTITION_SYSTEM_TENANT_API;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.annotation.RequestScope;
 
+@Hidden
 @RequestScope
 @RequestMapping(path = "/partition/system", produces = "application/json")
 @Tag(name = "partition-system-api", description = "Partition System API")
