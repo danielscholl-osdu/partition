@@ -14,6 +14,7 @@
 
 package org.opengroup.osdu.partition.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -40,6 +41,8 @@ import java.util.Map;
 @RequestMapping(path = "/partitions", produces = "application/json")
 @Tag(name = "partition-api", description = "Partition API")
 public interface PartitionApi {
+
+    @Hidden
     @Operation(summary = "${partitionApi.create.summary}", description = "${partitionApi.create.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
     @ApiResponses(value = {
@@ -57,6 +60,7 @@ public interface PartitionApi {
     ResponseEntity create(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId,
                           @RequestBody @Valid PartitionInfo partitionInfo);
 
+    @Hidden
     @Operation(summary = "${partitionApi.patch.summary}", description = "${partitionApi.patch.description}",
             security = {@SecurityRequirement(name = "Authorization")}, tags = { "partition-api" })
     @ApiResponses(value = {
@@ -103,6 +107,8 @@ public interface PartitionApi {
             @ApiResponse(responseCode = "502", description = "Bad Gateway",  content = {@Content(schema = @Schema(implementation = AppError.class ))}),
             @ApiResponse(responseCode = "503", description = "Service Unavailable",  content = {@Content(schema = @Schema(implementation = AppError.class ))})
     })
+
+    @Hidden
     @DeleteMapping("/{partitionId}")
     @PreAuthorize("@authorizationFilter.hasPermissions()")
     ResponseEntity delete(@Parameter(description = "Partition Id") @PathVariable("partitionId") String partitionId);
