@@ -14,28 +14,25 @@
 
 package org.opengroup.osdu.partition.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.opengroup.osdu.partition.api.descriptor.CreatePartitionDescriptor;
-import org.opengroup.osdu.partition.api.descriptor.DeletePartitionDescriptor;
 import org.opengroup.osdu.partition.api.descriptor.GetPartitionDescriptor;
 import org.opengroup.osdu.partition.util.BaseTestTemplate;
+import org.opengroup.osdu.partition.util.Config;
 import org.opengroup.osdu.partition.util.TestTokenUtils;
 import org.opengroup.osdu.partition.util.TestUtils;
 import org.springframework.http.HttpStatus;
 
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 public final class GetPartitionByIdApiTest extends BaseTestTemplate {
 
-    private String partitionId = getIntegrationTestPrefix() + System.currentTimeMillis();
+    private String partitionId = Config.Instance().osduTenant;
 
     @Override
     @Before
@@ -45,31 +42,13 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
 
     @Override
     @After
-    public void tearDown() throws Exception {
-        deleteResource();
+    public void tearDown() {
         this.testUtils = null;
     }
 
     @Override
     protected String getId() {
         return partitionId;
-    }
-
-    @Override
-    protected void deleteResource() throws Exception {
-        DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
-        deletePartitionDes.setPartitionId(partitionId);
-        deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
-    }
-
-    @Override
-    protected void createResource() throws Exception {
-        CreatePartitionDescriptor createPartitionDescriptor = new CreatePartitionDescriptor();
-        createPartitionDescriptor.setPartitionId(partitionId);
-
-        CloseableHttpResponse createResponse = createPartitionDescriptor.run(this.getId(), this.testUtils.getAccessToken());
-        assertEquals(this.error(EntityUtils.toString(createResponse.getEntity())), HttpStatus.CREATED.value(),
-                createResponse.getCode());
     }
 
     public GetPartitionByIdApiTest() {
@@ -82,14 +61,16 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
     }
 
     @Test
-    public void create_and_read_partition() throws Exception {
-        createResource();
-
-        //get partition
+    public void read_partition() throws Exception {
         CloseableHttpResponse response = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
         Map<String, JsonNode> partitionProperties = TestUtils.parseResponse(response);
-
         assertNotNull(partitionProperties);
-        assertEquals(partitionProperties.size(), CreatePartitionDescriptor.getDefaultProperties().size()); // While creating partition, properties are added in CreatePartitionDescriptor#getValidBody
+        assertEquals(HttpStatus.OK.value(), response.getCode());
+    }
+
+    @Test
+    public void read_not_existing_partition() throws Exception {
+        CloseableHttpResponse response = this.descriptor.run("not-existing-partition", this.testUtils.getAccessToken());
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getCode());
     }
 }

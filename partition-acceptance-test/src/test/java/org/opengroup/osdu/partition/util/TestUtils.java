@@ -18,6 +18,12 @@ package org.opengroup.osdu.partition.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -28,13 +34,6 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public abstract class TestUtils {
 
@@ -53,12 +52,6 @@ public abstract class TestUtils {
 	public static Map<String, String> getOsduTenantHeaders() {
 		Map<String, String> headers = new HashMap<>();
 		headers.put("data-partition-id", Config.Instance().osduTenant);
-		return headers;
-	}
-
-	public static Map<String, String> getCustomerTenantHeaders() {
-		Map<String, String> headers = new HashMap<>();
-		headers.put("data-partition-id", Config.Instance().clientTenant);
 		return headers;
 	}
 

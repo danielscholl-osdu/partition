@@ -22,13 +22,12 @@ import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderConfigurationRequest;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+import org.springframework.util.StringUtils;
 
 public class OpenIDProviderConfig {
 
     private String clientId;
     private String clientSecret;
-    private String noAccessClientId;
-    private String noAccessClientSecret;
     private String url;
     private final String[] scopes = {"openid"};
     private static final OpenIDProviderConfig openIDProviderConfig = new OpenIDProviderConfig();
@@ -38,11 +37,10 @@ public class OpenIDProviderConfig {
         try {
             openIDProviderConfig.clientId = System.getProperty("PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID", System.getenv("PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID"));
             openIDProviderConfig.clientSecret = System.getProperty("PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET", System.getenv("PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET"));
-            openIDProviderConfig.noAccessClientId =
-                System.getProperty("NO_ACCESS_OPENID_PROVIDER_CLIENT_ID", System.getenv("NO_ACCESS_OPENID_PROVIDER_CLIENT_ID"));
-            openIDProviderConfig.noAccessClientSecret =
-                System.getProperty("NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET", System.getenv("NO_ACCESS_OPENID_PROVIDER_CLIENT_SECRET"));
             openIDProviderConfig.url = System.getProperty("TEST_OPENID_PROVIDER_URL", System.getenv("TEST_OPENID_PROVIDER_URL"));
+            if(StringUtils.isEmpty(openIDProviderConfig.clientId) || StringUtils.isEmpty(openIDProviderConfig.clientSecret) || StringUtils.isEmpty(openIDProviderConfig.url)){
+                return null;
+            }
             Issuer issuer = new Issuer(openIDProviderConfig.url);
             OIDCProviderConfigurationRequest request = new OIDCProviderConfigurationRequest(issuer);
             HTTPRequest httpRequest = request.toHTTPRequest();
@@ -60,14 +58,6 @@ public class OpenIDProviderConfig {
 
     public String getClientSecret() {
         return clientSecret;
-    }
-
-    public String getNoAccessClientId() {
-        return noAccessClientId;
-    }
-
-    public String getNoAccessClientSecret() {
-        return noAccessClientSecret;
     }
 
     public String[] getScopes() {

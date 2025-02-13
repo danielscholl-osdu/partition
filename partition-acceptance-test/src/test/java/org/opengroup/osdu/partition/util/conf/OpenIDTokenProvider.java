@@ -17,17 +17,21 @@
 
 package org.opengroup.osdu.partition.util.conf;
 
-import com.nimbusds.oauth2.sdk.*;
+import com.nimbusds.oauth2.sdk.AuthorizationGrant;
+import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
+import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.TokenRequest;
+import com.nimbusds.oauth2.sdk.TokenResponse;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
 import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser;
-import net.minidev.json.JSONObject;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
+import net.minidev.json.JSONObject;
 
 public class OpenIDTokenProvider {
 
@@ -37,39 +41,42 @@ public class OpenIDTokenProvider {
     private final URI tokenEndpointURI;
     private final Scope scope;
     private final ClientAuthentication clientAuthentication;
-    private final ClientAuthentication noAccessClientAuthentication;
 
     public OpenIDTokenProvider() {
-        this.tokenEndpointURI = openIDProviderConfig.getProviderMetadata().getTokenEndpointURI();
-        this.scope = new Scope(openIDProviderConfig.getScopes());
-        this.clientAuthentication =
-            new ClientSecretBasic(
-                new ClientID(openIDProviderConfig.getClientId()),
-                new Secret(openIDProviderConfig.getClientSecret())
-            );
-        this.noAccessClientAuthentication =
-            new ClientSecretBasic(
-                new ClientID(openIDProviderConfig.getNoAccessClientId()),
-                new Secret(openIDProviderConfig.getNoAccessClientSecret())
-            );
+        if(openIDProviderConfig != null) {
+            this.tokenEndpointURI = openIDProviderConfig.getProviderMetadata().getTokenEndpointURI();
+            this.scope = new Scope(openIDProviderConfig.getScopes());
+            this.clientAuthentication =
+                new ClientSecretBasic(
+                    new ClientID(openIDProviderConfig.getClientId()),
+                    new Secret(openIDProviderConfig.getClientSecret())
+                );
+        }else {
+            this.tokenEndpointURI = null;
+            this.scope = null;
+            this.clientAuthentication = null;
+        }
     }
 
     public String getToken() {
         try {
-            TokenRequest request = new TokenRequest(this.tokenEndpointURI, this.clientAuthentication, this.clientGrant, this.scope);
-            return requestToken(request);
+            if (anyIsNull(this.tokenEndpointURI, this.scope, this.clientAuthentication)) {
+                return null;
+            }
+            TokenRequest request = new TokenRequest(
+                this.tokenEndpointURI,
+                this.clientAuthentication,
+                this.clientGrant,
+                this.scope
+            );
+            return "Bearer " + requestToken(request);
         } catch (ParseException | IOException e) {
             throw new RuntimeException("Unable get credentials from INTEGRATION_TESTER variables", e);
         }
     }
 
-    public String getNoAccessToken() {
-        try {
-            TokenRequest request = new TokenRequest(this.tokenEndpointURI, this.noAccessClientAuthentication, this.clientGrant, this.scope);
-            return requestToken(request);
-        } catch (ParseException | IOException e) {
-            throw new RuntimeException("Unable get credentials from INTEGRATION_TESTER variables", e);
-        }
+    private boolean anyIsNull(URI tokenEndpointURI, Scope scope, ClientAuthentication clientAuthentication) {
+        return tokenEndpointURI == null || scope == null || clientAuthentication == null;
     }
 
     private String requestToken(TokenRequest tokenRequest) throws ParseException, IOException {

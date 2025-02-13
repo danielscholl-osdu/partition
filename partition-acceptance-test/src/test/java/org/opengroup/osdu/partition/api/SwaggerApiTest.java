@@ -17,6 +17,8 @@
 
 package org.opengroup.osdu.partition.api;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -25,8 +27,6 @@ import org.opengroup.osdu.partition.util.TestBase;
 import org.opengroup.osdu.partition.util.TestUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
-import static org.junit.Assert.assertEquals;
 
 public final class SwaggerApiTest extends TestBase {
 

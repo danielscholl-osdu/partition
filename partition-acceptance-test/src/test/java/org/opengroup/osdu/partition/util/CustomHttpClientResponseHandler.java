@@ -16,6 +16,7 @@
 
 package org.opengroup.osdu.partition.util;
 
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -26,8 +27,6 @@ import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-
-import java.io.IOException;
 
 @Slf4j
 public class CustomHttpClientResponseHandler implements HttpClientResponseHandler<CloseableHttpResponse> {
