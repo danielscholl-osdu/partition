@@ -7,7 +7,6 @@ metadata:
   namespace: "{{ .Release.Namespace }}"
 data:
   PARTITION_HOST: "partition"
-  INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
   DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
   ENVIRONMENT: "anthos"
@@ -22,3 +21,11 @@ data:
   MINIO_EXTERNAL_ENDPOINT: {{ default (printf "http://s3.%s" .Values.global.domain) .Values.data.minioExternalEndpoint | quote }}
   {{- end }}
   MINIO_IGNORE_CERT_CHECK: {{ .Values.data.minioIgnoreCertCheck | quote }}
+  AS_INGESTED_COORDINATES_ENABLED: {{ .Values.data.asIngestedCoordinatesEnabled | quote }}
+  KEYWORD_LOWER_ENABLED: {{ .Values.data.keywordLowerEnabled | quote }}
+  BAG_OF_WORDS_ENABLED: {{ .Values.data.bagOfWordsEnabled | quote }}
+  X_COLLABORATION_ENABLED: {{ .Values.data.xCollaborationEnabled | quote }}
+  AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
+  INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
+  EDS_ENABLED: {{ .Values.data.edsEnabled | quote }}
+  POLICY_SERVICE_ENABLED: {{ .Values.data.policyServiceEnabled | quote }}
