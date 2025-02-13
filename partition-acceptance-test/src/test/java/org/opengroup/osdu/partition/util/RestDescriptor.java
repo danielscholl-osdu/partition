@@ -32,26 +32,9 @@ public abstract class RestDescriptor {
     public abstract String getValidBody();
     public String getQuery() { return ""; }
 
-    public CloseableHttpResponse runHttp(String arg, String token) throws Exception{
-        this.arg = arg;
-        return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), true);
-    }
     public CloseableHttpResponse run(String arg, String token) throws Exception{
         this.arg = arg;
         return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), false);
-    }
-    public CloseableHttpResponse runOnCustomerTenant(String arg, String token) throws Exception{
-        this.arg = arg;
-        return TestUtils.send(getPath(), getHttpMethod(), token, getValidBody(), getQuery(), TestUtils.getCustomerTenantHeaders(), false);
-    }
-    public CloseableHttpResponse runOptions(String arg, String token) throws Exception{
-        this.arg = arg;
-        return TestUtils.send(getPath(), "OPTIONS", token, "", "", false);
-    }
-
-    public CloseableHttpResponse runWithCustomPayload(String arg, String body, String token) throws Exception {
-        this.arg = arg;
-        return TestUtils.send(getPath(), getHttpMethod(), token, body, getQuery(), false);
     }
 
     public CloseableHttpResponse runWithInvalidPath(String arg, String token) throws Exception {

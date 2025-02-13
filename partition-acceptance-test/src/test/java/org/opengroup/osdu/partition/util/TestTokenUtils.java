@@ -37,6 +37,6 @@ public class TestTokenUtils extends TestUtils {
         if (StringUtils.isEmpty(token)) {
             token = tokenProvider.getToken();
         }
-        return "Bearer " + token;
+        return token;
     }
 }

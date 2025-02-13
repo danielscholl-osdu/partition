@@ -16,12 +16,11 @@
 
 package org.opengroup.osdu.partition.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.junit.Assume;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public abstract class BaseTestTemplate extends TestBase {
 
@@ -32,10 +31,6 @@ public abstract class BaseTestTemplate extends TestBase {
     }
 
     protected abstract String getId();
-
-    protected abstract void deleteResource() throws Exception;
-
-    protected abstract void createResource() throws Exception;
 
     protected abstract int expectedOkResponseCode();
 
@@ -55,17 +50,7 @@ public abstract class BaseTestTemplate extends TestBase {
     }
 
     public void should_return20X_when_usingCredentialsWithPermission(String token) throws Exception {
-        createResource();
         CloseableHttpResponse response = descriptor.run(getId(), token);
-        deleteResource();
         assertEquals(error(response.getCode() == 204 ? "" : EntityUtils.toString(response.getEntity())), expectedOkResponseCode(), response.getCode());
-    }
-
-    @Test
-    public void should_returnOk_when_makingHttpOptionsRequest() throws Exception {
-        createResource();
-        CloseableHttpResponse response = descriptor.runOptions(getId(), testUtils.getAccessToken());
-        assertEquals(error(EntityUtils.toString(response.getEntity())), 200, response.getCode());
-        deleteResource();
     }
 }

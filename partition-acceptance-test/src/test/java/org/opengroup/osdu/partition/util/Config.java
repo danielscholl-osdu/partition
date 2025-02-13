@@ -20,18 +20,13 @@ public class Config {
 
     public String hostUrl;
     public String osduTenant;
-    public String clientTenant;
-    public boolean executeAuthorizationDependentTests;
 
-    private static Config config = new Config();
+    private static final Config config = new Config();
 
     public static Config Instance() {
-
         //Note: PARTITION_BASE_URL has a '/' at the end of it
         config.hostUrl = System.getProperty("PARTITION_BASE_URL", System.getenv("PARTITION_BASE_URL"));
-        config.clientTenant = System.getProperty("CLIENT_TENANT", System.getenv("CLIENT_TENANT"));
         config.osduTenant = System.getProperty("MY_TENANT", System.getenv("MY_TENANT"));
-        config.executeAuthorizationDependentTests = Boolean.parseBoolean(System.getProperty("EXECUTE_AUTHORIZATION_DEPENDENT_TESTS", System.getenv("EXECUTE_AUTHORIZATION_DEPENDENT_TESTS")));
         return config;
     }
 }

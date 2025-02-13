@@ -17,6 +17,8 @@
 
 package org.opengroup.osdu.partition.api;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -26,8 +28,6 @@ import org.opengroup.osdu.partition.util.TestTokenUtils;
 import org.opengroup.osdu.partition.util.TestUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
-import static org.junit.Assert.assertEquals;
 
 public final class HealthCheckApiTest extends TestBase {
 
@@ -45,17 +45,27 @@ public final class HealthCheckApiTest extends TestBase {
 
   @Test
   public void should_returnOk() throws Exception {
-    CloseableHttpResponse response =
-        TestUtils.send("api/partition/v1/liveness_check", HttpMethod.GET.name(), null, "", "", false);
+    CloseableHttpResponse response = TestUtils.send(
+        "api/partition/v1/liveness_check",
+        HttpMethod.GET.name(),
+        null,
+        "",
+        "",
+        false
+    );
     assertEquals(HttpStatus.OK.value(), response.getCode());
   }
 
   @Test
   public void should_returnTrailingOk() throws Exception {
-    CloseableHttpResponse response =
-            TestUtils.send("api/partition/v1/liveness_check/", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "", "", false);
+    CloseableHttpResponse response = TestUtils.send(
+        "api/partition/v1/liveness_check/",
+        HttpMethod.GET.name(),
+        this.testUtils.getAccessToken(),
+        "",
+        "",
+        false
+    );
     assertEquals(HttpStatus.OK.value(), response.getCode());
   }
-
-
 }

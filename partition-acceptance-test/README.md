@@ -5,7 +5,6 @@ You will need to have the following environment variables defined.
 | name                 | value                      | description                | sensitive? | source | required |
 |----------------------|----------------------------|----------------------------|------------|--------|----------|
 | `MY_TENANT`          | ex `osdu`                  | Self Tenant name           | no         | -      | yes      |
-| `CLIENT_TENANT`      | ex `osdu`                  | Client Tenant name         | no         | -      | yes      |
 | `PARTITION_BASE_URL` | ex `http://localhost:8080` | Partition service Base URL | no         | -      | yes      |
 
 Authentication can be provided as OIDC config:
@@ -22,6 +21,7 @@ Or tokens can be used directly from env variables:
 |-------------------------|------------|-----------------------|------------|--------|
 | `PRIVILEGED_USER_TOKEN` | `********` | Privileged User Token | yes        | -      |
 
+Authentication configuration is optional and could be omitted if not needed.
 
 Execute following command to build code and run all the integration tests:
 
