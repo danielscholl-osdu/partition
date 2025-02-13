@@ -32,7 +32,7 @@
 		<cobertura_maven_plugin_version>2.7</cobertura_maven_plugin_version>
 		<openapi.version>2.3.0</openapi.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
-		<json-smart.version>2.5.1</json-smart.version>
+		<json-smart.version>2.5.2</json-smart.version>
 
 		<!-- Test Scoped Versions -->
 		<mockito.core.version>3.4.0</mockito.core.version>
