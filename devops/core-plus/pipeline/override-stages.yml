@@ -3,6 +3,10 @@ variables:
   CORE_ENABLE_BOOTSTRAP: "true"
   CORE_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap/Dockerfile"
 
+core-deploy:
+  variables:
+    CORE_HELM_SETS: >-
+      --set data.elasticHttps=false
 
 core-test:
   variables:

@@ -22,6 +22,7 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: ""
   bootstrapImage: ""
+  elasticHttps: ""
   # featureFlags
   indexerAugmenterEnabled: "false"
   asIngestedCoordinatesEnabled: "false"

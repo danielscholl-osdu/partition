@@ -25,7 +25,7 @@ data:
   {{- end }}
   SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
   DATABASE_ID: "{{ $databaseId }}"
-  ELASTIC_HTTPS: {{ .Values.data.elasticHttps | quote}}
+  ELASTIC_HTTPS: {{ .Values.data.elasticHttps | quote }}
   AS_INGESTED_COORDINATES_ENABLED: {{ .Values.data.asIngestedCoordinatesEnabled | quote }}
   KEYWORD_LOWER_ENABLED: {{ .Values.data.keywordLowerEnabled | quote }}
   BAG_OF_WORDS_ENABLED: {{ .Values.data.bagOfWordsEnabled | quote }}
