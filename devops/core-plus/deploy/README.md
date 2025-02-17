@@ -113,6 +113,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.minioIgnoreCertCheck** | whether minio should ignore TLS certs validity check, set to true if external minio is protected by self-signed certificates | string | false | no
 **data.minioUIEndpoint** | UI endpoint for gathering minio versions | string | `http://minio:9001` | yes
 **data.indexerAugmenterEnabled** | enable indexer Augmenter | string | false | no
+**data.elasticHttps** | use https(true) or http(false) in interservice communication (search/indexer <-> elasticsearch)| bool | "" | yes
 
 ### Deployment variables
 
