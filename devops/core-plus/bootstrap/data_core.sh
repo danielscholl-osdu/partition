@@ -131,6 +131,14 @@ core_partition_data() {
       "sensitive": true,
       "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
     },
+    "elasticsearch.8.https": {
+      "sensitive": false,
+      "value": "${ELASTIC_HTTPS}"
+    },
+    "elasticsearch.8.tls": {
+      "sensitive": false,
+      "value": "${ELASTIC_HTTPS}"
+    },
     "entitlements.datasource.url": {
       "sensitive": true,
       "value": "ENT_PG_URL${PARTITION_SUFFIX}"
