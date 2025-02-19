@@ -19,6 +19,8 @@ variables:
   IBM_INT_TEST_SUBDIR: testing/partition-test-ibm
   IBM_HELM_CONFIG_PATH: devops/ibm/ibm-partition-config
   IBM_HELM_DEPLOY_PATH: devops/ibm/ibm-partition-deploy
+  ACCEPTANCE_TEST_DIR: "partition-acceptance-test"
+
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
