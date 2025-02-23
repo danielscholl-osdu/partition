@@ -1,0 +1,235 @@
+# Template Dependabot Configuration for OSDU Services
+# Standard OSDU Service Structure:
+# - {service}[-vX]-core
+# - provider/{service}[-vX]-{provider}
+
+version: 2
+updates:
+  # GitHub Actions dependencies - Common across all services
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "fork_integration"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "common"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "fix"
+      include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    # Add Dependabot-specific CI validation
+    open-pull-requests-limit: 10
+    rebase-strategy: "auto"
+    versioning-strategy: "auto"
+    pull-request-branch-name:
+      separator: "-"
+    reviewers:
+      - "danielscholl"  # Add your GitHub username here
+    # Ensure CI passes before merging
+    require-ci-success: true
+
+  # Maven Root Project dependencies
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "fork_integration"
+    labels:
+      - "dependencies"
+      - "java"
+      - "common"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "fix"
+      include: "scope"
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+          - "org.springframework.boot:spring-boot*"
+          - "org.springframework.security:spring-security*"
+          - "org.springdoc:springdoc-openapi*"
+        update-types:
+          - "minor"
+          - "patch"
+      osdu-core:
+        patterns:
+          - "org.opengroup.osdu:os-core-common"
+        update-types:
+          - "minor"
+          - "patch"
+      build-tools:
+        patterns:
+          - "org.projectlombok:lombok"
+          - "com.google.guava:guava"
+          - "io.github.git-commit-id:*"
+          - "org.springframework.boot:spring-boot-maven-plugin"
+        update-types:
+          - "minor"
+          - "patch"
+      logging:
+        patterns:
+          - "org.apache.logging.log4j:*"
+          - "ch.qos.logback:*"
+          - "org.slf4j:*"
+        update-types:
+          - "minor"
+          - "patch"
+      data-format:
+        patterns:
+          - "com.fasterxml.jackson*"
+          - "net.minidev:json-smart"
+          - "com.google.code.gson:gson"
+          - "org.yaml:snakeyaml"
+        update-types:
+          - "minor"
+          - "patch"
+      common-utils:
+        patterns:
+          - "commons-beanutils:commons-beanutils"
+          - "io.github.resilience4j:*"
+          - "org.apache.commons:*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "org.springframework.boot:*"
+        versions: ["3.4.0"]
+      - dependency-name: "org.springframework:*"
+        versions: ["6.2.0"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Service Core Module dependencies
+  - package-ecosystem: "maven"
+    directory: "/**/*-core"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "common"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      core-dependencies:
+        patterns: ["*"]
+
+  # Azure Provider Module dependencies
+  - package-ecosystem: "maven"
+    directory: "/provider/**/*-azure"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "azure"
+    ignore:
+      - dependency-name: "*"
+        paths:
+          - "testing/**"
+    groups:
+      azure-dependencies:
+        patterns: ["com.azure*", "com.microsoft.azure*"]
+
+  ***REMOVED*** Provider Module dependencies
+  - package-ecosystem: "maven"
+    directory: "/provider/**/*-aws"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "aws"
+    ignore:
+      - dependency-name: "*"
+        paths:
+          - "testing/**"
+    groups:
+      aws-dependencies:
+        patterns: ["com.amazonaws*", "software.amazon*"]
+
+  # IBM Provider Module dependencies
+  - package-ecosystem: "maven"
+    directory: "/provider/**/*-ibm"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "ibm"
+    ignore:
+      - dependency-name: "*"
+        paths:
+          - "testing/**"
+    groups:
+      ibm-dependencies:
+        patterns: ["com.ibm*"]
+
+  ***REMOVED*** / JDBC Provider Module dependencies
+  - package-ecosystem: "maven"
+    directory: "/provider/**/*-{gc,jdbc}"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "gc"
+    ignore:
+      - dependency-name: "*"
+        paths:
+          - "testing/**"
+    groups:
+      google-cloud-dependencies:
+        patterns: ["com.google.cloud*"]
+      jdbc-dependencies:
+        patterns:
+          - "com.zaxxer:HikariCP"
+          - "org.postgresql:postgresql"
+          - "com.microsoft.sqlserver:mssql-jdbc"
+          - "com.oracle.database.jdbc:*"
+
+  # Core Plus Module dependencies (if present)
+  - package-ecosystem: "maven"
+    directory: "/**/*-core-plus"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "java"
+      - "common"
+    ignore:
+      - dependency-name: "*"
+        paths:
+          - "testing/**"
+    groups:
+      core-plus-dependencies:
+        patterns: ["*"]
+
+  # Monitor upstream repository's package ecosystem - Common across all services
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: "fork_upstream"
+    labels:
+      - "dependencies"
+      - "upstream"
+      - "common"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "fix"
+      include: "scope"
