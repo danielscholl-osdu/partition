@@ -143,7 +143,7 @@ updates:
       azure-dependencies:
         patterns: ["com.azure*", "com.microsoft.azure*"]
 
-  # AWS Provider Module dependencies
+  ***REMOVED*** Provider Module dependencies
   - package-ecosystem: "maven"
     directory: "/provider/**/*-aws"
     schedule:
@@ -177,7 +177,7 @@ updates:
       ibm-dependencies:
         patterns: ["com.ibm*"]
 
-  # Google Cloud / JDBC Provider Module dependencies
+  ***REMOVED*** / JDBC Provider Module dependencies
   - package-ecosystem: "maven"
     directory: "/provider/**/*-{gc,jdbc}"
     schedule:

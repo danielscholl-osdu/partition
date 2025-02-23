@@ -1,0 +1,24 @@
+{{- $databaseId := "" -}}
+{{- if eq .Values.data.databaseId "" }}
+  {{- fail "ERROR Add databaseId value" }}
+{{- else if eq .Values.data.databaseId "(default)" }}
+  {{- $databaseId = "" -}}
+{{- else }}
+  {{- $databaseId = .Values.data.databaseId -}}
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: {{ .Values.conf.appName | quote }}
+  name: {{ .Values.conf.configmap | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+data:
+  LOG_LEVEL: {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
+  SYSTEM_TENANT_API: "true"
+  GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
+  PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
+  SYSTEM_PARTITION_ID: "system"
+  SPRING_PROFILES_ACTIVE: "gcp"
+  DATABASE_ID: "{{ $databaseId }}"
