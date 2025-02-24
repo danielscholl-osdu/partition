@@ -65,3 +65,8 @@ cimpl-test:
       when: on_success
     - if: "$CIMPL == '1'"
       when: on_success
+
+cimpl-acceptance-test:
+  variables:
+    PARTITION_BASE_URL: https://osdu.dev1.osdu-cimpl.opengroup.org/
+    MY_TENANT: "osdu"
