@@ -53,7 +53,7 @@ include:
   - local: "devops/gc/pipeline/override-stages.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/core-global.yml"
+    file: "cloud-providers/cimpl-global.yml"
 
   - local: "devops/core-plus/pipeline/override-stages.yml"
 
@@ -74,6 +74,8 @@ download_plugins:
     - mvn dependency:copy -DrepoUrl=$OSM_PACKAGE_REGISTRY_URL -Dartifact="org.opengroup.osdu:os-osm-postgres:$OSM_VERSION:jar:plugin" -Dtransitive=false -DoutputDirectory="./tmp"
   rules:
     - if: "$PROTECTED == '1'"
+      when: on_success
+    - if: "$CIMPL == '1'"
       when: on_success
 
 stages:
