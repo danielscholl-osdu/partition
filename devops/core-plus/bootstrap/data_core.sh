@@ -185,7 +185,7 @@ core_partition_data() {
     },
     "sd.ksd.k8s.namespace": {
         "sensitive": false,
-        "value": "secret-admin"
+        "value": "secret-osdu"
     },
     "featureFlag.eds.enabled": {
       "sensitive": false,
