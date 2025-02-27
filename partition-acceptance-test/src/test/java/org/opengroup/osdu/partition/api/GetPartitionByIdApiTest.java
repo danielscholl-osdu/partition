@@ -17,8 +17,6 @@ package org.opengroup.osdu.partition.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Map;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -63,7 +61,8 @@ public final class GetPartitionByIdApiTest extends BaseTestTemplate {
     @Test
     public void read_partition() throws Exception {
         CloseableHttpResponse response = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
-        Map<String, JsonNode> partitionProperties = TestUtils.parseResponse(response);
+        Object partitionProperties = TestUtils.parseResponse(response);
+        
         assertNotNull(partitionProperties);
         assertEquals(HttpStatus.OK.value(), response.getCode());
     }
