@@ -23,12 +23,16 @@ import org.springframework.util.StringUtils;
 public class TestTokenUtils extends TestUtils {
 
     private OpenIDTokenProvider tokenProvider = null;
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     public TestTokenUtils() {
-        token = System.getProperty("PRIVILEGED_USER_TOKEN", System.getenv("PRIVILEGED_USER_TOKEN"));
-
-        if (StringUtils.isEmpty(token)) {
-            tokenProvider = new OpenIDTokenProvider();
+        token = System.getProperty("ROOT_USER_TOKEN", System.getenv("ROOT_USER_TOKEN"));
+        
+        if (token != null && !token.trim().isEmpty()) {
+        	token = TOKEN_PREFIX + token;
+        }
+        else {
+        	tokenProvider = new OpenIDTokenProvider();
         }
     }
 
