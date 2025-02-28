@@ -14,20 +14,21 @@
 
 package org.opengroup.osdu.partition.provider.aws.security;
 
-import org.opengroup.osdu.core.aws.entitlements.RequestKeys;
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
-import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
+import java.util.Map;
+
+import org.opengroup.osdu.core.aws.v2.entitlements.Authorizer;
+import org.opengroup.osdu.core.aws.v2.entitlements.RequestKeys;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
+import org.opengroup.osdu.core.aws.v2.ssm.SSMUtil;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.opengroup.osdu.core.aws.entitlements.Authorizer;
-import org.opengroup.osdu.core.aws.ssm.SSMUtil;
 
 import jakarta.annotation.PostConstruct;
-import java.util.Map;
 
 @Component
 

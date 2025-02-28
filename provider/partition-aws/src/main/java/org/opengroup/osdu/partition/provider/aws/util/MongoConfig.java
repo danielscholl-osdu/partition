@@ -14,8 +14,8 @@
 
 package org.opengroup.osdu.partition.provider.aws.util;
 
-import org.opengroup.osdu.core.aws.mongodb.MongoDBSimpleFactory;
-import org.opengroup.osdu.core.aws.mongodb.config.MongoPropertiesDefaultReader;
+import org.opengroup.osdu.core.aws.v2.mongodb.MongoDBSimpleFactory;
+import org.opengroup.osdu.core.aws.v2.mongodb.config.MongoPropertiesDefaultReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

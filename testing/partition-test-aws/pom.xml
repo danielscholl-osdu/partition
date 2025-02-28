@@ -68,8 +68,8 @@
             <artifactId>os-core-lib-aws</artifactId>
             <version>0.26.0-spring6-rc2</version>
         </dependency>
-
-
+        
+        
     </dependencies>
 
 </project>

@@ -18,29 +18,10 @@ package org.opengroup.osdu.partition.provider.aws.util;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.fail;
-
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.encryptionsdk.AwsCrypto;
-import com.amazonaws.encryptionsdk.CryptoResult;
-import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
-import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -49,153 +30,152 @@ import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.Map;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.kms.model.DecryptRequest;
+import software.amazon.awssdk.services.kms.model.DecryptResponse;
+import software.amazon.awssdk.services.kms.model.EncryptRequest;
+import software.amazon.awssdk.services.kms.model.EncryptResponse;
+
 @RunWith(MockitoJUnitRunner.class)
 public class AwsKmsEncryptionClientTest {
 
-
-    @Mock
-    private KmsMasterKeyProvider.Builder kmsBuilder;
-
-    @Mock
-    private KmsMasterKeyProvider keyProvider;
-
-    @Mock
-    private AwsCrypto instanceCrypto;
-
-    @Mock
-    private CryptoResult<byte[], KmsMasterKey> cryptoResult;
+	@Mock
+	private KmsClient kmsClient;
 
     @Captor
-    private ArgumentCaptor<Map<String, String>> encryptionContext;
+    private ArgumentCaptor<EncryptRequest> encryptRequestCaptor;
 
     @Captor
-    private ArgumentCaptor<byte[]> bytesCaptor;
+    private ArgumentCaptor<DecryptRequest> decryptRequestCaptor;
 
-    @InjectMocks
-    private AwsKmsEncryptionClient encryptionClient;
+	@InjectMocks
+	private AwsKmsEncryptionClient encryptionClient;
 
-    private final String KEY_ARN = "key_arn";
+	private final String KEY_ARN = "key_arn";
 
-    private final byte[] ENCRYPTED = HexFormat.of().parseHex("0123456789abcdef");
+	private final byte[] ENCRYPTED = HexFormat.of().parseHex("0123456789abcdef");
 
-    private byte[] DECRYPTED_BYTES;
+	private final String DECRYPTED = "Decrypted";
+	private final String AUTH_DATABASE = "osdu";
+	private final String VALID_ID = "valid_id";
 
-    private final String DECRYPTED = "Decrypted";
-    private final String AUTH_DATABASE = "osdu";
-    private final String VALID_ID = "valid_id";
+	private final Map<String, String> validContext = new HashMap<>();
 
-    private final Map<String, String> validContext = new HashMap<>();
+	@Before
+	public void setup() throws NoSuchFieldException, IllegalAccessException {
+		ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
+		ReflectionTestUtils.setField(encryptionClient, "authDatabase", AUTH_DATABASE);
 
-    @Before
-    public void setup() throws NoSuchFieldException, IllegalAccessException {
-        ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
-        ReflectionTestUtils.setField(encryptionClient, "authDatabase", AUTH_DATABASE);
-        ReflectionTestUtils.setField(encryptionClient, "keyProvider", keyProvider);
+		validContext.put(AUTH_DATABASE, VALID_ID);
+	}
 
-        DECRYPTED_BYTES = DECRYPTED.getBytes(StandardCharsets.UTF_8);
-        validContext.put(AUTH_DATABASE, VALID_ID);
-    }
+	@Test
+	public void should_return_when_initCalledWithLocal()
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		
+		final String LOCAL_KEY_ARN = "local_key_arn";
+		Method initializeKeyProvider = AwsKmsEncryptionClient.class.getDeclaredMethod("initializeKeyProvider");
+		initializeKeyProvider.setAccessible(true);
+		ReflectionTestUtils.setField(encryptionClient, "keyArn", LOCAL_KEY_ARN);
+		try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito
+																.mockConstruction(K8sLocalParameterProvider.class, (mock, context) -> {
+																	when(mock.getParameterAsStringOrDefault(anyString(), anyString())).thenReturn("bogus_key_arn");
+																	when(mock.getLocalMode()).thenReturn(true);
+																})) {
+			initializeKeyProvider.invoke(encryptionClient);
 
-    @Test
-    public void should_return_when_initCalledWithLocal() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        final String LOCAL_KEY_ARN = "local_key_arn";
-        Method initializeKeyProvider = AwsKmsEncryptionClient.class.getDeclaredMethod("initializeKeyProvider");
-        initializeKeyProvider.setAccessible(true);
-        ReflectionTestUtils.setField(encryptionClient, "keyArn", LOCAL_KEY_ARN);
-        try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito.mockConstruction(K8sLocalParameterProvider.class,
-                                                                                                           (mock, context) -> {
-                                                                                                               when(mock.getParameterAsStringOrDefault(anyString(), anyString())).thenReturn("bogus_key_arn");
-                                                                                                               when(mock.getLocalMode()).thenReturn(true);
-                                                                                                           })) {
-            try (MockedStatic<KmsMasterKeyProvider> kmsMKPStatic = Mockito.mockStatic(KmsMasterKeyProvider.class)) {
-                kmsMKPStatic.when(KmsMasterKeyProvider::builder).thenReturn(kmsBuilder);
-                when(kmsBuilder.withCredentials(any(AWSCredentialsProvider.class))).thenReturn(kmsBuilder);
-                when(kmsBuilder.buildStrict(anyString())).thenReturn(keyProvider);
+			assertTrue("Must pass when `initializeKeyProvider` called with local mode enabled!", true);
+			assertEquals(LOCAL_KEY_ARN, ReflectionTestUtils.getField(encryptionClient, "keyArn"));
 
-                initializeKeyProvider.invoke(encryptionClient);
+		} finally {
+			ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
+		}
+	}
 
-                assertTrue("Must pass when `initializeKeyProvider` called with local mode enabled!", true);
-                assertEquals(LOCAL_KEY_ARN, ReflectionTestUtils.getField(encryptionClient, "keyArn"));
-            }
-        } finally {
-            ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
-        }
-    }
-    @Test
-    public void should_return_when_initCalledWithoutLocal() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        final String OSDU_KEY_ARN = "osdu_key_arn";
-        Method initializeKeyProvider = AwsKmsEncryptionClient.class.getDeclaredMethod("initializeKeyProvider");
-        initializeKeyProvider.setAccessible(true);
-        ReflectionTestUtils.setField(encryptionClient, "keyArn", "bogus_key_arn");
-        try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito.mockConstruction(K8sLocalParameterProvider.class,
-                                                                                                           (mock, context) -> {
-                                                                                                               when(mock.getParameterAsStringOrDefault(anyString(), anyString())).thenReturn(OSDU_KEY_ARN);
-                                                                                                               when(mock.getLocalMode()).thenReturn(false);
-                                                                                                           })) {
-            try (MockedStatic<KmsMasterKeyProvider> kmsMKPStatic = Mockito.mockStatic(KmsMasterKeyProvider.class)) {
-                kmsMKPStatic.when(KmsMasterKeyProvider::builder).thenReturn(kmsBuilder);
-                when(kmsBuilder.withCredentials(any(AWSCredentialsProvider.class))).thenReturn(kmsBuilder);
-                when(kmsBuilder.buildStrict(anyString())).thenReturn(keyProvider);
+	@Test
+	public void should_return_when_initCalledWithoutLocal()
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		final String OSDU_KEY_ARN = "osdu_key_arn";
+		Method initializeKeyProvider = AwsKmsEncryptionClient.class.getDeclaredMethod("initializeKeyProvider");
+		initializeKeyProvider.setAccessible(true);
+		ReflectionTestUtils.setField(encryptionClient, "keyArn", "bogus_key_arn");
+		try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito
+																.mockConstruction(K8sLocalParameterProvider.class, (mock, context) -> {
+																	when(mock.getParameterAsStringOrDefault(anyString(), anyString())).thenReturn(OSDU_KEY_ARN);
+																	when(mock.getLocalMode()).thenReturn(false);
+																})) {
 
-                initializeKeyProvider.invoke(encryptionClient);
+			initializeKeyProvider.invoke(encryptionClient);
 
-                assertTrue("Must pass when `initializeKeyProvider` called with OSDU mode enabled!", true);
-                assertEquals(OSDU_KEY_ARN, ReflectionTestUtils.getField(encryptionClient, "keyArn"));
-            }
-        } finally {
-            ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
-        }
-    }
+			assertTrue("Must pass when `initializeKeyProvider` called with OSDU mode enabled!", true);
+			assertEquals(OSDU_KEY_ARN, ReflectionTestUtils.getField(encryptionClient, "keyArn"));
+		} finally {
+			ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
+		}
+	}
 
-    @Test
-    public void should_return_when_encryptCalledWithArgs() {
-        when(instanceCrypto.encryptData(any(KmsMasterKeyProvider.class), bytesCaptor.capture(), encryptionContext.capture())).thenReturn(cryptoResult);
-        when(cryptoResult.getResult()).thenReturn(ENCRYPTED);
+	@Test
+	public void should_return_when_encryptCalledWithArgs() {
+		// Arrange
+		EncryptResponse mockResponse = EncryptResponse.builder().ciphertextBlob(SdkBytes.fromByteArray(ENCRYPTED))
+				.build();
+		when(kmsClient.encrypt(any(EncryptRequest.class))).thenReturn(mockResponse);
 
-        byte[] encrypted = encryptionClient.encrypt(DECRYPTED, VALID_ID);
+		// Act
+		byte[] encrypted = encryptionClient.encrypt(DECRYPTED, VALID_ID);
 
-        assertArrayEquals(ENCRYPTED, encrypted);
-        assertArrayEquals(DECRYPTED_BYTES, bytesCaptor.getValue());
-        Map<String, String> map = encryptionContext.getValue();
-        assertEquals(1, map.size());
-        assertTrue(map.containsKey(AUTH_DATABASE));
-        assertEquals(VALID_ID, map.get(AUTH_DATABASE));
-    }
+		// Assert
+		assertArrayEquals(ENCRYPTED, encrypted);
+		verify(kmsClient).encrypt(encryptRequestCaptor.capture());
+        EncryptRequest capturedRequest = encryptRequestCaptor.getValue();
+        
+        Map<String, String> encryptionContext = capturedRequest.encryptionContext();
+        assertEquals("Should have exactly one entry", 1, encryptionContext.size());
+        assertEquals("Should contain valid ID", VALID_ID, encryptionContext.get(AUTH_DATABASE));
+        assertEquals("Should match expected context", validContext, encryptionContext);
+	}
 
-    @Test
-    public void should_return_when_decryptCalledWithValidArgs() {
-        when(instanceCrypto.decryptData(any(KmsMasterKeyProvider.class), bytesCaptor.capture())).thenReturn(cryptoResult);
-        when(cryptoResult.getResult()).thenReturn(DECRYPTED_BYTES);
-        when(cryptoResult.getEncryptionContext()).thenReturn(validContext);
+	@Test
+	public void should_return_when_decryptCalledWithValidArgs() {
+		// Arrange
+		DecryptResponse mockResponse = DecryptResponse.builder()
+				.plaintext(SdkBytes.fromString(DECRYPTED, StandardCharsets.UTF_8)).build();
+		when(kmsClient.decrypt(any(DecryptRequest.class))).thenReturn(mockResponse);
 
-        String decrypted = encryptionClient.decrypt(ENCRYPTED, VALID_ID);
+		// Act
+		String decrypted = encryptionClient.decrypt(ENCRYPTED, VALID_ID);
 
-        assertEquals(DECRYPTED, decrypted);
-        assertArrayEquals(ENCRYPTED, bytesCaptor.getValue());
-    }
+		// Assert
+		assertEquals(DECRYPTED, decrypted);
+		verify(kmsClient).decrypt(decryptRequestCaptor.capture());
+        DecryptRequest capturedRequest = decryptRequestCaptor.getValue();
+        
+        Map<String, String> encryptionContext = capturedRequest.encryptionContext();
+        assertEquals("Should have exactly one entry", 1, encryptionContext.size());
+        assertEquals("Should contain valid ID", VALID_ID, encryptionContext.get(AUTH_DATABASE));
+        assertEquals("Should match expected context", validContext, encryptionContext);
+	}
 
-    @Test
-    public void should_ThrowIllegalStateException_when_decryptCalledWithInValidArgs() {
-        when(instanceCrypto.decryptData(any(KmsMasterKeyProvider.class), bytesCaptor.capture())).thenReturn(cryptoResult);
-        when(cryptoResult.getEncryptionContext()).thenReturn(validContext);
+	@Test
+	public void should_return_when_defaultConstructorCalled() {
+		// Act
+		AwsKmsEncryptionClient cryptoClient = new AwsKmsEncryptionClient();
 
-        try {
-            String INVALID_ID = "invalid_id";
-            encryptionClient.decrypt(ENCRYPTED, INVALID_ID);
-            fail("Should throw exception when encryption contexts do not match.");
-        } catch (IllegalStateException exception) {
-            assertEquals("Wrong Encryption Context!", exception.getMessage());
-        }
-        assertArrayEquals(ENCRYPTED, bytesCaptor.getValue());
-    }
-
-    @Test
-    public void should_return_when_defaultConstructorCalled() {
-        AwsCrypto expectedCrypto = (AwsCrypto) ReflectionTestUtils.getField(AwsKmsEncryptionClient.class, "crypto");
-
-        AwsKmsEncryptionClient cryptoClient = new AwsKmsEncryptionClient();
-
-        AwsCrypto actualCrypto = (AwsCrypto) ReflectionTestUtils.getField(cryptoClient, "crypto");
-        assertEquals(expectedCrypto, actualCrypto);
-    }
+		// Assert
+		assertTrue(cryptoClient.getKmsClient() != null);
+	}
 }
