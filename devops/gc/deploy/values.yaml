@@ -1,6 +1,5 @@
 global:
   domain: ""
-  useHttps: true
   limitsEnabled: true
   dataPartitionId: ""
   logLevel: "ERROR"
