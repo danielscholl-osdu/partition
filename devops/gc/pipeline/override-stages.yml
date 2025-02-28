@@ -142,7 +142,7 @@ gc-dev2-verified-deploy: # verified deploy after tests
     GC_HELM_SETS: >-
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
-      --set data.elasticHttps=true
+      --set data.elasticHttps=false
 
 gc-preship-deploy:
   extends: .gc-preship-variables
