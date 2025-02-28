@@ -19,6 +19,4 @@ data:
   SYSTEM_TENANT_API: "true"
   GOOGLE_CLOUD_PROJECT: {{ .Values.data.projectId | quote }}
   PARTITION_NAMESPACE: {{ .Values.data.partitionNamespace | quote }}
-  SYSTEM_PARTITION_ID: "system"
-  SPRING_PROFILES_ACTIVE: "gcp"
   DATABASE_ID: "{{ $databaseId }}"
