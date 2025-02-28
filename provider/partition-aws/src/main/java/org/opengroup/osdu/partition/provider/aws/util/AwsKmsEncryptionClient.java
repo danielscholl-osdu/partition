@@ -18,20 +18,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.encryptionsdk.AwsCrypto;
-import com.amazonaws.encryptionsdk.CryptoResult;
-import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
-import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
-import com.amazonaws.encryptionsdk.CommitmentPolicy;
-import lombok.Data;
-
-import org.opengroup.osdu.core.aws.iam.IAMConfig;
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import jakarta.annotation.PostConstruct;
 
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.kms.model.DecryptRequest;
+import software.amazon.awssdk.services.kms.model.DecryptResponse;
+import software.amazon.awssdk.services.kms.model.EncryptRequest;
+import software.amazon.awssdk.services.kms.model.EncryptResponse;
 
 /**
  * <p>
@@ -43,75 +41,56 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class AwsKmsEncryptionClient {
 
-    @Value("${aws.kms.keyArn}")
-    private String keyArn;
+	@Value("${aws.kms.keyArn}")
+	private String keyArn;
 
-    @Value("${osdu.mongodb.database}")
-    private String authDatabase;
+	@Value("${osdu.mongodb.database}")
+	private String authDatabase;
 
-    private AWSCredentialsProvider amazonAWSCredentials;
+	private KmsClient kmsClient;
 
-    private KmsMasterKeyProvider keyProvider;
+	public AwsKmsEncryptionClient() {
+		this.kmsClient = KmsClient.builder().build();
+	}
 
-    private static final AwsCrypto crypto = AwsCrypto.builder()
-            .withCommitmentPolicy(CommitmentPolicy.RequireEncryptRequireDecrypt)
-            .build();
+	public AwsKmsEncryptionClient(KmsClient kmsClient) {
+		this.kmsClient = kmsClient;
+	}
 
+	@PostConstruct
+	private void initializeKeyProvider() {
 
-    private final AwsCrypto instanceCrypto;
+		// grab key arn from K8s
+		K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
 
-    public AwsKmsEncryptionClient() {
-        instanceCrypto = crypto;
-    }
+		if (Boolean.FALSE.equals(provider.getLocalMode())) {
+			keyArn = provider.getParameterAsStringOrDefault("KEY_ARN", keyArn);
+		}
+	}
 
-    public AwsKmsEncryptionClient(final AwsCrypto argCrypto) {
-        instanceCrypto = argCrypto;
-    }
+	public byte[] encrypt(String plainText, String id) {
+		Map<String, String> encryptionContext = generateEncryptionContext(id);
 
-    @PostConstruct
-    private void initializeKeyProvider() {
+		EncryptRequest request = EncryptRequest.builder().keyId(keyArn)
+				.plaintext(SdkBytes.fromString(plainText, StandardCharsets.UTF_8)).encryptionContext(encryptionContext)
+				.build();
 
-        // grab key arn from K8s
-        K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
+		EncryptResponse response = kmsClient.encrypt(request);
+		return response.ciphertextBlob().asByteArray();
+	}
 
-        if (Boolean.FALSE.equals(provider.getLocalMode())) {
-            keyArn = provider.getParameterAsStringOrDefault("KEY_ARN", keyArn);
-        }
+	public String decrypt(byte[] ciphertext, String id) {
+		Map<String, String> encryptionContext = generateEncryptionContext(id);
 
-        // log in with IAM credentials
-        amazonAWSCredentials = IAMConfig.amazonAWSCredentials();
+		DecryptRequest request = DecryptRequest.builder().keyId(keyArn)
+				.ciphertextBlob(SdkBytes.fromByteArray(ciphertext)).encryptionContext(encryptionContext).build();
 
-        // generate keyProvider
-        this.keyProvider = KmsMasterKeyProvider.builder()
-                .withCredentials(amazonAWSCredentials)
-                .buildStrict(keyArn);
-    }
+		DecryptResponse response = kmsClient.decrypt(request);
+		return response.plaintext().asString(StandardCharsets.UTF_8);
+	}
 
-    public byte[] encrypt(String plainText, String id) {
-
-        final Map<String, String> encryptionContext = generateEncryptionContext(id);
-        final CryptoResult<byte[], KmsMasterKey> encryptResult = instanceCrypto.encryptData(keyProvider, plainText.getBytes(StandardCharsets.UTF_8), encryptionContext);
-        return encryptResult.getResult();
-    }
-
-    public String decrypt(byte[] ciphertext, String id) {
-
-        final CryptoResult<byte[], KmsMasterKey> decryptResult = instanceCrypto.decryptData(keyProvider, ciphertext);
-        final Map<String, String> encryptionContext = generateEncryptionContext(id);
-
-        // throw error if context doesn't match
-        if (!encryptionContext.entrySet().stream()
-                .allMatch(e -> e.getValue().equals(decryptResult.getEncryptionContext().get(e.getKey())))) {
-            throw new IllegalStateException("Wrong Encryption Context!");
-        }
-
-        return new String(decryptResult.getResult(), StandardCharsets.UTF_8);
-    }
-
-    private Map<String, String> generateEncryptionContext(String id) {
-        return Collections.singletonMap(authDatabase, id);
-    }
+	private Map<String, String> generateEncryptionContext(String id) {
+		return Collections.singletonMap(authDatabase, id);
+	}
 
 }
-
-
