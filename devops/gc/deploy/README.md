@@ -97,7 +97,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | Name | Description | Type | Default |Required |
 |------|-------------|------|---------|---------|
 **global.domain** | your domain | string | - | yes
-**global.useHttps** | defines whether to use HTTPS instead of HTTP for external minio s3 endpoint connection | boolean | `true` | yes
 **global.limitsEnabled** | whether CPU and memory limits are enabled | boolean | `true` | yes
 **global.dataPartitionId** | data partition id | string | - | yes
 **global.logLevel** | severity of logging level | string | `ERROR` | yes
