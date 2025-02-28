@@ -68,8 +68,8 @@
             <artifactId>os-core-lib-aws</artifactId>
             <version>3.0.2</version>
         </dependency>
-
-
+        
+        
     </dependencies>
 
 </project>
