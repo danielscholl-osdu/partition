@@ -101,6 +101,10 @@ gc_partition_data() {
       "sensitive": false,
       "value": "${BAG_OF_WORDS_ENABLED}"
     },
+    "featureFlag.mapBooleanToString.enabled": {
+      "sensitive": false,
+      "value": true
+    },
     "featureFlag.xCollaboration.enabled": {
       "sensitive": false,
       "value": "${X_COLLABORATION_ENABLED}"
