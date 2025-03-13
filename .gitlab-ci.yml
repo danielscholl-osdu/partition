@@ -75,8 +75,6 @@ download_plugins:
   rules:
     - if: "$PROTECTED == '1'"
       when: on_success
-    - if: "$CIMPL == '1'"
-      when: on_success
 
 stages:
   - review

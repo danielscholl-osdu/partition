@@ -131,25 +131,13 @@ core_partition_data() {
       "sensitive": true,
       "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
     },
-        "elasticsearch.host": {
-      "sensitive": true,
-      "value": "ELASTIC_HOST${PARTITION_SUFFIX}"
-    },
-    "elasticsearch.port": {
-      "sensitive": true,
-      "value": "ELASTIC_PORT${PARTITION_SUFFIX}"
-    },
-    "elasticsearch.user": {
-      "sensitive": true,
-      "value": "ELASTIC_USER${PARTITION_SUFFIX}"
-    },
-    "elasticsearch.password": {
-      "sensitive": true,
-      "value": "ELASTIC_PASS${PARTITION_SUFFIX}"
-    },
-    "index-augmenter-enabled": {
+    "elasticsearch.8.https": {
       "sensitive": false,
-      "value": "${INDEXER_AUGMENTER_ENABLED}"
+      "value": "${ELASTIC_HTTPS}"
+    },
+    "elasticsearch.8.tls": {
+      "sensitive": false,
+      "value": "${ELASTIC_HTTPS}"
     },
     "entitlements.datasource.url": {
       "sensitive": true,
@@ -185,7 +173,11 @@ core_partition_data() {
     },
     "sd.ksd.k8s.namespace": {
         "sensitive": false,
-        "value": "secret-osdu"
+        "value": "secret-admin"
+    },
+    "index-augmenter-enabled": {
+      "sensitive": false,
+      "value": "${INDEXER_AUGMENTER_ENABLED}"
     },
     "featureFlag.eds.enabled": {
       "sensitive": false,
@@ -198,6 +190,30 @@ core_partition_data() {
     "featureFlag.policy.enabled": {
       "sensitive": false,
       "value": "${POLICY_SERVICE_ENABLED}"
+    },
+    "featureFlag.autocomplete.enabled": {
+      "sensitive": false,
+      "value": "${AUTOCOMPLETE_ENABLED}"
+    },
+    "featureFlag.asIngestedCoordinates.enabled": {
+      "sensitive": false,
+      "value": "${AS_INGESTED_COORDINATES_ENABLED}"
+    },
+    "featureFlag.keywordLower.enabled": {
+      "sensitive": false,
+      "value": "${KEYWORD_LOWER_ENABLED}"
+    },
+    "featureFlag.bagOfWords.enabled": {
+      "sensitive": false,
+      "value": "${BAG_OF_WORDS_ENABLED}"
+    },
+    "featureFlag.mapBooleanToString.enabled": {
+      "sensitive": false,
+      "value": true
+    },
+    "featureFlag.xCollaboration.enabled": {
+      "sensitive": false,
+      "value": "${X_COLLABORATION_ENABLED}"
     },
     "featureFlag.autocomplete.enabled": {
       "sensitive": false,
