@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "postgres-bootstrap-deployment"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    rollme: {{ randAlphaNum 5 | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      job: postgresql-bootstrap
+  template:
+    metadata:
+      labels:
+        job: postgresql-bootstrap
+    spec:
+      containers:
+      - name: "postgres-bootstrap"
+        image: "{{ .Values.bootstrap.postgres.image }}"
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/bootstrap_ready
+        envFrom:
+        - secretRef:
+            name: "postgres-bootstrap-secret"
+        env:
+          - name: PARTITION_POSTGRESQL_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: "partition-postgres-secret"
+                key: PARTITION_POSTGRES_DB_NAME
+          - name: PARTITION_POSTGRESQL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: "partition-postgres-secret"
+                key: OSM_POSTGRES_USERNAME
+          - name: PARTITION_POSTGRESQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "partition-postgres-secret"
+                key: OSM_POSTGRES_PASSWORD
+      serviceAccountName: {{ .Values.bootstrap.postgres.serviceAccount }}

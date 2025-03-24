@@ -1,0 +1,36 @@
+{{- $databaseId := "" -}}
+{{- if eq .Values.data.databaseId "" }}
+  {{- fail "ERROR Add databaseId value" }}
+{{- else if eq .Values.data.databaseId "(default)" }}
+  {{- $databaseId = "" -}}
+{{- else }}
+  {{- $databaseId = .Values.data.databaseId -}}
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: "{{ .Values.conf.appName }}-bootstrap"
+  name: "{{ .Values.conf.configmap }}-bootstrap"
+  namespace: "{{ .Release.Namespace }}"
+data:
+  PARTITION_HOST: {{ .Values.data.partitionHost | quote }}
+  PARTITION_SUFFIX: {{ .Values.data.partitionSuffix | quote }}
+  DATA_PARTITION_ID: {{ .Values.global.dataPartitionId | quote }}
+  {{- if .Values.data.dataProjectId }}
+  PROJECT_ID: "{{ .Values.data.dataProjectId }}"
+  {{- else }}
+  PROJECT_ID: "{{ .Values.data.projectId }}"
+  {{- end }}
+  SERVICE_ACCOUNT: {{ printf "%s@%s.iam.gserviceaccount.com" .Values.data.datafierSa .Values.data.projectId | quote }}
+  DATABASE_ID: "{{ $databaseId }}"
+  ELASTIC_HTTPS: {{ .Values.data.elasticHttps | quote }}
+  AS_INGESTED_COORDINATES_ENABLED: {{ .Values.data.asIngestedCoordinatesEnabled | quote }}
+  KEYWORD_LOWER_ENABLED: {{ .Values.data.keywordLowerEnabled | quote }}
+  BAG_OF_WORDS_ENABLED: {{ .Values.data.bagOfWordsEnabled | quote }}
+  X_COLLABORATION_ENABLED: {{ .Values.data.xCollaborationEnabled | quote }}
+  INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
+  EDS_ENABLED: {{ .Values.data.edsEnabled | quote }}
+  POLICY_SERVICE_ENABLED: {{ .Values.data.policyServiceEnabled | quote }}
+  AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
