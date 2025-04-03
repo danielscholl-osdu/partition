@@ -37,7 +37,7 @@ Pre-requisites
 * Lombok 1.18 or later
 * [Maven 3.8.0+](https://maven.apache.org/download.cgi)
 
-##***REMOVED*** Service Configuration
+### Google Cloud Service Configuration
 
 [Google Cloud service configuration](docs/gc/README.md)
 
@@ -131,7 +131,7 @@ $ (cd testing/partition-test-core/ && mvn clean install)
 This section describes how to run cloud OSDU E2E tests.
 
 
-##***REMOVED*** test configuration
+### Google Cloud test configuration
 
 [Google Cloud service configuration](docs/gc/README.md)
 
