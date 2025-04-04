@@ -114,6 +114,14 @@ A liveness check can also be performed at `http://localhost:8080/api/partition/v
 
 Jet Brains - the authors of Intellij IDEA, have written an [excellent guide](https://www.jetbrains.com/help/idea/debugging-your-first-java-application.html) on how to debug java programs.
 
+## Notes
+
+### System Partition
+
+The Azure implementation of OSDU has a special partition called the system partition. This partition allows entitlements to be used to provide access to system artifacts, initially system schemas. This partition has no partition-specific infrastructure.
+
+The partition name "system" is reserved for the system partition and should NOT be used for a regular partition.
+
 ## License
 Copyright 2017-2020, Schlumberger
 
