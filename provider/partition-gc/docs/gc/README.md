@@ -51,7 +51,7 @@ Execute following command to build code and run all the integration tests:
 $ (cd testing/partition-test-gc/ && mvn clean test)
 ```
 
-#***REMOVED*** service account configuration
+## Google Cloud service account configuration
 
 TBD
 
