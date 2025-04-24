@@ -14,15 +14,20 @@
 
 package org.opengroup.osdu.partition.provider.azure.di;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.policy.FixedDelayOptions;
 import com.azure.core.http.policy.RetryOptions;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import lombok.Setter;
 import org.apache.http.HttpStatus;
+import org.opengroup.osdu.azure.di.PodIdentityConfiguration;
+import org.opengroup.osdu.azure.di.WorkloadIdentityConfiguration;
 import org.opengroup.osdu.common.Validators;
 import org.opengroup.osdu.core.common.model.http.AppException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,30 +45,44 @@ public class TableStorageBootstrapConfig {
     private int retryDeltaBackoffMs;
     private int retryMaxAttempts;
 
+    @Autowired
+    private PodIdentityConfiguration podIdentityConfiguration;
+
+    @Autowired
+    private WorkloadIdentityConfiguration workloadIdentityConfiguration;
+
     private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
 
     @Bean
     @Lazy
     public TableServiceClient getTableServiceClient(
             final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName,
-            final @Named("TABLE_STORAGE_ACCOUNT_KEY") String storageAccountKey) {
+            final @Named("TABLE_STORAGE_ACCOUNT_KEY") String storageAccountKey,
+            final @Named(value = "TABLE_STORAGE_ACCOUNT_ENDPOINT") String storageAccountEndpoint) {
         try {
-            Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
-            Validators.checkNotNullAndNotEmpty(storageAccountKey, "storageAccountKey");
-
-            final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
-
-            //There was no substitute function available for setting the maximum execution time as in the previous
-            //version after my research, leaving that part for now. We would still like to know the replaceable code for below line:
-            //cloudTableClient.getDefaultRequestOptions().setMaximumExecutionTimeInMs(maximumExecutionTimeMs);
-            com.azure.core.http.policy.FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
+            // Set up retry options first for all authentication methods
+            FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
             RetryOptions retryOptions = new RetryOptions(fixedDelayOptions);
-            TableServiceClient serviceClient = new TableServiceClientBuilder()
-                    .connectionString(storageConnectionString)
-                    .retryOptions(retryOptions)
-                    .buildClient();
+            
+            TableServiceClientBuilder builder = new TableServiceClientBuilder().retryOptions(retryOptions);
+            
+            if (Boolean.TRUE.equals(podIdentityConfiguration.getIsEnabled()) &&
+                Boolean.TRUE.equals(workloadIdentityConfiguration.getIsEnabled())) {
+                // Use managed identity authentication with DefaultAzureCredential  
+                Validators.checkNotNullAndNotEmpty(storageAccountEndpoint, "storageAccountEndpoint");
+                
+                TokenCredential credential = new DefaultAzureCredentialBuilder().build();
+                builder.endpoint(storageAccountEndpoint).credential(credential);  
+            } else {
+                // Use connection string-based authentication (original method)
+                Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
+                Validators.checkNotNullAndNotEmpty(storageAccountKey, "storageAccountKey");
 
-            return serviceClient;
+                final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
+                builder.connectionString(storageConnectionString);
+            }
+
+            return builder.buildClient();
         }
         catch (Exception e){
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
