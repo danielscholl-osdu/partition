@@ -23,11 +23,8 @@ import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import lombok.Setter;
 import org.apache.http.HttpStatus;
-import org.opengroup.osdu.azure.di.PodIdentityConfiguration;
-import org.opengroup.osdu.azure.di.WorkloadIdentityConfiguration;
 import org.opengroup.osdu.common.Validators;
 import org.opengroup.osdu.core.common.model.http.AppException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,50 +38,34 @@ import java.time.Duration;
 @Setter
 public class TableStorageBootstrapConfig {
 
-    private int maximumExecutionTimeMs;
     private int retryDeltaBackoffMs;
     private int retryMaxAttempts;
-
-    @Autowired
-    private PodIdentityConfiguration podIdentityConfiguration;
-
-    @Autowired
-    private WorkloadIdentityConfiguration workloadIdentityConfiguration;
-
-    private final static String CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net";
 
     @Bean
     @Lazy
     public TableServiceClient getTableServiceClient(
-            final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName,
-            final @Named("TABLE_STORAGE_ACCOUNT_KEY") String storageAccountKey,
-            final @Named(value = "TABLE_STORAGE_ACCOUNT_ENDPOINT") String storageAccountEndpoint) {
+        final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName) {
         try {
-            // Set up retry options first for all authentication methods
+            // Construct storageAccountEndpoint from storageAccountName
+            Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
+            String storageAccountEndpoint = String.format("https://%s.table.core.windows.net/", storageAccountName);
+
+            // Set up retry options
             FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
             RetryOptions retryOptions = new RetryOptions(fixedDelayOptions);
-            
-            TableServiceClientBuilder builder = new TableServiceClientBuilder().retryOptions(retryOptions);
-            
-            if (Boolean.TRUE.equals(podIdentityConfiguration.getIsEnabled()) &&
-                Boolean.TRUE.equals(workloadIdentityConfiguration.getIsEnabled())) {
-                // Use managed identity authentication with DefaultAzureCredential  
-                Validators.checkNotNullAndNotEmpty(storageAccountEndpoint, "storageAccountEndpoint");
-                
-                TokenCredential credential = new DefaultAzureCredentialBuilder().build();
-                builder.endpoint(storageAccountEndpoint).credential(credential);  
-            } else {
-                // Use connection string-based authentication (original method)
-                Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
-                Validators.checkNotNullAndNotEmpty(storageAccountKey, "storageAccountKey");
 
-                final String storageConnectionString = String.format(CONNECTION_STRING, storageAccountName, storageAccountKey);
-                builder.connectionString(storageConnectionString);
-            }
+            // Use managed identity for authentication
+            TokenCredential managedIdentityCredential = new DefaultAzureCredentialBuilder().build();
 
-            return builder.buildClient();
+            TableServiceClient serviceClient = new TableServiceClientBuilder()
+                    .endpoint(storageAccountEndpoint)
+                    .credential(managedIdentityCredential)
+                    .retryOptions(retryOptions)
+                    .buildClient();
+
+            return serviceClient;
         }
-        catch (Exception e){
+        catch (Exception e) {
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
         }
     }
@@ -108,9 +89,8 @@ public class TableStorageBootstrapConfig {
             }
             return tableClient;
         }
-        catch (Exception e){
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error creating a Table Client for table: %s", tblConfiguration), e.getMessage(), e);
+        catch (Exception e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error creating a Table Client for table: %s", tblConfiguration.getCloudTableName()), e.getMessage(), e);
         }
-
     }
 }
