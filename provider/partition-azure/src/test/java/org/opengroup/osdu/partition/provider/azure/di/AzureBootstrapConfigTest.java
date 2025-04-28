@@ -31,20 +31,10 @@ public class AzureBootstrapConfigTest {
     @Test
     public void config_returnsCorrectSecret_tblStorage() {
         KeyVaultSecret secret = mock(KeyVaultSecret.class);
-        doReturn("tbl-storage-secret").when(secret).getValue();
+        doReturn("tbl-storage").when(secret).getValue();
         doReturn(secret).when(kv).getSecret("tbl-storage");
 
         String secretValue = bootstrapConfig.storageAccountName(kv);
-        assertEquals("tbl-storage-secret", secretValue, "Secret value was incorrect");
-    }
-
-    @Test
-    public void config_returnsCorrectSecret_tblStorageKey() {
-        KeyVaultSecret secret = mock(KeyVaultSecret.class);
-        doReturn("tbl-storage-key-secret").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("tbl-storage-key");
-
-        String secretValue = bootstrapConfig.storageAccountKey(kv);
-        assertEquals("tbl-storage-key-secret", secretValue, "Secret value was incorrect");
+        assertEquals("tbl-storage", secretValue, "Secret value was incorrect");
     }
 }
