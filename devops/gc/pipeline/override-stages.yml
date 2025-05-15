@@ -152,7 +152,6 @@ gc-preship-deploy:
   needs: ["gc-dev2-verified-deploy", "gc-dev2-test"]
   variables:
     GC_HELM_SETS: >-
-      --set global.dataPartitionId=m19
       --set data.edsEnabled=true
       --set data.databaseId=\(default\)
       --set data.elasticHttps=false
