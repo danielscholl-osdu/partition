@@ -21,7 +21,6 @@ variables:
   IBM_HELM_DEPLOY_PATH: devops/ibm/ibm-partition-deploy
   ACCEPTANCE_TEST_DIR: "partition-acceptance-test"
 
-
 include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "standard-setup.yml"
@@ -87,21 +86,3 @@ download_plugins:
   rules:
     - if: "$PROTECTED == '1'"
       when: on_success
-
-stages:
-  - review
-  - build
-  - csp-build
-  - coverage
-  - containerize
-  - scan
-  - deploy
-  - bootstrap
-  - integration
-  - acceptance
-  - cleanup
-  - verified-deploy
-  - performance-testing
-  - publish
-  - deploy_preship
-
