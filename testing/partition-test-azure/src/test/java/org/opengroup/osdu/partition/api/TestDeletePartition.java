@@ -73,7 +73,7 @@ public class TestDeletePartition extends DeletePartitionTest {
     private CloseableHttpResponse deletePartition(String partitionId) throws Exception {
         DeletePartitionDescriptor deletePartitionDes = new DeletePartitionDescriptor();
         deletePartitionDes.setPartitionId(partitionId);
-        CloseableHttpResponse response = deletePartitionDes.run(this.getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse response = deletePartitionDes.run(partitionId, this.testUtils.getAccessToken());
         return response;
     }
 
@@ -86,7 +86,7 @@ public class TestDeletePartition extends DeletePartitionTest {
 
         this.descriptor = createPartition;
 
-        CloseableHttpResponse createResponse = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+        CloseableHttpResponse createResponse = this.descriptor.run(partitionId, this.testUtils.getAccessToken());
 
 
         this.descriptor = oldDescriptor;
