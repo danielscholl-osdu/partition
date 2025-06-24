@@ -1,91 +1,59 @@
-# Fork Management Template
+# Introduction
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub Issues](https://img.shields.io/github/issues/danielscholl-osdu/osdu-fork-template)](https://github.com/danielscholl-osdu/osdu-fork-template/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/danielscholl-osdu/osdu-fork-template/pulls)
+The Partition service is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not. It is a Maven multi-module project with each cloud implementation placed in its submodule.
 
+## Community Implementation
+It is containing an Open-Source version with os-osm Driver containing the postgres db for consumption. As of now the code is not having any authentication for core-plus as it is not having the infra for authentication.
+So, currently it's only enough to run and consume the service locally, for development and understanding purpose.
 
-#### AI-Driven Development
+One could either spin up a postgres docker container locally, and use along with local partition service code. Or else, fetch the container image for postgres service and Partition service both and then use them. More details [here](./README.md#running-locally---partition-core-plus) 
 
-[![Claude Ready](https://img.shields.io/badge/Claude%20Code-Ready-orange?logo=anthropic)](https://github.com/danielscholl/pr-generator-agent/blob/main/CLAUDE.md)
-[![Copilot-Ready](https://img.shields.io/badge/Copilot%20Agent-Ready-8A2BE2?logo=github)](https://github.com/danielscholl-osdu/osdu-fork-template/blob/main/.github/copilot-instructions.md)
-[![Template CI](https://img.shields.io/badge/Template%20CI-Active-green?logo=github)](https://github.com/danielscholl-osdu/osdu-fork-template/actions)
+## Running Locally - AWS
 
+Instructions for running the AWS implementation locally can be found [here](./provider/partition-aws/README.md)
 
-- 🤖 **Built with AI** - Developed and maintained using [Claude Code](CLAUDE.md) and [GitHub Copilot](.github/copilot-instructions.md)
-- 📋 **AI Task Assignment** - Issues assigned to `copilot` or comments to `claude` invoke agents
-- 📚 **AI-Friendly Documentation** - Comprehensive [guides](CONTRIBUTING.md) for AI agents
-- 🔄 **Automated Workflows** - GitHub Actions with AI-enhanced PR descriptions and conflict resolution
-- 🎯 **AI-First Architecture** - Designed with clear [principals](AI_PRINCIPLES.md) for AI understanding and modification
+## Running Locally - Azure
 
-## What is Fork Management Template?
+Instructions for running the Azure implementation locally can be found [here](./provider/partition-azure/README.md)
 
-This template automates the complex task of maintaining long-lived forks of upstream repositories. It's designed for teams who need to:
+## Running Locally - Google Cloud
 
-<div align="center">
+Instructions for running the Google Cloud implementation locally can be found [here](./provider/partition-gc/README.md)
 
+## Running Locally - IBM
 
-| Preserve Local Changes | Smart Conflict Resolution | Release Versions | AI Development |
-|:------------------------:|:---------------------------:|:------------------------:|:-----------------------:|
-| Keep custom modifications safe while syncing upstream | AI-powered detection and resolution of merge conflicts | Align fork versions with upstream releases | Patterns and docs for AI agent integration |
+## Running Locally - Partition Core Plus
+Instructions for running the Partion Core Plus can be found [here](./partition-core-plus/README.md)
 
+## Running Integration Tests
 
-</div>
+Instructions for running the integration tests can be found [here](./testing/README.md)
 
-**Perfect for**: scenarios requiring controlled upstream synchronization with forked changes.
+### Open API 3.0 - Swagger
+- Swagger UI : https://host/context-path/swagger (will redirect to https://host/context-path/swagger-ui/index.html)
+- api-docs (JSON) : https://host/context-path/api-docs
+- api-docs (YAML) : https://host/context-path/api-docs.yaml
 
-## Core Architecture
+All the Swagger and OpenAPI related common properties are managed here [swagger.properties](./partition-core/src/main/resources/swagger.properties)
 
-The template implements a **three-branch strategy** that creates controlled integration checkpoints:
+#### Server Url(full path vs relative path) configuration
+- `api.server.fullUrl.enabled=true` It will generate full server url in the OpenAPI swagger
+- `api.server.fullUrl.enabled=false` It will generate only the contextPath only
+- default value is false (Currently only in Azure it is enabled)
+[Reference]:(https://springdoc.org/faq.html#_how_is_server_url_generated) 
 
-```mermaid
-graph LR
-   fork_upstream["fork_upstream<br/>(mirror)"] --> fork_integration["fork_integration<br/>(conflicts)"]
-   fork_integration --> main["main<br/>(stable)"]
-   
-   style fork_upstream fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-   style fork_integration fill:#fff3e0,stroke:#e65100,stroke-width:2px
-   style main fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
-```
+## License
 
-This flow ensures upstream changes are validated before reaching your stable branch, with AI-enhanced conflict analysis at each stage.
+Copyright 2017-2020, Schlumberger
 
-## Key Features
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-| Feature                | Description                                                                                   |
-|------------------------|-----------------------------------------------------------------------------------------------|
-| Automated Daily Sync   | Pulls upstream changes with conflict detection                                                |
-| AI-Enhanced Analysis   | Intelligent PR descriptions and conflict categorization                                       |
-| Branch Protection      | Prevents accidental damage to stable branches                                                 |
-| Release Correlation    | Tracks your versions against upstream releases                                                |
-| Multi-AI Ready         | Optimized for Claude Code and GitHub Copilot collaboration                                    |
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-## Prerequisites
-
-Before starting, ensure you have:
-- GitHub account with repository creation permissions
-- (Optional) Personal Access Token (PAT) for full automation:
-  - Create a secret named `GH_TOKEN` in your repository
-  - Required scopes: `repo`, `workflow`, `admin:repo_hook`
-  - Without PAT: Manual configuration of branch protection and secrets required
-
-## Quick Start
-
-### 1. Create New Repository
-1. Click the "Use this template" button above
-2. Choose a name and owner for your new repository
-3. Create repository
-
-### 2. Initialize Repository
-1. Go to Actions → Select "Initialize Fork" → Click "Run workflow"
-2. Follow the setup instructions in the auto-created issue
-3. Configure your upstream repository and sync settings
-
-## How It Works
-
-1. **Daily Automation**: Checks upstream for changes and creates sync PRs
-2. **Conflict Analysis**: AI categorizes conflicts and suggests resolution approaches  
-3. **Staged Integration**: Changes flow through validation checkpoints
-4. **Release Tracking**: Maintains correlation between your versions and upstream
-
-**See detailed architecture diagrams and workflows**: [Product Architecture](doc/product-architecture.md)
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
