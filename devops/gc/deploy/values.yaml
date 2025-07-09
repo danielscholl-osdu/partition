@@ -4,7 +4,7 @@ global:
   dataPartitionId: ""
   logLevel: "ERROR"
   tier: ""
-  autoscaling: true
+  autoscalingMode: "cpu"
 
 data:
   # configmaps
@@ -26,6 +26,12 @@ data:
   imagePullPolicy: "IfNotPresent"
   image: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-partition:latest"
   bootstrapImage: "community.opengroup.org:5555/osdu/platform/system/partition/osdu-gcp-bootstrap-partition:latest"
+  affinityLabelsSpot:
+    cloud.google.com/gke-provisioning:
+      - spot
+  affinityLabelsStandard:
+    cloud.google.com/gke-provisioning:
+      - standard
   # featureFlags
   indexerAugmenterEnabled: "true"
   policyServiceEnabled: "true"
@@ -39,7 +45,6 @@ data:
 conf:
   appName: "partition"
   configmap: "partition-config"
-  replicas: 2
 
 istio:
   proxyCPU: "5m"
@@ -52,16 +57,25 @@ istio:
   partitionEditors: []
 
 hpa:
-  minReplicas: 3
-  maxReplicas: 15
-  targetType: "AverageValue"
-  targetValue: 400
-  behaviorScaleUpStabilizationWindowSeconds: 10
-  behaviorScaleUpPoliciesValue: 50
-  behaviorScaleUpPoliciesPeriodSeconds: 15
-  behaviorScaleDownStabilizationWindowSeconds: 60
-  behaviorScaleDownPoliciesValue: 25
-  behaviorScaleDownPoliciesPeriodSeconds: 60
+  minReplicas: 1
+  maxReplicas: 6
+  cpu:
+    utilization: 1000
+    scaleUpStabilizationWindowSeconds: 30
+    scaleUpValue: 200
+    scaleUpPeriod: 15
+    scaleDownStabilizationWindowSeconds: 150
+    scaleDownValue: 100
+    scaleDownPeriod: 15
+  requests:
+    targetType: "AverageValue"
+    targetValue: 40
+    scaleUpStabilizationWindowSeconds: 10
+    scaleUpValue: 50
+    scaleUpPeriod: 15
+    scaleDownStabilizationWindowSeconds: 60
+    scaleDownValue: 25
+    scaleDownPeriod: 60
 
 limits:
   maxTokens: 300
