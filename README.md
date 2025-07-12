@@ -1,63 +1,59 @@
-# OSDU SPI Fork Management Template
+# Introduction
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub Issues](https://img.shields.io/github/issues/danielscholl-osdu/osdu-fork-template)](https://github.com/danielscholl-osdu/osdu-fork-template/issues)
-[![Documentation](https://img.shields.io/badge/Documentation-Live-blue?logo=gitbook)](https://danielscholl-osdu.github.io/osdu-fork-template/)
+The Partition service is responsible for creating and retrieving partition specific properties on behalf of other services whether they are secret values or not. It is a Maven multi-module project with each cloud implementation placed in its submodule.
 
-> **Automated management for long-lived forks with AI-enhanced workflows**
+## Community Implementation
+It is containing an Open-Source version with os-osm Driver containing the postgres db for consumption. As of now the code is not having any authentication for core-plus as it is not having the infra for authentication.
+So, currently it's only enough to run and consume the service locally, for development and understanding purpose.
 
-## What This Template Provides
+One could either spin up a postgres docker container locally, and use along with local partition service code. Or else, fetch the container image for postgres service and Partition service both and then use them. More details [here](./README.md#running-locally---partition-core-plus) 
 
-- 🔄 Automated upstream synchronization with conflict detection
-- 🤖 AI-enhanced PR descriptions and conflict guidance
-- 🛡️ Three-branch safety strategy
-- 📈 Release correlation tracking
-- 🎯 Zero-maintenance operations
+## Running Locally - AWS
 
-**Perfect for**: OSDU teams needing Azure SPI customizations while staying current with upstream.
+Instructions for running the AWS implementation locally can be found [here](./provider/partition-aws/README.md)
 
-## Quick Start
+## Running Locally - Azure
 
-### 1. Create Your Fork Repository
+Instructions for running the Azure implementation locally can be found [here](./provider/partition-azure/README.md)
 
-Click **"Use this template"** → Choose repository name → **Create repository**
+## Running Locally - Google Cloud
 
-### 2. Initialize Your Fork
+Instructions for running the Google Cloud implementation locally can be found [here](./provider/partition-gc/README.md)
 
-1. Go to **Actions** → **"Repository Initialization"** → **"Run workflow"**
-2. Follow the setup instructions in the automatically created issue
-3. Provide your upstream repository URL when prompted
-4. Wait 2-5 minutes for complete setup
+## Running Locally - IBM
 
-### 3. Configure Secrets (Optional but Recommended)
+## Running Locally - Partition Core Plus
+Instructions for running the Partion Core Plus can be found [here](./partition-core-plus/README.md)
 
-For full automation, add these secrets in **Settings** → **Secrets and variables** → **Actions**:
+## Running Integration Tests
 
-| Secret | Purpose | Required |
-|--------|---------|----------|
-| `GH_TOKEN` | Repository automation | For branch protection & full automation |
-| `ANTHROPIC_API_KEY` | AI-enhanced PR descriptions | Optional but recommended |
+Instructions for running the integration tests can be found [here](./testing/README.md)
 
-### 4. Start Using
+### Open API 3.0 - Swagger
+- Swagger UI : https://host/context-path/swagger (will redirect to https://host/context-path/swagger-ui/index.html)
+- api-docs (JSON) : https://host/context-path/api-docs
+- api-docs (YAML) : https://host/context-path/api-docs.yaml
 
-- **Daily sync** happens automatically at midnight UTC
-- **Manual sync** available in Actions → "Upstream Synchronization"  
-- **Conflicts** create detailed issues with resolution guidance
-- **Releases** are automatically versioned and correlated with upstream
+All the Swagger and OpenAPI related common properties are managed here [swagger.properties](./partition-core/src/main/resources/swagger.properties)
 
-## Support and Contributing
-
-📚 **[Complete Documentation](https://danielscholl-osdu.github.io/osdu-fork-template/)** - Comprehensive guides covering system concepts, architecture, workflows, and AI integration.
-
-- **Issues**: [Report bugs or request features](https://github.com/danielscholl-osdu/osdu-fork-template/issues)
-- **Discussions**: [Community support and questions](https://github.com/danielscholl-osdu/osdu-fork-template/discussions)
-- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines
-- **Security**: Report security issues privately via [GitHub security advisories](https://github.com/danielscholl-osdu/osdu-fork-template/security/advisories)
+#### Server Url(full path vs relative path) configuration
+- `api.server.fullUrl.enabled=true` It will generate full server url in the OpenAPI swagger
+- `api.server.fullUrl.enabled=false` It will generate only the contextPath only
+- default value is false (Currently only in Azure it is enabled)
+[Reference]:(https://springdoc.org/faq.html#_how_is_server_url_generated) 
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+Copyright 2017-2020, Schlumberger
 
----
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-**Need help?** Check the [documentation](https://danielscholl-osdu.github.io/osdu-fork-template/) or [open an issue](https://github.com/danielscholl-osdu/osdu-fork-template/issues/new).
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
