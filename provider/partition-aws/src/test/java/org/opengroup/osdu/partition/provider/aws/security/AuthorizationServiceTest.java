@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.aws.v2.entitlements.Authorizer;
 import org.opengroup.osdu.core.aws.v2.entitlements.RequestKeys;
 import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
 import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
@@ -47,9 +46,6 @@ public class AuthorizationServiceTest {
     @Mock
     private DpsHeaders headers;
 
-    @Mock
-    Authorizer authorizer;
-
     private final String spuEmail = "spu@email.com";
 
     @InjectMocks
@@ -65,20 +61,17 @@ public class AuthorizationServiceTest {
 
         validHeaders.put(RequestKeys.AUTHORIZATION_HEADER_KEY, spuEmail);
         validLowerCaseHeaders.put(RequestKeys.AUTHORIZATION_HEADER_KEY.toLowerCase(), spuEmail);
-        authorizationService.authorizer = authorizer;
         authorizationService.spuEmail = spuEmail;
     }
 
     @Test
     public void should_return_when_initCalled() throws K8sParameterNotFoundException {
 
-        try (MockedConstruction<Authorizer> authorizer = Mockito.mockConstruction(Authorizer.class)) {
-            try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito.mockConstruction(K8sLocalParameterProvider.class,
-                   (mock, context) -> { when(mock.getParameterAsString(anyString())).thenReturn(spuEmail); })) {
-                authorizationService.init();
+        try (MockedConstruction<K8sLocalParameterProvider> k8sParameterProvider = Mockito.mockConstruction(K8sLocalParameterProvider.class,
+                (mock, context) -> { when(mock.getParameterAsString(anyString())).thenReturn(spuEmail); })) {
+            authorizationService.init();
 
-                assertEquals(spuEmail, authorizationService.spuEmail);
-            }
+            assertEquals(spuEmail, authorizationService.spuEmail);
         }
     }
 

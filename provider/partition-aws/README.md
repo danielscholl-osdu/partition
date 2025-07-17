@@ -32,7 +32,7 @@ The following environment variables need to be defined to run the service locall
 | `MONGODB_USERNAME` | ex `admin` | MongoDB username used as part of the connection string | yes | - |
 | `MONGODB_PASSWORD` | - | MongoDB password used as part of the connection string | yes | - |
 | `MONGODB_USE_SRV_ENDPOINT` | `false` or `true` | To run the service locally, set this to false | no | - |
-| `KEY_ARN` | ex `arn:aws:kms:us-east-1:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab` | A symmetric AWS KMS encryption key ARN with the appropriate key user policy that allows encrypt/decrypt access to the IAM role configured in the following step | yes | https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html |
+| `KEY_ARN` | ex `arn:aws:kms:{AWS_REGION}:{AWS_ACCOUNT_ID}:key/1234abcd-12ab-34cd-56ef-1234567890ab` | A symmetric AWS KMS encryption key ARN with the appropriate key user policy that allows encrypt/decrypt access to the IAM role configured in the following step | yes | https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html |
 
 ### MongoDB Setup Locally
 * Navigate to where the mongo sever is installed and start the server using:
