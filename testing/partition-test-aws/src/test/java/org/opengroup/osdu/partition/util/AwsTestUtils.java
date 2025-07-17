@@ -39,7 +39,7 @@ public class AwsTestUtils extends TestUtils {
     ServicePrincipal sp;
     private String awsOauthCustomScope;
 
-    private final static String COGNITO_NAME = "COGNITO_NAME";
+    private final static String IDP_NAME = "IDP_NAME";
     private final static String REGION = "AWS_REGION";
 
 
@@ -54,15 +54,15 @@ public class AwsTestUtils extends TestUtils {
     public synchronized String getAccessToken() throws Exception {
         if(sptoken==null) {
             SecretsManager sm = new SecretsManager();
-            String cognitoName = System.getProperty(COGNITO_NAME, System.getenv(COGNITO_NAME));
+            String idpName = System.getProperty(IDP_NAME, System.getenv(IDP_NAME));
             String amazonRegion = System.getProperty(REGION, System.getenv(REGION));
 
-            String oauth_token_url = "/osdu/cognito/" + cognitoName + "/oauth/token-uri";
-            String oauth_custom_scope = "/osdu/cognito/" + cognitoName + "/oauth/custom-scope";
+            String oauth_token_url = "/osdu/idp/" + idpName + "/oauth/token-uri";
+            String oauth_custom_scope = "/osdu/idp/" + idpName + "/oauth/custom-scope";
 
-            String client_credentials_client_id = "/osdu/cognito/" + cognitoName + "/client/client-credentials/id";
+            String client_credentials_client_id = "/osdu/idp/" + idpName + "/client/client-credentials/id";
             String client_secret_key = "client_credentials_client_secret";
-            String client_secret_secretName = "/osdu/cognito/" + cognitoName + "/client-credentials-secret";
+            String client_secret_secretName = "/osdu/idp/" + idpName + "/client-credentials-secret";
 
             amazonAWSCredentials = IAMConfig.amazonAWSCredentials();
             ssmManager = AWSSimpleSystemsManagementClientBuilder.standard()

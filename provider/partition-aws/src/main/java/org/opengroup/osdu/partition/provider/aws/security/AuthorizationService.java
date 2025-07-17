@@ -18,7 +18,6 @@ package org.opengroup.osdu.partition.provider.aws.security;
 
 import java.util.Map;
 
-import org.opengroup.osdu.core.aws.v2.entitlements.Authorizer;
 import org.opengroup.osdu.core.aws.v2.entitlements.RequestKeys;
 import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
 import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
@@ -37,7 +36,6 @@ public class AuthorizationService implements IAuthorizationService {
     private final DpsHeaders headers;
 
     // Make these fields package-private for testing
-    Authorizer authorizer;
     String memberEmail = null;
     SSMUtil ssmUtil = null;
     String spuEmail = null;
@@ -48,7 +46,6 @@ public class AuthorizationService implements IAuthorizationService {
 
     @PostConstruct
     public void init() throws K8sParameterNotFoundException {
-        authorizer = new Authorizer();
         K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
         spuEmail = provider.getParameterAsString("service_principal_user");
     }
