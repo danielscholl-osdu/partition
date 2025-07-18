@@ -50,3 +50,9 @@ load-tests/*.pyc
 
 dist/
 devops/ibm/ibm-partition-config/values-donotcommit.yaml
+
+# AI files
+.claude/
+CLAUDE.md
+.mcp.json
+.github/copilot-instructions.md
