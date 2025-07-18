@@ -87,29 +87,6 @@ jobs:
           echo "- GITLAB_UPSTREAM_URL: ${{ vars.GITLAB_UPSTREAM_URL }}"
           echo "- GITLAB_TOKEN: configured"
 
-      - name: Setup GitLab MCP Server
-        if: contains(github.event.pull_request.labels.*.name, 'OSDU')
-        timeout-minutes: 5
-        run: |
-          # Install GitLab MCP server
-          npm install -g @zereight/gitlab-mcp
-          
-          # Create MCP configuration
-          mkdir -p .mcp
-          cat > .mcp/config.json << 'EOF'
-          {
-            "mcpServers": {
-              "GitLab communication server": {
-                "command": "npx",
-                "args": ["@zereight/gitlab-mcp"],
-                "env": {
-                  "GITLAB_PERSONAL_ACCESS_TOKEN": "${{ secrets.GITLAB_TOKEN }}",
-                  "GITLAB_READ_ONLY_MODE": "false"
-                }
-              }
-            }
-          }
-          EOF
 
       - name: Create GitLab MR
         if: steps.claude_auth.outputs.auth_method != 'none'
@@ -120,8 +97,35 @@ jobs:
           claude_code_oauth_token: ${{ env.CLAUDE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ env.CLAUDE_API_KEY }}
           
-          # Enable MCP server for GitLab operations
-          mcp_config_path: ".mcp/config.json"
+          # GitLab MCP server configuration
+          mcp_config: |
+            {
+              "mcpServers": {
+                "gitlab": {
+                  "command": "npx",
+                  "args": ["-y", "@zereight/gitlab-mcp"],
+                  "env": {
+                    "GITLAB_PERSONAL_ACCESS_TOKEN": "${{ secrets.GITLAB_TOKEN }}",
+                    "GITLAB_READ_ONLY_MODE": "false"
+                  }
+                }
+              }
+            }
+          
+          # Allow GitLab MCP tools for merge request creation
+          allowed_tools: |
+            mcp__gitlab__create_merge_request
+            mcp__gitlab__create_or_update_file
+            mcp__gitlab__get_file_contents
+            mcp__gitlab__create_branch
+            mcp__gitlab__get_project
+            mcp__gitlab__push_files
+            mcp__gitlab__create_note
+            mcp__gitlab__create_merge_request_note
+            Edit
+            Read
+            Bash
+            Task
 
           additional_permissions: |
             actions: read
@@ -140,17 +144,26 @@ jobs:
             
             TASK: Create a GitLab merge request that mirrors this GitHub PR
             
+            AVAILABLE GITLAB MCP TOOLS:
+            - mcp__gitlab__get_project (get project details)
+            - mcp__gitlab__create_branch (create new branch)
+            - mcp__gitlab__get_file_contents (read files)
+            - mcp__gitlab__create_or_update_file (update files)
+            - mcp__gitlab__push_files (push changes)
+            - mcp__gitlab__create_merge_request (create MR)
+            - mcp__gitlab__create_merge_request_note (add MR comments)
+            
             INSTRUCTIONS:
-            1. Use GitLab MCP tools to analyze the current GitHub PR changes and metadata
-            2. Create a new branch in the GitLab repository with name prefixed `ai-agent-`
-            3. Push the same file changes to the new branch
-            4. Create a GitLab MR with:
+            1. Get the GitLab project details using mcp__gitlab__get_project
+            2. Create a new branch with name prefixed `ai-agent-` using mcp__gitlab__create_branch
+            3. Read the changed files from this GitHub PR and push them to GitLab using mcp__gitlab__create_or_update_file
+            4. Create a GitLab MR using mcp__gitlab__create_merge_request with:
                - Same title as GitHub PR
                - Same description (adapted for GitLab format)
                - Label: `MR::Dependencies Upgrade`
             5. Comment on this GitHub PR with the GitLab MR URL
             
-            Use the GitLab MCP server tools available to you for all GitLab operations.
+            Use only the GitLab MCP server tools listed above for all GitLab operations.
             Do not log any authentication tokens or sensitive information.
 
           # Optional: Use sticky comments to make Claude reuse the same comment on subsequent pushes to the same PR
