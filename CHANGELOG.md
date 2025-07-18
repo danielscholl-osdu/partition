@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/danielscholl-osdu/partition/compare/v1.0.0...v1.0.1) (2025-07-18)
+
+
+### 🔨 Build System
+
+* **deps:** Update dependencies and fix deprecated JWT API usage ([9592a10](https://github.com/danielscholl-osdu/partition/commit/9592a107b655ca92ba55d61f6d0c84b1bb777218))
+
 ## 1.0.0 (2025-07-18)
 
 
