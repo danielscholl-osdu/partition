@@ -22,9 +22,8 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jwt.JWTClaimsSet;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.impl.DefaultClaims;
-import io.jsonwebtoken.impl.DefaultJws;
-import io.jsonwebtoken.impl.DefaultJwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,22 @@ public class AuthorizationServiceTest {
         map.put("email", email);
         map.put("appcode", appcode);
         map.put("iss", "sauth-preview.slb.com");
-        Jws<Claims> jws = new DefaultJws<>(new DefaultJwsHeader(map), new DefaultClaims(map), "sig");
+        
+        // Create a proper JWS token using the modern API
+        javax.crypto.SecretKey key = Keys.hmacShaKeyFor("dummy-secret-key-that-is-long-enough".getBytes());
+        
+        String token = Jwts.builder()
+            .claims(map)
+            .issuer("sauth-preview.slb.com")
+            .signWith(key)
+            .compact();
+        
+        // Parse it back to get a proper Jws<Claims> object
+        Jws<Claims> jws = Jwts.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token);
+        
         return new DummyAuthToken(jws);
     }
 
@@ -143,11 +157,11 @@ public class AuthorizationServiceTest {
         }
 
         public <T> T getClaim(String claim, Class<T> type) {
-            return jws.getBody().get(claim, type);
+            return jws.getPayload().get(claim, type);
         }
 
         public String getIssuer() {
-            return jws.getBody().getIssuer();
+            return jws.getPayload().getIssuer();
         }
     }
 }
