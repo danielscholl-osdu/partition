@@ -90,63 +90,8 @@ jobs:
           
           echo "GitLab configuration validated:"
           echo "- GITLAB_UPSTREAM_URL: ${{ vars.GITLAB_UPSTREAM_URL }}"
-          echo "- GITLAB_API_URL: ${{ vars.GITLAB_API_URL || 'https://gitlab.com/api/v4' }}"
           echo "- GITLAB_TOKEN: configured"
 
-      - name: Test GitLab MCP Server Installation  
-        run: |
-          echo "Testing GitLab MCP server installation..."
-          npx -y @zereight/mcp-gitlab --version || echo "GitLab MCP server installation test completed"
-          echo "Node.js version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-
-      - name: Debug GitLab API Configuration
-        run: |
-          echo "=== GitLab API Configuration Debug ==="
-          echo "GITLAB_API_URL: ${{ vars.GITLAB_API_URL || 'https://gitlab.com/api/v4' }}"
-          echo "GITLAB_UPSTREAM_URL: ${{ vars.GITLAB_UPSTREAM_URL }}"
-          echo "GITLAB_TOKEN: $(if [ -n "${{ secrets.GITLAB_TOKEN }}" ]; then echo "SET (${#GITLAB_TOKEN} chars)"; else echo "NOT SET"; fi)"
-          echo ""
-          echo "=== Testing GitLab API Connectivity ==="
-          
-          # Extract project path from GITLAB_UPSTREAM_URL
-          PROJECT_URL="${{ vars.GITLAB_UPSTREAM_URL }}"
-          if [[ "$PROJECT_URL" == *"community.opengroup.org"* ]]; then
-            API_BASE="https://community.opengroup.org/api/v4"
-            PROJECT_PATH=$(echo "$PROJECT_URL" | sed 's|https://community.opengroup.org/||' | sed 's|\.git$||')
-          else
-            API_BASE="${{ vars.GITLAB_API_URL || 'https://gitlab.com/api/v4' }}"
-            PROJECT_PATH=$(echo "$PROJECT_URL" | sed 's|https://[^/]*/||' | sed 's|\.git$||')
-          fi
-          
-          PROJECT_PATH_ENCODED=$(echo "$PROJECT_PATH" | sed 's|/|%2F|g')
-          
-          echo "Detected GitLab API base: $API_BASE"
-          echo "Detected project path: $PROJECT_PATH"
-          echo "URL-encoded project path: $PROJECT_PATH_ENCODED"
-          echo ""
-          
-          # Test API connectivity
-          echo "Testing API connectivity..."
-          curl -I "$API_BASE/version" 2>&1 || echo "API base unreachable"
-          echo ""
-          
-          # Test authentication
-          echo "Testing authentication..."
-          AUTH_RESPONSE=$(curl -s -w "HTTP_%{http_code}" -H "Authorization: Bearer ${{ secrets.GITLAB_TOKEN }}" "$API_BASE/user" 2>&1)
-          echo "Auth test response: $AUTH_RESPONSE"
-          echo ""
-          
-          # Test project access
-          echo "Testing project access..."
-          PROJECT_RESPONSE=$(curl -s -w "HTTP_%{http_code}" -H "Authorization: Bearer ${{ secrets.GITLAB_TOKEN }}" "$API_BASE/projects/$PROJECT_PATH_ENCODED" 2>&1)
-          echo "Project access response: $PROJECT_RESPONSE"
-          echo ""
-          
-          echo "=== MCP Server Expected Configuration ==="
-          echo "GITLAB_API_URL should be: $API_BASE"
-          echo "GITLAB_PERSONAL_ACCESS_TOKEN should be: [REDACTED]"
-          echo "Project ID for MCP: $PROJECT_PATH"
 
       - name: Create GitLab MR
         if: steps.claude_auth.outputs.auth_method != 'none'
