@@ -32,10 +32,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <oauth2-oidc-sdk.version>9.15</oauth2-oidc-sdk.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
     </properties>
 
     <dependencies>
@@ -44,25 +42,16 @@
             <artifactId>partition-test-core</artifactId>
             <version>0.29.0-SNAPSHOT</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.opengroup.osdu</groupId>-->
-<!--            <artifactId>apd-openid</artifactId>-->
-<!--            <version>0.29.0-SNAPSHOT</version>-->
-<!--        </dependency>-->
+        <!-- provider dependencies -->
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>9.15</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>${oauth2-oidc-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
+            <version>${slf4j-api.version}</version>
         </dependency>
     </dependencies>
 </project>
