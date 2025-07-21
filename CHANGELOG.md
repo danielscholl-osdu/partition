@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0](https://github.com/danielscholl-osdu/partition/compare/v1.0.1...v1.1.0) (2025-07-21)
+
+
+### ✨ Features
+
+* **gc-quarkus:** Implement Quarkus-based partition service with Helm deployment ([d27cb9f](https://github.com/danielscholl-osdu/partition/commit/d27cb9fea17da59ed5716b0100480c5a3fb6579e))
+* Implement  dependency management for partition testing and bump ([8a8ff95](https://github.com/danielscholl-osdu/partition/commit/8a8ff95bde4930a4d84b854adfaebb82d6844382))
+* Implement  dependency management for partition testing and bump ([4c2ac2d](https://github.com/danielscholl-osdu/partition/commit/4c2ac2d0e4c6958a559911aeb3d876c2b76b2728))
+
+
+### 🔧 Miscellaneous
+
+* Sync template updates ([4e44c68](https://github.com/danielscholl-osdu/partition/commit/4e44c688b282f62537e12b25cc952cdf8fa21759))
+* Sync template updates ([5c0915b](https://github.com/danielscholl-osdu/partition/commit/5c0915b480dc1abcb0cfb887564b7f7572713a11))
+
 ## [1.0.1](https://github.com/danielscholl-osdu/partition/compare/v1.0.0...v1.0.1) (2025-07-18)
 
 
