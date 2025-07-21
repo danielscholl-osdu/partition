@@ -66,6 +66,8 @@ include:
 
   - local: "devops/gc/pipeline/override-stages.yml"
 
+  - local: "devops/gc-quarkus/pipeline/override-stages.yml"
+
   - local: "devops/core-plus/pipeline/override-stages.yml"
 
   - local: "/publish.yml"

@@ -1,0 +1,46 @@
+#  Copyright 2025 Google LLC
+#  Copyright 2025 EPAM
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+{{- $databaseId := "" -}}
+{{- if eq .Values.data.databaseId "" }}
+  {{- fail "ERROR Add databaseId value" }}
+{{- else if eq .Values.data.databaseId "(default)" }}
+  {{- $databaseId = "" -}}
+{{- else }}
+  {{- $databaseId = .Values.data.databaseId -}}
+{{- end }}
+
+apiVersion: org.opengroup/v1beta1
+kind: Partition
+metadata:
+  name: {{ .Values.global.dataPartitionId | quote }}
+spec:
+  projectId: {{ .Values.data.projectId | quote }}
+  tenantServiceAccount: {{ .Values.data.tenantServiceAccount | quote}}
+  bucketsPrefix: {{ .Values.data.projectId | quote }}
+  dataBootstrapFlag: {{ .Values.data.bootstrapFlag | quote }}
+  dataPartition: {{ .Values.global.dataPartitionId | quote }}
+  databaseId: {{ $databaseId }}
+  domain: {{ .Values.global.domain | quote }}
+  mode: {{ .Values.global.tier | default "DEV" | lower | quote }}
+  asIngestedCoordinatesEnabled: {{ .Values.data.asIngestedCoordinatesEnabled }}
+  autoCompleteEnabled: {{ .Values.data.autoCompleteEnabled }}
+  bagOfWordsEnabled: {{ .Values.data.bagOfWordsEnabled }}
+  collaborationEnabled: {{ .Values.data.xCollaborationEnabled }}
+  edsEnabled: {{ .Values.data.edsEnabled }}
+  elasticHttps: {{ .Values.data.elasticHttps }}
+  indexerAugmenterEnabled: {{ .Values.data.indexerAugmenterEnabled }}
+  keyWordLowerEnabled: {{ .Values.data.keyWordLowerEnabled }}
+  policyServiceEnabled: {{ .Values.data.policyServiceEnabled }}

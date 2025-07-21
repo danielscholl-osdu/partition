@@ -1,0 +1,16 @@
+FROM azul/zulu-openjdk:17
+WORKDIR /app
+ARG PROVIDER_NAME
+ENV PROVIDER_NAME $PROVIDER_NAME
+
+# Copy the quarkus-app dir to the production image from the builder stage.
+COPY provider/partition-${PROVIDER_NAME}/target/quarkus-app/ /app/
+
+# Add a non-root user
+RUN groupadd -g 10001 -r nonroot \
+  && useradd -g 10001 -r -u 10001 nonroot
+# Run as non-root user
+USER 10001:10001
+# Run the web service on container startup.
+CMD ["java", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", \
+  "-jar", "/app/quarkus-run.jar"]
