@@ -30,48 +30,41 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<java.version>17</java.version>
-		<maven.compiler.target>17</maven.compiler.target>
-		<maven.compiler.source>17</maven.compiler.source>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jersey-client.version>1.19.4</jersey-client.version>
+		<junit.version>4.13.2</junit.version>
+		<gson.version>2.13.1</gson.version>
+		<spring-web.version>6.2.9</spring-web.version>
+		<httpclient5.version>5.2.3</httpclient5.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.24</version>
-			<scope>provided</scope>
-		</dependency>
-
+		<!-- core dependencies -->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>1.19.4</version>
+			<version>${jersey-client.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<version>${junit.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.10.1</version>
+			<version>${gson.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>5.2.7.RELEASE</version>
+			<version>${spring-web.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
-			<version>5.2.1</version>
+			<version>${httpclient5.version}</version>
+			<!-- NOTE: Cannot upgrade to 5.5 - breaking change requires Content-Type header for OPTIONS requests
+			     Error: "OPTIONS request must have Content-Type header" breaks 5 integration tests -->
 		</dependency>
 
 
