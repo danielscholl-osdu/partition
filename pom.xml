@@ -29,7 +29,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- OSDU Versions-->
-    <os-core-common.version>3.5.2</os-core-common.version>
+    <os-core-common.version>trusted-ai-agent-security-deps-20250721-232440-SNAPSHOT</os-core-common.version>
 
     <!-- Spring Versions-->
     <spring-boot.version>3.5.3</spring-boot.version>
@@ -76,36 +76,7 @@
         <scope>import</scope>
       </dependency>
       <!-- Core CommonBOM Override Section Start -->
-      <dependency>
-        <groupId>com.nimbusds</groupId>
-        <artifactId>nimbus-jose-jwt</artifactId>
-        <version>9.37.2</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>3.25.5</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.18.0</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>1.5.13</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.5.13</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomcat.embed</groupId>
-        <artifactId>tomcat-embed-core</artifactId>
-        <version>10.1.42</version>
-      </dependency>
+
       <!-- Core CommonBOM Override Section End -->
       <dependency>
         <groupId>org.opengroup.osdu</groupId>
