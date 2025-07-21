@@ -102,7 +102,12 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>4.1.119.Final</version>
+            <version>4.1.122.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.1.122.Final</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
