@@ -30,46 +30,21 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <os-core-lib-aws.version>7.0.0</os-core-lib-aws.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>1.19.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-        </dependency>
-
-
         <dependency>
             <groupId>org.opengroup.osdu.partition</groupId>
             <artifactId>partition-test-core</artifactId>
             <version>0.29.0-SNAPSHOT</version>
         </dependency>
-
+        <!-- provider dependencies -->
         <dependency>
             <groupId>org.opengroup.osdu.core.aws</groupId>
             <artifactId>os-core-lib-aws</artifactId>
-            <version>7.0.0</version>
+            <version>${os-core-lib-aws.version}</version>
         </dependency>
-        
-        
     </dependencies>
 
 </project>

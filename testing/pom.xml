@@ -22,6 +22,28 @@
 	<description>Root partition test project</description>
 	<packaging>pom</packaging>
 
+	<properties>
+		<java.version>17</java.version>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- Only truly shared dependency versions -->
+		<lombok.version>1.18.38</lombok.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Only dependencies used by ALL test modules -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -38,6 +60,15 @@
 		<module>partition-test-baremetal</module>
 		<module>partition-test-core-plus</module>
   </modules>
+
+	<dependencies>
+		<!-- Dependencies that ALL modules need at compile time -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
 	<repositories>
 		<repository>
