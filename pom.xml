@@ -29,11 +29,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- OSDU Versions-->
-    <os-core-common.version>3.5.2</os-core-common.version>
+    <os-core-common.version>trusted-ai-agent-security-deps-20250721-232440-SNAPSHOT</os-core-common.version>
 
     <!-- Spring Versions-->
-    <spring-boot.version>3.3.13</spring-boot.version>
-    <spring-security.version>6.5.1</spring-security.version>
+    <spring-boot.version>3.5.3</spring-boot.version>
+    <spring-security.version>6.5.2</spring-security.version>
     <spring-framework.version>6.2.9</spring-framework.version>
 
     <!-- Project Versions-->
@@ -232,19 +232,23 @@
 
   <repositories>
     <repository>
-      <id>${repo.releases.id}</id>
-      <url>${repo.releases.url}</url>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>community-maven-repo</id>
+      <url>https://community.opengroup.org/api/v4/groups/17/-/packages/maven</url>
     </repository>
   </repositories>
 
   <distributionManagement>
     <repository>
-      <id>${publish.releases.id}</id>
-      <url>${publish.releases.url}</url>
+      <id>community-maven-via-job-token</id>
+      <url>https://community.opengroup.org/api/v4/projects/221/packages/maven</url>
     </repository>
     <snapshotRepository>
-      <id>${publish.snapshots.id}</id>
-      <url>${publish.snapshots.url}</url>
+      <id>community-maven-via-job-token</id>
+      <url>https://community.opengroup.org/api/v4/projects/221/packages/maven</url>
     </snapshotRepository>
   </distributionManagement>
 </project>
