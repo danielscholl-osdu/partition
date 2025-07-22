@@ -31,10 +31,10 @@ spec:
     - match:
         - uri:
             prefix: {{ printf "/api/%s/v1" .Values.conf.appName | quote }}
-          {{- if ne .Values.conf.appName "partition" }}  
-          rewrite:
-            uri: /api/partition/v1
-          {{- end }}
+        {{- if ne .Values.conf.appName "partition" }}  
+        rewrite:
+          uri: /api/partition/v1
+        {{- end }}
       route:
         - destination:
             port:
