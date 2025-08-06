@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/danielscholl-osdu/partition/compare/v1.1.0...v1.1.1) (2025-08-06)
+
+
+### ⚙️ Continuous Integration
+
+* **devops:** Add dev2 environment support and fix YAML formatting ([861d703](https://github.com/danielscholl-osdu/partition/commit/861d70311feb25821a1ce392f947bb346e83c9b1))
+
 ## [1.1.0](https://github.com/danielscholl-osdu/partition/compare/v1.0.1...v1.1.0) (2025-07-21)
 
 
