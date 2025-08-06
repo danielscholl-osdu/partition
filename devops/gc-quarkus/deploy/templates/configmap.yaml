@@ -21,5 +21,4 @@ metadata:
   name: {{ .Values.conf.configmap | quote }}
   namespace: {{ .Release.Namespace | quote }}
 data:
-  LOG_LEVEL:
-    {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
+  LOG_LEVEL: {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
