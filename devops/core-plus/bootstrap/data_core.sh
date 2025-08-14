@@ -218,6 +218,10 @@ core_partition_data() {
     "featureFlag.autocomplete.enabled": {
       "sensitive": false,
       "value": "${AUTOCOMPLETE_ENABLED}"
+    },
+    "reservoir-connection": {
+        "sensitive": true,
+        "value": "RESERVOIR_POSTGRES_CONN_STRING_OSDU"
     }
   }
 }
