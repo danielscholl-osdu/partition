@@ -35,6 +35,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
         <junit.version>4.13.2</junit.version>
+        <netty.version>4.1.124.Final</netty.version>
+        <tomcat.version>10.1.44</tomcat.version>
     </properties>
 
     <dependencyManagement>
@@ -43,6 +45,31 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.15.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http2</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.5.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -58,26 +85,12 @@
                     <groupId>org.springframework.security</groupId>
                     <artifactId>spring-security-crypto</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>net.minidev</groupId>
-                    <artifactId>json-smart</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-common</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>partition-core</artifactId>
             <version>0.29.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- AWS managed packages -->
@@ -101,28 +114,13 @@
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-common</artifactId>
-            <version>4.1.122.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
-            <version>4.1.122.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>10.1.42</version>
+            <version>${netty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>6.3.8</version>
-        </dependency>
-        <dependency>
-            <groupId>net.minidev</groupId>
-            <artifactId>json-smart</artifactId>
-            <version>2.5.2</version>
         </dependency>
 
         <!-- Testing packages -->
