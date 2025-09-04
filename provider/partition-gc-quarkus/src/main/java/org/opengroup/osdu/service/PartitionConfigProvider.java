@@ -11,6 +11,7 @@ import lombok.Getter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.opengroup.osdu.model.exception.AppException;
+import java.util.List;
 
 @ApplicationScoped
 @Startup
@@ -18,8 +19,8 @@ import org.opengroup.osdu.model.exception.AppException;
 public class PartitionConfigProvider {
   private static final Logger log = Logger.getLogger(PartitionConfigProvider.class);
 
-  @ConfigProperty(name = "partitionConfigsPath")
-  private String partitionConfigsPath;
+  @ConfigProperty(name = "partitionConfigsPaths")
+  private List<String> partitionConfigsPaths;
 
   @ConfigProperty(name = "groupId")
   private String groupId;
@@ -36,25 +37,28 @@ public class PartitionConfigProvider {
   @ConfigProperty(name = "gitPropertiesPath", defaultValue = "/git.properties")
   private String gitPropertiesPath;
 
-  protected void setPartitionConfigsPath(String partitionConfigsPath) {
-    this.partitionConfigsPath = partitionConfigsPath;
+  protected void setPartitionConfigsPaths(List<String> partitionConfigsPaths) {
+    this.partitionConfigsPaths = partitionConfigsPaths;
   }
 
   @PostConstruct
   protected void init() {
-    if (partitionConfigsPath == null || partitionConfigsPath.trim().isEmpty()) {
+    if (partitionConfigsPaths == null || partitionConfigsPaths.isEmpty()) {
       throw new AppException(
           INTERNAL_SERVER_ERROR.getStatusCode(),
           "Environment variable is not set",
-          "The environment variable PARTITION_CONFIGS_PATH is required but not set");
+          "The environment variable PARTITION_CONFIGS_PATHS is required but not set");
     }
-    log.infof("Partition Configs Path: %s", partitionConfigsPath);
-    if (!Files.exists(Paths.get(partitionConfigsPath))) {
-      log.errorf("Partition Configs Path: %s does not exist", partitionConfigsPath);
-      throw new AppException(
-          INTERNAL_SERVER_ERROR.getStatusCode(),
-          "Partition Configs Path does not exist",
-          "Partition Configs Path: " + partitionConfigsPath + " does not exist");
+    log.infof("Partition Configs Paths: %s", partitionConfigsPaths);
+
+    for (String path : partitionConfigsPaths) {
+      if (!Files.exists(Paths.get(path))) {
+        log.errorf("Partition Configs Path: %s does not exist", path);
+        throw new AppException(
+            INTERNAL_SERVER_ERROR.getStatusCode(),
+            "Partition Configs Path does not exist",
+            "Partition Configs Path: " + path + " does not exist");
+      }
     }
   }
 }

@@ -71,7 +71,6 @@ public interface PartitionSystemApi {
               content = {@Content(schema = @Schema(implementation = AppError.class))}),
       })
   @GET
-  @Path("/{partitionId}")
   @Produces(MediaType.APPLICATION_JSON)
   Map<String, Property> get();
 }

@@ -22,3 +22,4 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 data:
   LOG_LEVEL: {{ .Values.data.logLevel | default .Values.global.logLevel | quote }}
+  PARTITION_CONFIGS_PATHS: {{ printf "%s,%s" .Values.data.dataPartitionsConfigPath .Values.data.systemPartitionConfigPath  | quote }}

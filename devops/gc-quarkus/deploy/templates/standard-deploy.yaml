@@ -67,20 +67,16 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ .Values.conf.configmap | quote }}
-          env:
-          - name: PARTITION_CONFIGS_PATH
-            value: /mnt/partitions
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: partitions-volume
-              mountPath: /mnt/partitions/data
             - name: system-partition
-              mountPath: /mnt/partitions/system.json
-              subPath: system.json
+              mountPath: {{ .Values.data.systemPartitionConfigPath | quote }}
+            - name: data-partitions
+              mountPath: {{ .Values.data.dataPartitionsConfigPath | quote }}
           resources:
             requests:
               cpu: {{ .Values.data.requestsCpu | quote }}
@@ -91,7 +87,7 @@ spec:
               memory: {{ .Values.data.limitsMemory | quote }}
             {{- end }}
       volumes:
-        - name: partitions-volume
+        - name: data-partitions
           configMap:
             name: {{ .Values.conf.configmapPartitions | quote }}
         - name: system-partition

@@ -23,28 +23,35 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jboss.logging.Logger;
 
 public class EnvVarResource implements QuarkusTestResourceLifecycleManager {
   private static final Logger log = Logger.getLogger(EnvVarResource.class);
 
-  private Path tempDir;
+  private List<Path> tempDirs;
 
   @Override
   public Map<String, String> start() {
-    try {
-      tempDir = Files.createTempDirectory("partition-configs-test-");
-    } catch (IOException e) {
-      throw new RuntimeException("Could not create temp dir for test", e);
-    }
-
-    return Map.of("PARTITION_CONFIGS_PATH", tempDir.toAbsolutePath().toString());
+    tempDirs = TestUtils.createTestDirectories();
+    return Map.of(
+        "PARTITION_CONFIGS_PATHS",
+        tempDirs.stream()
+            .map(Path::toAbsolutePath)
+            .map(Path::toString)
+            .map(s -> s.replace("\\", "\\\\"))
+            .collect(Collectors.joining(",")));
   }
 
   @Override
   public void stop() {
+    tempDirs.forEach(this::deleteTempDir);
+  }
+
+  private void deleteTempDir(Path tempDir) {
     if (tempDir != null && Files.exists(tempDir)) {
       try (Stream<Path> walk = Files.walk(tempDir)) {
         walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);

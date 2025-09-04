@@ -33,7 +33,7 @@ import org.opengroup.osdu.model.exception.AppException;
 class PartitionServiceImplTest {
   private static final String TEST_PARTITION_1 = "osdu";
   private static final String TEST_PARTITION_2 = "second";
-  private static final String PARTITIONS_PATH = "/test/path";
+  private static final List<String> PARTITIONS_PATHS = List.of("/test/path,/test/data");
   private static final String NON_EXISTENT_PARTITION = "nonexistent";
   private static final int NOT_FOUND_CODE = 404;
   private static final String NOT_FOUND_MESSAGE = "Partition does not exist";
@@ -55,12 +55,12 @@ class PartitionServiceImplTest {
     testPartitions =
         Map.of(TEST_PARTITION_1, mockPartitionInfo1, TEST_PARTITION_2, mockPartitionInfo2);
 
-    when(mockPartitionConfigProvider.getPartitionConfigsPath()).thenReturn(PARTITIONS_PATH);
+    when(mockPartitionConfigProvider.getPartitionConfigsPaths()).thenReturn(PARTITIONS_PATHS);
   }
 
   @Test
   void should_updatePartitionInfoMap_when_initCalled() {
-    when(mockPartitionFileLoaderService.loadPartitionInfoMapFromFiles(PARTITIONS_PATH))
+    when(mockPartitionFileLoaderService.loadPartitionInfoMapFromFiles(PARTITIONS_PATHS))
         .thenReturn(testPartitions);
 
     partitionService.init();
@@ -69,8 +69,8 @@ class PartitionServiceImplTest {
     assertEquals(List.of(TEST_PARTITION_1, TEST_PARTITION_2), result);
 
     verify(mockPartitionFileLoaderService, atLeastOnce())
-        .loadPartitionInfoMapFromFiles(PARTITIONS_PATH);
-    verify(mockDirectoryWatchService, atLeastOnce()).watchDirectory(eq(PARTITIONS_PATH), any());
+        .loadPartitionInfoMapFromFiles(PARTITIONS_PATHS);
+    verify(mockDirectoryWatchService, atLeastOnce()).watchDirectories(eq(PARTITIONS_PATHS), any());
   }
 
   @Test
@@ -106,6 +106,7 @@ class PartitionServiceImplTest {
 
   @Test
   void should_throwAppException_when_partitionIdNotFound() {
+    partitionService.updatePartitionInfoMap(testPartitions);
     AppException thrown =
         assertThrows(
             AppException.class, () -> partitionService.getPartition(NON_EXISTENT_PARTITION));

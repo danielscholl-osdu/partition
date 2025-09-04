@@ -123,6 +123,8 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.serviceAccountName** | name of your service account | string | `partition` | yes
 **data.image** | path to the image in a registry | string | - | yes
 **data.imagePullPolicy** | when to pull the image | string | `IfNotPresent` | yes
+**data.systemPartitionConfigPath** | mount path for system partition json | string | `/mnt/system-partition` | yes
+**data.dataPartitionsConfigPath** | mount path for data partitions json | string | `/mnt/data-partitions` | yes
 
 ### Configuration variables
 
@@ -130,6 +132,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 |------|-------------|------|---------|---------|
 **conf.appName** | name of the app | string | `partition-quarkus` | yes
 **conf.configmap** | configmap to be used | string | `partition-quarkus-config` | yes
+**conf.configmapPartitions** | configmap with data partitions configuration | string | `quarkus-partitions` | yes
 **conf.replicas** | number of replicas | integer | `1` | yes
 
 ### ISTIO variables
@@ -183,6 +186,7 @@ The Quarkus implementation exposes the following endpoints:
 ## Quarkus Native Executable
 
 This deployment uses a native executable built with GraalVM, which provides:
+
 - Significantly faster startup times
 - Lower memory consumption
 - Improved security through reduced attack surface

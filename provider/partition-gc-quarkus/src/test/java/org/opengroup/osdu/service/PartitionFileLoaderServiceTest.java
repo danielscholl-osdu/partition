@@ -17,8 +17,12 @@
 
 package org.opengroup.osdu.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.opengroup.osdu.util.TestUtils.resetFilesForTest;
+import static org.opengroup.osdu.util.TestUtils.NON_EXISTENT_DIRECTORY;
+import static org.opengroup.osdu.util.TestUtils.TEST_FILES_PATH;
+import static org.opengroup.osdu.util.TestUtils.VALID_PARTITIONS_TO_PATH_MAP;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,35 +35,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.opengroup.osdu.model.PartitionInfo;
 import org.opengroup.osdu.model.exception.AppException;
+import org.opengroup.osdu.util.TestUtils;
 
 @QuarkusTest
 class PartitionFileLoaderServiceTest {
 
-  private static final String TEST_PARTITION_1 = "osdu";
-  private static final String TEST_PARTITION_2 = "second";
-  private static final String NON_EXISTENT_DIRECTORY = "non/existent/directory";
-  private static final String TEST_PARTITION_FILE_PATH = "/testFiles/%s.json";
   @Inject PartitionFileLoaderService partitionFileLoaderService;
 
   @Inject ObjectMapper objectMapper;
 
   @Test
   void should_loadPartitionsFromValidFiles_and_skipNotValidFiles_when_directoryWithFilesExists(
-      @TempDir Path tempDir) throws Exception {
-    resetFilesForTest(tempDir);
+      @TempDir Path baseTestsDir, @TempDir Path testHierarchyDir) throws Exception {
+    TestUtils.resetTestFilesInDirs(baseTestsDir, testHierarchyDir);
     Map<String, PartitionInfo> partitionInfoMap =
-        partitionFileLoaderService.loadPartitionInfoMapFromFiles(tempDir.toString());
+        partitionFileLoaderService.loadPartitionInfoMapFromFiles(
+            List.of(baseTestsDir.toString(), testHierarchyDir.toString()));
 
-    List<String> validPartitions = List.of(TEST_PARTITION_1, TEST_PARTITION_2);
-    assertEquals(validPartitions.size(), partitionInfoMap.size());
-    for (String partition : validPartitions) {
-      assertTrue(partitionInfoMap.containsKey(partition));
+    assertEquals(VALID_PARTITIONS_TO_PATH_MAP.size(), partitionInfoMap.size());
+    for (Map.Entry<String, String> partitionWithPath : VALID_PARTITIONS_TO_PATH_MAP.entrySet()) {
+      assertThat(partitionInfoMap.keySet(), hasItem(partitionWithPath.getKey()));
 
       JsonNode expectedProperties =
           objectMapper.readTree(
-              getClass().getResourceAsStream(TEST_PARTITION_FILE_PATH.formatted(partition)));
+              getClass().getResourceAsStream(TEST_FILES_PATH + partitionWithPath.getValue()));
       JsonNode actualProperties =
-          objectMapper.valueToTree(partitionInfoMap.get(partition).getProperties());
+          objectMapper.valueToTree(
+              partitionInfoMap.get(partitionWithPath.getKey()).getProperties());
       assertEquals(expectedProperties, actualProperties);
     }
   }
@@ -67,7 +69,7 @@ class PartitionFileLoaderServiceTest {
   @Test
   void should_loadEmptyPartitionInfoMap_when_emptyDirectoryExists(@TempDir Path emptyTempDir) {
     Map<String, PartitionInfo> partitionInfoMap =
-        partitionFileLoaderService.loadPartitionInfoMapFromFiles(emptyTempDir.toString());
+        partitionFileLoaderService.loadPartitionInfoMapFromFiles(List.of(emptyTempDir.toString()));
 
     assertEquals(0, partitionInfoMap.size());
   }
@@ -77,7 +79,9 @@ class PartitionFileLoaderServiceTest {
     AppException exception =
         assertThrows(
             org.opengroup.osdu.model.exception.AppException.class,
-            () -> partitionFileLoaderService.loadPartitionInfoMapFromFiles(NON_EXISTENT_DIRECTORY));
+            () ->
+                partitionFileLoaderService.loadPartitionInfoMapFromFiles(
+                    List.of(NON_EXISTENT_DIRECTORY)));
     assertEquals(500, exception.getError().getCode());
   }
 }

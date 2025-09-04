@@ -29,13 +29,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.opengroup.osdu.model.exception.AppException;
+import java.util.List;
 
 @QuarkusTest
 class PartitionConfigProviderTest {
 
-  private static final String PARTITION_CONFIGS_PATH = "/test/partition/path";
-  private static final String ERROR_MESSAGE_CONFIGS_PATH_IS_REQUIRED_BUT_NOT_SET =
-      "The environment variable PARTITION_CONFIGS_PATH is required but not set";
+  private static final String TEST_PARTITION_PATH = "/test/partition/path";
+  private static final String ERROR_MESSAGE_CONFIGS_PATHS_ARE_REQUIRED_BUT_NOT_SET =
+      "The environment variable PARTITION_CONFIGS_PATHS is required but not set";
   private static final String DOES_NOT_EXIST_MESSAGE_PART = "does not exist";
   private static MockedStatic<Files> filesStaticMock;
   PartitionConfigProvider partitionConfigProvider;
@@ -58,38 +59,38 @@ class PartitionConfigProviderTest {
 
   @Test
   void should_notThrowException_when_fileExists() {
-    partitionConfigProvider.setPartitionConfigsPath(PARTITION_CONFIGS_PATH);
-    filesStaticMock.when(() -> Files.exists(Paths.get(PARTITION_CONFIGS_PATH))).thenReturn(true);
+    partitionConfigProvider.setPartitionConfigsPaths(List.of(TEST_PARTITION_PATH));
+    filesStaticMock.when(() -> Files.exists(Paths.get(TEST_PARTITION_PATH))).thenReturn(true);
 
     assertDoesNotThrow(() -> partitionConfigProvider.init());
 
-    assertEquals(PARTITION_CONFIGS_PATH, partitionConfigProvider.getPartitionConfigsPath());
+    assertEquals(List.of(TEST_PARTITION_PATH), partitionConfigProvider.getPartitionConfigsPaths());
   }
 
   @Test
   void should_throwException_when_partitionConfigsPathIsNull() {
-    partitionConfigProvider.setPartitionConfigsPath(null);
+    partitionConfigProvider.setPartitionConfigsPaths(null);
 
     AppException exception = assertThrows(AppException.class, () -> partitionConfigProvider.init());
 
     assertEquals(
-        ERROR_MESSAGE_CONFIGS_PATH_IS_REQUIRED_BUT_NOT_SET, exception.getError().getMessage());
+        ERROR_MESSAGE_CONFIGS_PATHS_ARE_REQUIRED_BUT_NOT_SET, exception.getError().getMessage());
   }
 
   @Test
   void should_throwException_when_partitionConfigsPathIsEmpty() {
-    partitionConfigProvider.setPartitionConfigsPath("");
+    partitionConfigProvider.setPartitionConfigsPaths(List.of());
 
     AppException exception = assertThrows(AppException.class, () -> partitionConfigProvider.init());
 
     assertEquals(
-        ERROR_MESSAGE_CONFIGS_PATH_IS_REQUIRED_BUT_NOT_SET, exception.getError().getMessage());
+        ERROR_MESSAGE_CONFIGS_PATHS_ARE_REQUIRED_BUT_NOT_SET, exception.getError().getMessage());
   }
 
   @Test
   void should_throwException_when_partitionConfigsPathDoesNotExist() {
-    partitionConfigProvider.setPartitionConfigsPath(PARTITION_CONFIGS_PATH);
-    filesStaticMock.when(() -> Files.exists(Paths.get(PARTITION_CONFIGS_PATH))).thenReturn(false);
+    partitionConfigProvider.setPartitionConfigsPaths(List.of(TEST_PARTITION_PATH));
+    filesStaticMock.when(() -> Files.exists(Paths.get(TEST_PARTITION_PATH))).thenReturn(false);
 
     AppException exception = assertThrows(AppException.class, () -> partitionConfigProvider.init());
 

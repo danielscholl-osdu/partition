@@ -28,6 +28,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.*;
 import org.opengroup.osdu.model.exception.AppException;
 import org.opengroup.osdu.util.EnvVarResource;
+import java.util.List;
 
 @QuarkusTest
 @QuarkusTestResource(EnvVarResource.class)
@@ -52,7 +53,7 @@ class DirectoryWatchServiceTest {
     Runnable dummy = mock(Runnable.class);
     AppException ex =
         assertThrows(
-            AppException.class, () -> directoryWatchService.watchDirectory(nonExistentDir, dummy));
+            AppException.class, () -> directoryWatchService.watchDirectories(List.of(nonExistentDir), dummy));
     assertEquals(500, ex.getError().getCode());
   }
 }

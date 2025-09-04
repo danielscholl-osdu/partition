@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -29,23 +30,41 @@ public class PartitionFileLoaderService {
   private final ObjectMapper objectMapper;
 
   @Retry
-  public Map<String, PartitionInfo> loadPartitionInfoMapFromFiles(String directory) {
-    log.debugf("Loading partition infos from directory: %s", directory);
+  public Map<String, PartitionInfo> loadPartitionInfoMapFromFiles(List<String> directories) {
+    log.debugf("Loading partition infos from directories: %s", directories);
     Map<String, PartitionInfo> loadedPartitions = new HashMap<>();
-    Path directoryPath = Paths.get(directory);
-    try (Stream<Path> pathStream = Files.walk(directoryPath)) {
-      pathStream.filter(Files::isRegularFile).filter(this::isJsonFile).forEach(path -> loadPartitionInfoToMap(path, loadedPartitions));
-      return loadedPartitions;
-    } catch (IOException e) {
-      log.errorf(e, "Error loading partition infos from directory: %s", directory);
-      throw new AppException(
-          INTERNAL_SERVER_ERROR, "Error loading partition info", e.getMessage(), e);
+
+    for (String directory : directories) {
+      Path directoryPath = Paths.get(directory);
+      if (!Files.exists(directoryPath) || !Files.isDirectory(directoryPath)) {
+        log.errorf("Directory does not exist or is not a directory: %s", directory);
+        throw new AppException(
+            INTERNAL_SERVER_ERROR,
+            "Error loading partition info",
+            "Directory does not exist or is not a directory: %s".formatted(directory));
+      }
+
+      try (Stream<Path> pathStream = Files.walk(directoryPath)) {
+        pathStream
+            .filter(this::isJsonFile)
+            .forEach(pathToJsonFile -> loadPartitionInfoToMap(pathToJsonFile, loadedPartitions));
+      } catch (IOException e) {
+        log.errorf(e, "Error loading partition infos from directory: %s", directory);
+        throw new AppException(
+            INTERNAL_SERVER_ERROR, "Error loading partition info", e.getMessage(), e);
+      }
     }
+    return loadedPartitions;
   }
 
   private void loadPartitionInfoToMap(Path path, Map<String, PartitionInfo> partitionInfoMap) {
     try {
-      partitionInfoMap.put(getPartitionIdFromPath(path), loadPartitionInfoFromFile(path));
+      String partitionId = getPartitionIdFromPath(path);
+      if (partitionInfoMap.containsKey(partitionId)) {
+        log.warnf("Partition info '%s' already exists. Skipping file: %s", partitionId, path);
+        return;
+      }
+      partitionInfoMap.put(partitionId, loadPartitionInfoFromFile(path));
     } catch (Exception e) {
       log.errorf(
           "Error loading partition info from file: %s. Skipping file. Error: %s",

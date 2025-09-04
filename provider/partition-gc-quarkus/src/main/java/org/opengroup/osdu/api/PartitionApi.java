@@ -89,7 +89,7 @@ public interface PartitionApi {
             content = {@Content(schema = @Schema(implementation = AppError.class))}),
       })
   @GET
-  @Path("/{partitionId}")
+  @Path("/{partitionId:.+}")
   @Produces(MediaType.APPLICATION_JSON)
   Map<String, Property> get(@Param String partitionId);
 }
