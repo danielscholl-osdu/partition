@@ -18,8 +18,15 @@
 package org.opengroup.osdu.api;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.opengroup.osdu.util.TestUtils.INVALID_PARTITION;
+import static org.opengroup.osdu.util.TestUtils.JSON;
+import static org.opengroup.osdu.util.TestUtils.PARTITIONS_ENDPOINT;
+import static org.opengroup.osdu.util.TestUtils.TEST_FILES_PATH;
+import static org.opengroup.osdu.util.TestUtils.TEST_PARTITION_1;
+import static org.opengroup.osdu.util.TestUtils.TEST_PARTITION_2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +35,7 @@ import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,23 +43,21 @@ import org.opengroup.osdu.util.TestUtils;
 
 @QuarkusTest
 class PartitionResourceTest {
-  private static final String PARTITIONS_ENDPOINT = "/partitions";
-  private static final String TEST_PARTITION_1 = "osdu";
-  private static final String TEST_PARTITION_2 = "second";
-  private static final String INVALID_PARTITION = "invalid-partition";
-  private static final String TEST_PARTITION_FILE_PATH = "/testFiles/%s.json";
   private static final String CODE = "code";
   @Inject private ObjectMapper objectMapper;
 
   @ConfigProperty(name = "directory-watch.debounce-delay-ms")
   private int debounceDelayMs;
 
-  @ConfigProperty(name = "partitionConfigsPath")
-  private String partitionConfigsPath;
+  @ConfigProperty(name = "partitionConfigsPaths")
+  private List<String> partitionConfigsPaths;
 
   @BeforeEach
   void setup() {
-    TestUtils.resetFilesForTest(Path.of(partitionConfigsPath));
+    assertThat(
+        "Two paths must be set in PARTITION_CONFIGS_PATHS", partitionConfigsPaths.size(), is(2));
+    TestUtils.resetTestFilesInDirs(
+        Path.of(partitionConfigsPaths.get(0)), Path.of(partitionConfigsPaths.get(1)));
     waitDebounceDelay();
   }
 
@@ -70,7 +76,7 @@ class PartitionResourceTest {
   void should_returnPartitionProperties_when_getEndpointCalledWithValidId() throws IOException {
     JsonNode expectedProperties =
         objectMapper.readTree(
-            getClass().getResourceAsStream(TEST_PARTITION_FILE_PATH.formatted(TEST_PARTITION_1)));
+            getClass().getResourceAsStream(TEST_FILES_PATH + TEST_PARTITION_1 + JSON));
 
     String response =
         given()
@@ -105,9 +111,11 @@ class PartitionResourceTest {
         .then()
         .statusCode(200)
         .contentType(ContentType.JSON)
-        .body("", contains(TEST_PARTITION_1, TEST_PARTITION_2));
+        .body("", hasItems(TEST_PARTITION_1, TEST_PARTITION_2));
 
-    TestUtils.removeAllFilesInDir(Path.of(partitionConfigsPath));
+    for (String path : partitionConfigsPaths) {
+      TestUtils.removeAllFilesInDir(Path.of(path));
+    }
     waitDebounceDelay();
 
     given()
@@ -121,7 +129,7 @@ class PartitionResourceTest {
 
   private void waitDebounceDelay() {
     try {
-      Thread.sleep((long) (debounceDelayMs * 1.2));
+      Thread.sleep(debounceDelayMs * 2L);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

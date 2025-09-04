@@ -35,8 +35,8 @@ public class PartitionServiceImpl implements IPartitionService {
     updatePartitionInfoMapFromFiles();
     CompletableFuture.runAsync(
         () ->
-            directoryWatchService.watchDirectory(
-                partitionConfigProvider.getPartitionConfigsPath(),
+            directoryWatchService.watchDirectories(
+                partitionConfigProvider.getPartitionConfigsPaths(),
                 this::updatePartitionInfoMapFromFiles));
   }
 
@@ -67,10 +67,10 @@ public class PartitionServiceImpl implements IPartitionService {
   protected Map<String, PartitionInfo> loadPartitionInfoMapFromFiles() {
     Map<String, PartitionInfo> loadedPartitionInfoMap =
         partitionFileLoaderService.loadPartitionInfoMapFromFiles(
-            partitionConfigProvider.getPartitionConfigsPath());
+            partitionConfigProvider.getPartitionConfigsPaths());
     log.infof(
-        "Loaded %s partitions from directory: %s",
-        loadedPartitionInfoMap.size(), partitionConfigProvider.getPartitionConfigsPath());
+        "Loaded %s partitions from directories: %s",
+        loadedPartitionInfoMap.size(), partitionConfigProvider.getPartitionConfigsPaths());
     return loadedPartitionInfoMap;
   }
 

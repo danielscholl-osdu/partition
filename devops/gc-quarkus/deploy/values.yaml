@@ -23,6 +23,8 @@ data:
   affinityLabelsStandard:
     cloud.google.com/gke-provisioning:
       - standard
+  systemPartitionConfigPath: "/mnt/system-partition"
+  dataPartitionsConfigPath: "/mnt/data-partitions"
   # data partition configuration
   projectId: ""
   tenantServiceAccount: ""
