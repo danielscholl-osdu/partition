@@ -53,7 +53,7 @@ gc_system_partition_data() {
       "sensitive": false,
       "value": "${PROJECT_ID}-system-schema"
     },
-    "system.featureFlag.eds.enabled": {
+    "system.eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
     },

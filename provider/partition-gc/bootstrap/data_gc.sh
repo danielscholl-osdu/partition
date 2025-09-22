@@ -73,7 +73,7 @@ gc_partition_data() {
       "sensitive": false,
       "value": "${PROJECT_ID}-${DATA_PARTITION_ID_VALUE}-schema"
     },
-    "featureFlag.eds.enabled": {
+    "eds.enabled": {
       "sensitive": false,
       "value": "${EDS_ENABLED}"
     },
