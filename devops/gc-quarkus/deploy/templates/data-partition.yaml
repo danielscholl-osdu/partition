@@ -30,11 +30,10 @@ spec:
   projectId: {{ .Values.data.projectId | quote }}
   tenantServiceAccount: {{ .Values.data.tenantServiceAccount | quote}}
   bucketsPrefix: {{ .Values.data.projectId | quote }}
-  dataBootstrapFlag: {{ .Values.data.bootstrapFlag | quote }}
   dataPartition: {{ .Values.global.dataPartitionId | quote }}
   databaseId: {{ $databaseId }}
   domain: {{ .Values.global.domain | quote }}
-  mode: {{ .Values.global.tier | default "DEV" | lower | quote }}
+  mode: {{ .Values.data.operatorMode | default "prod" }}
   asIngestedCoordinatesEnabled: {{ .Values.data.asIngestedCoordinatesEnabled }}
   autoCompleteEnabled: {{ .Values.data.autoCompleteEnabled }}
   bagOfWordsEnabled: {{ .Values.data.bagOfWordsEnabled }}
@@ -44,3 +43,10 @@ spec:
   indexerAugmenterEnabled: {{ .Values.data.indexerAugmenterEnabled }}
   keyWordLowerEnabled: {{ .Values.data.keyWordLowerEnabled }}
   policyServiceEnabled: {{ .Values.data.policyServiceEnabled }}
+  partitionProperties:
+    properties:
+    {{- range .Values.data.partitionProperties.properties }}
+    - name: {{ .name | quote }}
+      sensitive: {{ .sensitive }}
+      value: {{ .value | quote }}
+    {{- end }}
