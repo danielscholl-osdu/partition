@@ -28,7 +28,7 @@ data:
   # data partition configuration
   projectId: ""
   tenantServiceAccount: ""
-  bootstrapFlag: "none"
+  operatorMode: "prod"
   databaseId: "osdu-system"
   elasticHttps: true
   indexerAugmenterEnabled: true
@@ -39,6 +39,12 @@ data:
   keyWordLowerEnabled: true
   bagOfWordsEnabled: true
   xCollaborationEnabled: false
+  partitionProperties:
+    properties: {}
+    # example of custom property
+    # - name: foo
+    #   sensitive: false
+    #   value: bar
 
 conf:
   appName: "partition-quarkus"
