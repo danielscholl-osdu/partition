@@ -43,6 +43,7 @@ spec:
   indexerAugmenterEnabled: {{ .Values.data.indexerAugmenterEnabled }}
   keyWordLowerEnabled: {{ .Values.data.keyWordLowerEnabled }}
   policyServiceEnabled: {{ .Values.data.policyServiceEnabled }}
+  {{- if not (empty .Values.data.partitionProperties.properties)  }}
   partitionProperties:
     properties:
     {{- range .Values.data.partitionProperties.properties }}
@@ -50,3 +51,4 @@ spec:
       sensitive: {{ .sensitive }}
       value: {{ .value | quote }}
     {{- end }}
+  {{- end }}
