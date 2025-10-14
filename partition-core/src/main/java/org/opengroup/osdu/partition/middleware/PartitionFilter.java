@@ -14,7 +14,6 @@
 
 package org.opengroup.osdu.partition.middleware;
 
-import org.opengroup.osdu.core.common.http.ResponseHeaders;
 import org.opengroup.osdu.core.common.http.ResponseHeadersFactory;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -29,7 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 @Component
