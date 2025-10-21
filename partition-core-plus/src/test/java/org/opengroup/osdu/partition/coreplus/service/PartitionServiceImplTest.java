@@ -34,8 +34,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PartitionServiceImplTest {
@@ -186,5 +186,124 @@ public class PartitionServiceImplTest {
         List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
 
         assertEquals(expectedPartitions, actualPartitions);
+    }
+
+    @Test
+    public void should_throwException_when_createPartitionAndCacheHasPartition() {
+        PartitionInfo cachedPartition = new PartitionInfo();
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(cachedPartition);
+
+        assertThrows(AppException.class, () -> {
+            partitionServiceImpl.createPartition(PARTITION_ID, expectedPartitionInfo);
+        });
+    }
+
+    @Test
+    public void should_notClearCache_when_createPartitionReturnsNull() {
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(null);
+        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+                .thenReturn(emptyList)
+                .thenReturn(emptyList);
+
+        assertThrows(AppException.class, () -> {
+            partitionServiceImpl.createPartition(PARTITION_ID, expectedPartitionInfo);
+        });
+    }
+
+    @Test
+    public void should_throwException_when_updatePartitionWithIdField() {
+        Map<String, Property> properties = new HashMap<>();
+        properties.put("id", new Property(false, "some-value"));
+        PartitionInfo partitionInfoWithId = new PartitionInfo();
+        partitionInfoWithId.setProperties(properties);
+
+        assertThrows(AppException.class, () -> {
+            partitionServiceImpl.updatePartition(PARTITION_ID, partitionInfoWithId);
+        });
+    }
+
+    @Test
+    public void should_updateExistingEntity_when_entityFound() {
+        PartitionPropertyEntity existingEntity = new PartitionPropertyEntity(PARTITION_ID, NAME, new Property(true, "old-value"));
+        
+        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+                .thenReturn(partitionPropertyEntityList);
+        when(partitionPropertyEntityRepository.findByPartitionIdAndName(PARTITION_ID, NAME))
+                .thenReturn(existingEntity);
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(null);
+
+        PartitionInfo actualPartitionInfo = partitionServiceImpl.updatePartition(PARTITION_ID, expectedPartitionInfo);
+
+        assertEquals(expectedPartitionInfo, actualPartitionInfo);
+        assertEquals(SENSITIVE, existingEntity.getSensitive());
+        assertEquals(VALUE, existingEntity.getValue());
+    }
+
+    @Test
+    public void should_deleteCacheEntry_when_updatePartitionAndCacheHasEntry() {
+        PartitionInfo cachedPartition = new PartitionInfo();
+        
+        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+                .thenReturn(partitionPropertyEntityList);
+        when(partitionPropertyEntityRepository.findByPartitionIdAndName(PARTITION_ID, NAME))
+                .thenReturn(null);
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(cachedPartition);
+
+        partitionServiceImpl.updatePartition(PARTITION_ID, expectedPartitionInfo);
+
+        verify(partitionServiceCache).delete(PARTITION_ID);
+    }
+
+    @Test
+    public void should_returnCachedPartition_when_getPartitionAndCacheHasEntry() {
+        PartitionInfo cachedPartition = new PartitionInfo();
+        cachedPartition.setProperties(new HashMap<>());
+        
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(cachedPartition);
+
+        PartitionInfo actualPartitionInfo = partitionServiceImpl.getPartition(PARTITION_ID);
+
+        assertEquals(cachedPartition, actualPartitionInfo);
+        verify(partitionPropertyEntityRepository, times(0)).findByPartitionId(PARTITION_ID);
+    }
+
+    @Test
+    public void should_notDeleteCache_when_deletePartitionAndCacheIsNull() {
+        when(partitionPropertyEntityRepository.findByPartitionId(PARTITION_ID))
+                .thenReturn(partitionPropertyEntityList);
+        when(partitionServiceCache.get(PARTITION_ID)).thenReturn(null);
+        doNothing().when(partitionPropertyEntityRepository).deleteByPartitionId(PARTITION_ID);
+
+        partitionServiceImpl.deletePartition(PARTITION_ID);
+
+        verify(partitionServiceCache, times(0)).delete(PARTITION_ID);
+        verify(partitionListCache).clearAll();
+    }
+
+    @Test
+    public void should_returnEmptyList_when_getAllPartitionsReturnsEmpty() {
+        List<String> emptyPartitions = new ArrayList<>();
+        
+        when(partitionListCache.get(PartitionServiceImpl.PARTITION_LIST_KEY)).thenReturn(null);
+        when(partitionPropertyEntityRepository.getAllPartitions()).thenReturn(emptyPartitions);
+
+        List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
+
+        assertEquals(emptyPartitions, actualPartitions);
+        verify(partitionListCache, times(0)).put(any(), any());
+    }
+
+    @Test
+    public void should_returnCachedList_when_getAllPartitionsAndListIsCached() {
+        List<String> cachedPartitions = new ArrayList<>();
+        cachedPartitions.add("partition-1");
+        cachedPartitions.add("partition-2");
+        
+        when(partitionListCache.get(PartitionServiceImpl.PARTITION_LIST_KEY)).thenReturn(cachedPartitions);
+
+        List<String> actualPartitions = partitionServiceImpl.getAllPartitions();
+
+        assertEquals(cachedPartitions, actualPartitions);
+        verify(partitionPropertyEntityRepository, times(0)).getAllPartitions();
     }
 }

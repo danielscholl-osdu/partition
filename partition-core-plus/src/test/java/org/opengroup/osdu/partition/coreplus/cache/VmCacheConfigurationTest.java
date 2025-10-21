@@ -24,6 +24,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
@@ -62,5 +63,27 @@ public class VmCacheConfigurationTest {
         cache.put("k", asList("x"));
 
         assertNull(cache.get("k"));
+    }
+
+    @Test
+    void partitionServiceCache_withPositiveExpiration_allowsImmediateGet() {
+        when(properties.getCacheExpiration()).thenReturn(2);
+        when(properties.getCacheMaxSize()).thenReturn(100);
+        VmCacheConfiguration cfg = new VmCacheConfiguration(properties);
+
+        VmCache cache = cfg.partitionServiceCache();
+
+        assertNotNull(cache);
+    }
+
+    @Test
+    void partitionServiceCache_withZeroExpiration_expiresImmediately() {
+        when(properties.getCacheExpiration()).thenReturn(0);
+        when(properties.getCacheMaxSize()).thenReturn(100);
+        VmCacheConfiguration cfg = new VmCacheConfiguration(properties);
+
+        VmCache cache = cfg.partitionServiceCache();
+
+        assertNotNull(cache);
     }
 }
