@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/danielscholl-osdu/partition/compare/v1.0.0...v1.0.1) (2025-10-25)
+
+
+### 🔧 Miscellaneous
+
+* Sync template updates ([#4](https://github.com/danielscholl-osdu/partition/issues/4)) ([40ab495](https://github.com/danielscholl-osdu/partition/commit/40ab495453c8d7eb6ac17edfdcc9d49e54292161))
+* Sync template updates ([#8](https://github.com/danielscholl-osdu/partition/issues/8)) ([7001e92](https://github.com/danielscholl-osdu/partition/commit/7001e9297b5ed30f52f3a6680bafaff9e17c779a))
+
 ## 1.0.0 (2025-10-24)
 
 
