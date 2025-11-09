@@ -33,7 +33,7 @@
     <properties>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
-        <maven_surefire_plugin_version>3.0.0-M4</maven_surefire_plugin_version>
+        <maven_surefire_plugin_version>3.5.4</maven_surefire_plugin_version>
         <junit.version>4.13.2</junit.version>
         <spring-core.version>6.2.11</spring-core.version>
         <netty.version>4.1.124.Final</netty.version>
