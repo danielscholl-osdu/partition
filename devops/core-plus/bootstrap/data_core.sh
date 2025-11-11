@@ -173,7 +173,7 @@ core_partition_data() {
     },
     "sd.ksd.k8s.namespace": {
         "sensitive": false,
-        "value": "secret-admin"
+        "value": "${SECRET_SERVICE_NAMESPACE}"
     },
     "index-augmenter-enabled": {
       "sensitive": false,
