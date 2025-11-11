@@ -12,6 +12,7 @@ data:
   ENVIRONMENT: "anthos"
   SERVICE_ACCOUNT: {{ printf "%s@service.local" .Values.data.datafierSa | quote }}
   DOMAIN: "{{ .Values.global.domain }}"
+  SECRET_SERVICE_NAMESPACE: {{ printf "%s-%s" .Release.Namespace .Values.data.secretAdminNamespace | quote }}
   BUCKET_PREFIX: {{ .Values.data.bucketPrefix | quote }}
   MINIO_ENDPOINT: {{ default "http://minio:9000" .Values.data.minioExternalEndpoint | quote }}
   MINIO_UI_ENDPOINT: {{ .Values.data.minioUIEndpoint | quote }}
