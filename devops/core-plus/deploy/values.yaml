@@ -7,6 +7,7 @@ global:
 data:
   # configmaps
   logLevel: "ERROR"
+  secretAdminNamespace: "secret-admin"
   # deployments
   partitionSuffix: "_SYSTEM"
   datafierSa: "datafier"
