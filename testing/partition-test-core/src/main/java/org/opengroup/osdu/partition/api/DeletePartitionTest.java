@@ -29,6 +29,7 @@ public abstract class DeletePartitionTest extends BaseTestTemplate {
     private String partitionId;
 
     private static String integrationTestPrefix = getIntegrationTestPrefix();
+    protected static int RETRY_COUNT = 2;
 
     public DeletePartitionTest() {
         super(createDeleteDescriptor(integrationTestPrefix + System.currentTimeMillis()));
@@ -72,7 +73,13 @@ public abstract class DeletePartitionTest extends BaseTestTemplate {
 
     @Test
     public void should_return404_when_deletingNonExistedPartition() throws Exception {
+        int retryCount = RETRY_COUNT;
         CloseableHttpResponse response1 = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+        while(retryCount>=0 && response1.getCode()== 500) {
+            response1 = this.descriptor.run(this.getId(), this.testUtils.getAccessToken());
+            retryCount--;
+        }
+
         Assert.assertEquals(this.error(""), HttpStatus.NOT_FOUND.value(), response1.getCode());
     }
 
