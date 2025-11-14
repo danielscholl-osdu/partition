@@ -21,6 +21,7 @@ public class Config {
     public String hostUrl;
     public String osduTenant;
     public String clientTenant;
+    public String dataPartitionId;
 
     private static Config config = new Config();
 
@@ -36,6 +37,7 @@ public class Config {
             config.hostUrl = System.getProperty("PARTITION_BASE_URL", System.getenv("PARTITION_BASE_URL"));
             config.clientTenant = System.getProperty("CLIENT_TENANT", System.getenv("CLIENT_TENANT"));
             config.osduTenant = System.getProperty("MY_TENANT", System.getenv("MY_TENANT"));
+            config.dataPartitionId = System.getProperty("DATA_PARTITION_ID", System.getenv("DATA_PARTITION_ID"));
         }
         return config;
     }
