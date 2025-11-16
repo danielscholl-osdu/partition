@@ -35,8 +35,8 @@ public class AzureBootstrapConfig {
     }
 
     @Bean
-    @Named("TABLE_STORAGE_ACCOUNT_NAME")
-    public String storageAccountName(SecretClient kv) {
-        return KeyVaultFacade.getSecretWithValidation(kv, "tbl-storage");
+    @Named("TABLE_STORAGE_ENDPOINT")
+    public String storageAccountEndpoint(SecretClient kv) {
+        return KeyVaultFacade.getSecretWithDefault(kv, "tbl-storage-endpoint", null);
     }
 }

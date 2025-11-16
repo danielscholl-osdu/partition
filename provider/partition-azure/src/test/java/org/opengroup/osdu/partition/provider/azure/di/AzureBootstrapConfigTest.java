@@ -19,6 +19,7 @@ import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -29,12 +30,22 @@ public class AzureBootstrapConfigTest {
     private final SecretClient kv = mock(SecretClient.class);
 
     @Test
-    public void config_returnsCorrectSecret_tblStorage() {
+    public void config_returnsNull_tblEndpoint() {
         KeyVaultSecret secret = mock(KeyVaultSecret.class);
-        doReturn("tbl-storage").when(secret).getValue();
-        doReturn(secret).when(kv).getSecret("tbl-storage");
+        doReturn(null).when(secret).getValue();
+        doReturn(secret).when(kv).getSecret("tbl-storage-endpoint");
 
-        String secretValue = bootstrapConfig.storageAccountName(kv);
-        assertEquals("tbl-storage", secretValue, "Secret value was incorrect");
+        String secretValue = bootstrapConfig.storageAccountEndpoint(kv);
+        assertNull("Secret value should be null", secretValue);
+    }
+
+    @Test
+    public void config_returnsValid_tblEndpoint() {
+        KeyVaultSecret secret = mock(KeyVaultSecret.class);
+        doReturn("https://azurestorage.z46.table.storage.azure.net/").when(secret).getValue();
+        doReturn(secret).when(kv).getSecret("tbl-storage-endpoint");
+
+        String secretValue = bootstrapConfig.storageAccountEndpoint(kv);
+        assertEquals("https://azurestorage.z46.table.storage.azure.net/", secretValue, "Secret value should be valid table endpoint");
     }
 }
