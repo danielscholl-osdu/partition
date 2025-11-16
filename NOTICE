@@ -199,7 +199,7 @@ The following software have components provided under the terms of this license:
 - Nimbus LangTag (from https://bitbucket.org/connect2id/nimbus-language-tags)
 - Non-Blocking Reactive Foundation for the JVM (from https://github.com/reactor/reactor, https://github.com/reactor/reactor-core)
 - OAuth 2.0 SDK with OpenID Connect extensions (from https://bitbucket.org/connect2id/oauth-2.0-sdk-with-openid-connect-extensions)
-- Objenesis (from https://repo1.maven.org/maven2/org/objenesis/objenesis)
+- Objenesis (from https://repo1.maven.org/maven2/org/objenesis/objenesis, https://repository.cloudera.com/artifactory/cloudera-repos/org/objenesis/objenesis)
 - OkHttp (from https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp, https://square.github.io/okhttp/)
 - OkHttp Logging Interceptor (from https://github.com/square/okhttp, https://repo1.maven.org/maven2/com/squareup/okhttp3/logging-interceptor, https://square.github.io/okhttp/)
 - OkHttp URLConnection (from https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp-urlconnection, https://square.github.io/okhttp/)
@@ -207,6 +207,13 @@ The following software have components provided under the terms of this license:
 - OpenCensus (from https://github.com/census-instrumentation/opencensus-java, https://github.com/census-instrumentation/opencensus-proto)
 - OpenTelemetry Java (from https://github.com/open-telemetry/opentelemetry-java)
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://codehaus-plexus.github.io/plexus-utils/, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
+- Prometheus Metrics Config (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-config)
+- Prometheus Metrics Core (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-core)
+- Prometheus Metrics Exposition Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-formats)
+- Prometheus Metrics Exposition Formats no protobuf (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-formats-no-protobuf)
+- Prometheus Metrics Exposition Text Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-textformats)
+- Prometheus Metrics Model (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-model)
+- Prometheus Metrics Tracer Common (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-tracer-common)
 - Protocol Buffer extensions to the Google HTTP Client Library for Java. (from https://repo1.maven.org/maven2/com/google/http-client/google-http-client-protobuf)
 - Proton-J (from https://repo1.maven.org/maven2/org/apache/qpid/proton-j)
 - QpidJMS Client (from https://repo1.maven.org/maven2/org/apache/qpid/qpid-jms-client)
@@ -282,6 +289,7 @@ The following software have components provided under the terms of this license:
 - micrometer-jakarta9 (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-observation (from https://github.com/micrometer-metrics/micrometer)
 - micrometer-registry-azure-monitor (from https://github.com/micrometer-metrics/micrometer)
+- micrometer-registry-prometheus (from <https://github.com/micrometer-metrics/micrometer>, https://github.com/micrometer-metrics/micrometer)
 - org.apiguardian:apiguardian-api (from https://github.com/apiguardian-team/apiguardian)
 - org.conscrypt:conscrypt-openjdk-uber (from https://conscrypt.org/)
 - org.opentest4j:opentest4j (from https://github.com/ota4j-team/opentest4j)
@@ -320,7 +328,6 @@ BSD-2-Clause
 The following software have components provided under the terms of this license:
 
 - Apache Log4j Core (from https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core)
-- Hamcrest Core (from http://hamcrest.org/, http://hamcrest.org/JavaHamcrest/, https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core)
 - HdrHistogram (from http://hdrhistogram.github.io/HdrHistogram/)
 - Jodd Util (from https://util.jodd.org)
 - LatencyUtils (from http://latencyutils.github.io/LatencyUtils/)
@@ -356,6 +363,7 @@ The following software have components provided under the terms of this license:
 - Netty/Codec/HTTP (from https://repo1.maven.org/maven2/io/netty/netty-codec-http)
 - Old JAXB Core (from <https://eclipse-ee4j.github.io/jaxb-ri/>, https://eclipse-ee4j.github.io/jaxb-ri/, https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl)
 - Plexus Common Utilities (from http://plexus.codehaus.org/plexus-utils, https://codehaus-plexus.github.io/plexus-utils/, https://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils)
+- Prometheus Metrics Exposition Formats (from https://repo1.maven.org/maven2/io/prometheus/prometheus-metrics-exposition-formats)
 - Protocol Buffer Java API (from http://code.google.com/p/protobuf, https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java)
 - Protocol Buffers [Util] (from https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util)
 - RE2/J (from http://github.com/google/re2j)
@@ -623,7 +631,6 @@ public-domain
 ========================================================================
 The following software have components provided under the terms of this license:
 
-- JBoss Logging 3 (from http://www.jboss.org)
 - JSON in Java (from https://github.com/douglascrockford/JSON-java)
 
 ========================================================================
