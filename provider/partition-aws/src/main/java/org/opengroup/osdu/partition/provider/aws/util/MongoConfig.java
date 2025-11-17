@@ -26,8 +26,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoConfig {
 
-    @Autowired
-    public @Bean MongoTemplate mongoTemplate(MongoDBSimpleFactory mongoDBFactory, MongoPropertiesDefaultReader propertiesReader) {
+    @Bean
+    public MongoTemplate mongoTemplate(MongoDBSimpleFactory mongoDBFactory, MongoPropertiesDefaultReader propertiesReader) {
         return mongoDBFactory.mongoTemplate(propertiesReader.getProperties());
     }
 }
