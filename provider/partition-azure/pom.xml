@@ -33,7 +33,7 @@
     <core-lib-azure.version>2.2.8</core-lib-azure.version>
     <!-- Plugin Versions -->
     <surefire-plugin.version>3.5.4</surefire-plugin.version>
-    <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
+    <jacoco-plugin.version>0.8.14</jacoco-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -113,14 +113,14 @@
     <dependency>
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.0.2</version>
+      <version>10.6</version>
     </dependency>
 
     <!-- Other dependencies -->
     <dependency>
       <groupId>org.redisson</groupId>
       <artifactId>redisson</artifactId>
-      <version>3.33.0</version>
+      <version>3.52.0</version>
     </dependency>
 
     <!-- Test Scoped Dependencies -->
