@@ -74,7 +74,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.5.6</version>
+            <version>1.5.21</version>
         </dependency>
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.6</version>
+            <version>1.5.21</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
