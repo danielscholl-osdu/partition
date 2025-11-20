@@ -32,7 +32,7 @@
     <os-core-common.version>3.6.1</os-core-common.version>
 
     <!-- Spring Versions-->
-    <spring-boot.version>3.5.7</spring-boot.version>
+    <spring-boot.version>3.5.8</spring-boot.version>
     <spring-security.version>6.5.1</spring-security.version>
     <spring-framework.version>6.2.12</spring-framework.version>
 
