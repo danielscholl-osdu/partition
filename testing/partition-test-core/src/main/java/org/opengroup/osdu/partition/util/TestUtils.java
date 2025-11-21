@@ -31,7 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TestUtils {
@@ -54,20 +53,12 @@ public abstract class TestUtils {
 	public static Map<String, String> getOsduTenantHeaders() {
 		Map<String, String> headers = new HashMap<>();
 		headers.put("data-partition-id", Config.Instance().osduTenant);
-		final String correlationId = UUID.randomUUID().toString();
-		System.out.printf("Using correlation-id for the request: %s \n", correlationId);
-		headers.put("correlation-id", correlationId);
 		return headers;
 	}
 
 	public static Map<String, String> getCustomerTenantHeaders() {
 		Map<String, String> headers = new HashMap<>();
 		headers.put("data-partition-id", Config.Instance().clientTenant);
-
-		final String correlationId = UUID.randomUUID().toString();
-		System.out.printf("Using correlation-id for the request: %s \n", correlationId);
-		headers.put("correlation-id", correlationId);
-
 		return headers;
 	}
 
