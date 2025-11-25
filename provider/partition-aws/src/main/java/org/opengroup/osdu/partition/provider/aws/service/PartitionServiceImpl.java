@@ -16,69 +16,63 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
-import java.util.*;
+import java.util.List;
 
 import org.apache.http.HttpStatus;
-import org.opengroup.osdu.core.aws.dynamodb.DynamoDBQueryHelperV2;
-import org.opengroup.osdu.core.aws.dynamodb.IDynamoDBQueryHelperFactory;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBConfig;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.aws.config.ProviderConfigurationBag;
 import org.opengroup.osdu.partition.provider.aws.model.PartitionDoc;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-/**
- * Implementation of IPartitionService for AWS DynamoDB.
- * Handles CRUD operations for partitions in DynamoDB.
- */
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
-    private final JaxRsDpsLog logger;
-    private final IPartitionRepository repository;
     private static final String PARTITION_NOT_FOUND = "Partition not found";
     private static final String PARTITION_EXISTS = "Partition with same id exists";
     private static final String CANNOT_UPDATE_ID = "The field id cannot be updated";
 
     private final JaxRsDpsLog logger;
-    private final DynamoDBQueryHelperV2 queryHelper;
+    private final DynamoDBQueryHelper<PartitionDoc> queryHelper;
 
     @Autowired
-    public PartitionServiceImpl(IDynamoDBQueryHelperFactory queryHelperFactory,
-                                JaxRsDpsLog logger,
-                                ProviderConfigurationBag config) {
+    public PartitionServiceImpl(JaxRsDpsLog logger, ProviderConfigurationBag config) {
         this.logger = logger;
-        this.queryHelper = queryHelperFactory.getQueryHelper(
-                config.amazonRegion,
-                config.dynamodbTableName
+        DynamoDBConfig dynamoConfig = DynamoDBConfig.builder()
+                .region(config.amazonRegion)
+                .build();
+        DynamoDbEnhancedClient enhancedClient = dynamoConfig.dynamoDbEnhancedClient();
+        DynamoDbTable<PartitionDoc> table = enhancedClient.table(
+                config.dynamodbTableName,
+                TableSchema.fromBean(PartitionDoc.class)
         );
-    }
-
-    public PartitionServiceImpl(JaxRsDpsLog logger, 
-                               IPartitionRepository repository, 
-                               AwsKmsEncryptionClient awsKmsEncryptionClient) {
-        this.logger = logger;
-        this.repository = repository;
-        this.awsKmsEncryptionClient = awsKmsEncryptionClient;
+        this.queryHelper = DynamoDBQueryHelper.<PartitionDoc>builder()
+                .client(enhancedClient)
+                .itemType(PartitionDoc.class)
+                .table(table)
+                .build();
     }
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
-
         PartitionDoc partition = PartitionDoc.create(partitionId, partitionInfo);
 
-        if (queryHelper.keyExistsInTable(PartitionDoc.class, partition)) {
+        if (queryHelper.getItem(partitionId).isPresent()) {
             logger.error("Attempted to create duplicate partition: " + partitionId);
             throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", PARTITION_EXISTS);
         }
 
         try {
-            queryHelper.save(partition);
+            queryHelper.putItem(partition);
             logger.info("Created partition: " + partitionId);
             return partition.getPartitionInfo();
         } catch (Exception e) {
@@ -94,17 +88,32 @@ public class PartitionServiceImpl implements IPartitionService {
         validateNoIdUpdate(partitionInfo);
 
         PartitionDoc partition = getPartitionOrThrow(partitionId);
+        PartitionInfo existing = partition.getPartitionInfo();
 
-        try {
-            PartitionInfo updatedProperties = partition.getPartitionInfo();
-            queryHelper.save(PartitionDoc.create(partitionId, updatedProperties));
-            logger.info("Updated partition: " + partitionId);
-            return partitionInfo;
-        } catch (Exception e) {
-            logger.error("Failed to update partition: " + partitionId, e);
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                    "Failed to update partition", e.getMessage());
+        boolean hasChanges = false;
+        for (var entry : partitionInfo.getProperties().entrySet()) {
+            Property oldValue = existing.getProperties().putIfAbsent(entry.getKey(), entry.getValue());
+            /*
+             * If the oldValue is null, then the property did not already exist. See:
+             * https://docs.oracle.com/javase/8/docs/api/java/util/Map.html#putIfAbsent-K-V-
+             */
+            hasChanges = (oldValue == null || hasChanges); 
         }
+
+        if (hasChanges) {
+            try {
+                queryHelper.putItem(PartitionDoc.create(partitionId, existing));
+                logger.info("Updated partition: " + partitionId);
+            } catch (Exception e) {
+                logger.error("Failed to update partition: " + partitionId, e);
+                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                        "Failed to update partition", e.getMessage());
+            }
+        } else {
+            logger.info("No changes detected for partition: " + partitionId);
+        }
+
+        return existing;
     }
 
     @Override
@@ -116,10 +125,10 @@ public class PartitionServiceImpl implements IPartitionService {
     @Override
     public boolean deletePartition(String partitionId) {
         validatePartitionId(partitionId);
-        getPartitionOrThrow(partitionId); // Verify existence
+        getPartitionOrThrow(partitionId);
 
         try {
-            queryHelper.deleteByPrimaryKey(PartitionDoc.class, partitionId);
+            queryHelper.deleteItem(partitionId);
             logger.info("Deleted partition: " + partitionId);
             return true;
         } catch (Exception e) {
@@ -132,9 +141,9 @@ public class PartitionServiceImpl implements IPartitionService {
     @Override
     public List<String> getAllPartitions() {
         try {
-            return queryHelper.scanTable(PartitionDoc.class).stream()
+            return queryHelper.scanTable().stream()
                     .map(PartitionDoc::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             logger.error("Failed to retrieve all partitions", e);
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
@@ -163,7 +172,7 @@ public class PartitionServiceImpl implements IPartitionService {
     }
 
     private PartitionDoc getPartitionOrThrow(String partitionId) {
-        PartitionDoc partition = queryHelper.loadByPrimaryKey(PartitionDoc.class, partitionId);
+        PartitionDoc partition = queryHelper.getItem(partitionId).orElse(null);
         if (partition == null) {
             logger.error("Partition not found: " + partitionId);
             throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND,

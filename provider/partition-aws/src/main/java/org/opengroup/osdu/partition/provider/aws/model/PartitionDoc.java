@@ -15,12 +15,12 @@
 
 package org.opengroup.osdu.partition.provider.aws.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import lombok.*;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
 import jakarta.validation.constraints.NotEmpty;
 
@@ -28,27 +28,36 @@ import jakarta.validation.constraints.NotEmpty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@DynamoDBTable(tableName = PartitionDoc.TABLE_NAME) // DynamoDB table name (without environment prefix)
+@DynamoDbBean
 public class PartitionDoc {
 
     public static final String TABLE_NAME = "PartitionRepository";
 
     @NotEmpty
-    @DynamoDBHashKey(attributeName = "id")
     private String id;
 
-    @DynamoDBAttribute(attributeName = "properties")
-    @DynamoDBTypeConverted(converter = PartitionInfoConverter.class)
     private PartitionInfo partitionInfo;
 
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("id")
+    public String getId() {
+        return id;
+    }
 
-    /**
-     * Creates a new PartitionDoc instance.
-     *
-     * @param id            The partition identifier
-     * @param partitionInfo The partition data
-     * @return A new PartitionDoc instance
-     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @DynamoDbAttribute("properties")
+    @DynamoDbConvertedBy(PartitionInfoConverter.class)
+    public PartitionInfo getPartitionInfo() {
+        return partitionInfo;
+    }
+
+    public void setPartitionInfo(PartitionInfo partitionInfo) {
+        this.partitionInfo = partitionInfo;
+    }
+
     public static PartitionDoc create(String id, PartitionInfo partitionInfo) {
         return PartitionDoc.builder()
                 .id(id)

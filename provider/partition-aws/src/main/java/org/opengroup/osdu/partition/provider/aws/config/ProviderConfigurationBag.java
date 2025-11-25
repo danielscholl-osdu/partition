@@ -15,24 +15,20 @@
 
 package org.opengroup.osdu.partition.provider.aws.config;
 
-import org.opengroup.osdu.core.aws.ssm.K8sLocalParameterProvider;
-import org.opengroup.osdu.core.aws.ssm.K8sParameterNotFoundException;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
 
 @Component
 public class ProviderConfigurationBag {
 
-    @Value("${aws.region}")
-    public String amazonRegion;
+    public final String amazonRegion;
+    public final String dynamodbTableName;
 
-    public String dynamodbTableName;
-
-    @PostConstruct
-    public void init() throws K8sParameterNotFoundException {
-        K8sLocalParameterProvider provider = new K8sLocalParameterProvider();
-        dynamodbTableName = provider.getParameterAsString("DYNAMODB_TABLE_NAME");
+    public ProviderConfigurationBag(@Value("${aws.region}") String amazonRegion) throws K8sParameterNotFoundException {
+        this.amazonRegion = amazonRegion;
+        K8sLocalParameterProvider parameterProvider = new K8sLocalParameterProvider();
+        this.dynamodbTableName = parameterProvider.getParameterAsString("DYNAMODB_TABLE_NAME");
     }
 }

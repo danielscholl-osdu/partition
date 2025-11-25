@@ -14,25 +14,70 @@
  */
 package org.opengroup.osdu.partition.provider.aws.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
-import com.google.gson.Gson;
 import org.opengroup.osdu.partition.model.PartitionInfo;
+import org.opengroup.osdu.partition.model.Property;
+import software.amazon.awssdk.enhanced.dynamodb.AttributeConverter;
+import software.amazon.awssdk.enhanced.dynamodb.AttributeValueType;
+import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-public class PartitionInfoConverter implements DynamoDBTypeConverter<String, PartitionInfo> {
+import java.util.HashMap;
+import java.util.Map;
 
-    private static final Gson gson = new Gson();
+public class PartitionInfoConverter implements AttributeConverter<PartitionInfo> {
 
     @Override
-    public String convert(PartitionInfo p) {
-        return gson.toJson(p);
+    public AttributeValue transformFrom(PartitionInfo partitionInfo) {
+        if (partitionInfo == null || partitionInfo.getProperties() == null) {
+            return AttributeValue.builder().nul(true).build();
+        }
+        
+        Map<String, AttributeValue> propertiesMap = new HashMap<>();
+        partitionInfo.getProperties().forEach((key, property) -> {
+            Map<String, AttributeValue> propertyMap = new HashMap<>();
+            propertyMap.put("value", AttributeValue.builder().s(String.valueOf(property.getValue())).build());
+            propertyMap.put("sensitive", AttributeValue.builder().bool(property.isSensitive()).build());
+            propertiesMap.put(key, AttributeValue.builder().m(propertyMap).build());
+        });
+        
+        return AttributeValue.builder().m(propertiesMap).build();
     }
 
     @Override
-    public PartitionInfo unconvert(String s) {
-        if (s == null || s.isEmpty()) {
+    public PartitionInfo transformTo(AttributeValue attributeValue) {
+        if (attributeValue == null || Boolean.TRUE.equals(attributeValue.nul()) || attributeValue.m() == null) {
             return null;
         }
+        
+        Map<String, Property> properties = new HashMap<>();
+        attributeValue.m().forEach((key, value) -> {
+            if (value.m() != null) {
+                AttributeValue valueAttr = value.m().get("value");
+                AttributeValue sensitiveAttr = value.m().get("sensitive");
+                
+                Property property = new Property();
+                if (valueAttr != null && valueAttr.s() != null) {
+                    property.setValue(valueAttr.s());
+                }
+                if (sensitiveAttr != null && sensitiveAttr.bool() != null) {
+                    property.setSensitive(sensitiveAttr.bool());
+                }
+                properties.put(key, property);
+            }
+        });
+        
+        PartitionInfo partitionInfo = new PartitionInfo();
+        partitionInfo.setProperties(properties);
+        return partitionInfo;
+    }
 
-        return gson.fromJson(s, PartitionInfo.class);
+    @Override
+    public EnhancedType<PartitionInfo> type() {
+        return EnhancedType.of(PartitionInfo.class);
+    }
+
+    @Override
+    public AttributeValueType attributeValueType() {
+        return AttributeValueType.M;
     }
 }
