@@ -31,7 +31,7 @@ public abstract class HealthCheckApiTest extends TestBase {
   @Test
   public void should_returnOk() throws Exception {
     CloseableHttpResponse response =
-        TestUtils.send("api/partition/v1/liveness_check", HttpMethod.GET.name(), this.testUtils.getAccessToken(), "", "", false);
+        TestUtils.send("api/partition/v1/liveness_check", HttpMethod.GET.name(), null, "", "", false);
     assertEquals(HttpStatus.OK.value(), response.getCode());
   }
 

@@ -14,14 +14,13 @@
 
 package org.opengroup.osdu.partition.provider.azure.di;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.policy.FixedDelayOptions;
 import com.azure.core.http.policy.RetryOptions;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.core.credential.TokenCredential;
-
 import lombok.Setter;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.common.Validators;
@@ -38,23 +37,24 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "azure.table-storage")
 @Setter
 public class TableStorageBootstrapConfig {
+
     private int retryDeltaBackoffMs;
     private int retryMaxAttempts;
 
     @Bean
     @Lazy
     public TableServiceClient getTableServiceClient(
-        final @Named("TABLE_STORAGE_ENDPOINT") String storageAccountEndpoint) {
+        final @Named("TABLE_STORAGE_ACCOUNT_NAME") String storageAccountName) {
         try {
-            
-            Validators.checkNotNullAndNotEmpty(storageAccountEndpoint, "storageAccountEndpoint");
-            
-            //There was no substitute function available for setting the maximum execution time as in the previous
-            //version after my research, leaving that part for now. We would still like to know the replaceable code for below line:
-            //cloudTableClient.getDefaultRequestOptions().setMaximumExecutionTimeInMs(maximumExecutionTimeMs);
-            com.azure.core.http.policy.FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
+            // Construct storageAccountEndpoint from storageAccountName
+            Validators.checkNotNullAndNotEmpty(storageAccountName, "storageAccountName");
+            String storageAccountEndpoint = String.format("https://%s.table.core.windows.net/", storageAccountName);
+
+            // Set up retry options
+            FixedDelayOptions fixedDelayOptions = new FixedDelayOptions(retryMaxAttempts, Duration.ofMillis(retryDeltaBackoffMs));
             RetryOptions retryOptions = new RetryOptions(fixedDelayOptions);
-            
+
+            // Use managed identity for authentication
             TokenCredential managedIdentityCredential = new DefaultAzureCredentialBuilder().build();
 
             TableServiceClient serviceClient = new TableServiceClientBuilder()
@@ -65,7 +65,7 @@ public class TableStorageBootstrapConfig {
 
             return serviceClient;
         }
-        catch (Exception e){
+        catch (Exception e) {
             throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Error creating cloud table storage client", e.getMessage(), e);
         }
     }
@@ -89,9 +89,8 @@ public class TableStorageBootstrapConfig {
             }
             return tableClient;
         }
-        catch (Exception e){
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error creating a Table Client for table: %s", tblConfiguration), e.getMessage(), e);
+        catch (Exception e) {
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, String.format("Error creating a Table Client for table: %s", tblConfiguration.getCloudTableName()), e.getMessage(), e);
         }
-
     }
 }
