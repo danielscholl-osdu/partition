@@ -9,7 +9,7 @@
     <parent>
         <artifactId>partition</artifactId>
         <groupId>org.opengroup.osdu</groupId>
-        <version>0.29.0-SNAPSHOT</version>
+        <version>0.30.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.opengroup.osdu</groupId>
             <artifactId>partition-core</artifactId>
-            <version>0.29.0-SNAPSHOT</version>
+            <version>0.30.0-SNAPSHOT</version>
             <exclusions>
             <exclusion>
                 <groupId>net.minidev</groupId>
