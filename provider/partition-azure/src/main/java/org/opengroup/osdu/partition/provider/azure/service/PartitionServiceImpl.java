@@ -14,6 +14,8 @@
 
 package org.opengroup.osdu.partition.provider.azure.service;
 
+import com.google.common.base.Stopwatch;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.cache.ICache;
 import org.opengroup.osdu.core.common.model.http.AppException;
@@ -31,8 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class PartitionServiceImpl implements IPartitionService {
 
     private static final String SYSTEM_PARTITION_DELETE_ERROR = "System partition is reserved for system and shared usage, currently it cannot Deleted";
@@ -92,10 +96,17 @@ public class PartitionServiceImpl implements IPartitionService {
 
     @Override
     public PartitionInfo getPartition(String partitionId) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         PartitionInfo pi = partitionServiceCache.get(partitionId);
+        stopwatch.stop();
+        log.info(String.format("Total time taken to fetch from PartitionCache: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
 
         if (pi == null) {
+            stopwatch.reset();
+            stopwatch.start();
             Map<String, Property> out = new HashMap<>(tableStore.getPartition(partitionId));
+            stopwatch.stop();
+            log.info(String.format("Total time taken to Fetch Data From Storage Table: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
 
             if (out.isEmpty()) {
                 throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
@@ -134,8 +145,10 @@ public class PartitionServiceImpl implements IPartitionService {
         List<String> partitions = partitionListCache.get(PARTITION_LIST_KEY);
 
         if (partitions == null) {
+            Stopwatch stopwatch = Stopwatch.createStarted();
             partitions = tableStore.getAllPartitions();
-
+            stopwatch.stop();
+            log.info(String.format("Total time taken to fetch all partition: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
             if (partitions != null) {
                 partitionListCache.put(PARTITION_LIST_KEY, partitions);
             }

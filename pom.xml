@@ -32,13 +32,14 @@
     <os-core-common.version>3.6.1</os-core-common.version>
 
     <!-- Spring Versions-->
-    <spring-boot.version>3.3.13</spring-boot.version>
+    <spring-boot.version>3.5.7</spring-boot.version>
     <spring-security.version>6.5.1</spring-security.version>
-    <spring-framework.version>6.2.9</spring-framework.version>
+    <spring-framework.version>6.2.12</spring-framework.version>
 
     <!-- Project Versions-->
     <lombok.version>1.18.38</lombok.version>
     <guava.version>33.4.8-jre</guava.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
 
     <!-- Plugin Versions -->
     <git-commit-id-plugin.version>8.0.2</git-commit-id-plugin.version>
@@ -46,6 +47,16 @@
 
   <dependencyManagement>
     <dependencies>
+      <!--
+        commons-lang3 Fix CVE-2025-48924
+        Override Spring Boot 3.5.7's commons-lang3 version to fix uncontrolled recursion vulnerability.
+        This can be removed when Spring Boot updates to commons-lang3 3.18.0 or later.
+      -->
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>${commons-lang3.version}</version>
+      </dependency>
       <!-- BOMs listed in order of dependency hierarchy:
            spring-boot-dependencies first as it's the parent BOM providing default dependency management,
            spring-security-bom second as it may need to override Spring Framework versions for security purposes,

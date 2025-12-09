@@ -17,14 +17,18 @@ package org.opengroup.osdu.partition.provider.azure.persistence;
 import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableTransactionAction;
 import com.azure.data.tables.models.TableTransactionActionType;
+import com.google.common.base.Stopwatch;
+import lombok.extern.slf4j.Slf4j;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class PartitionTableStore {
 
     private final static String ID = "id";
@@ -75,7 +79,11 @@ public class PartitionTableStore {
     public Map<String, Property> getPartition(String partitionId) {
         Map<String, Property> out = new HashMap<>();
 
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<TableEntity> partitionEntities = this.getAllByPartitionId(partitionId);
+        stopwatch.stop();
+        log.info(String.format("Total time taken by Get Partition Method based on PartitionId: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+
         if (partitionEntities.isEmpty()) {
             return out;
         }
@@ -120,6 +128,7 @@ public class PartitionTableStore {
         Iterable<TableEntity> results = (Iterable<TableEntity>)
                 this.dataTableStore.queryByKey(PARTITION_KEY, partitionId);
         results.forEach(out::add);
+        log.info("Result Size {}", out.size());
         return out;
     }
 
