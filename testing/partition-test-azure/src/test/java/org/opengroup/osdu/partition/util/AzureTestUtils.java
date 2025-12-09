@@ -16,13 +16,23 @@
 
 package org.opengroup.osdu.partition.util;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import com.google.common.base.Strings;
+import org.springframework.http.HttpStatus;
+
+import static org.junit.Assert.assertEquals;
 
 public class AzureTestUtils extends TestUtils {
 
     @Override
     public synchronized String getAccessToken() throws Exception {
-        if (Strings.isNullOrEmpty(token)) {
+        String bearerToken = System.getProperty("INTEGRATION_TESTER_ACCESS_TOKEN", System.getenv("INTEGRATION_TESTER_ACCESS_TOKEN"));
+        if(!Strings.isNullOrEmpty(bearerToken) && Strings.isNullOrEmpty(token)) {
+            System.out.println("Using INTEGRATION_TESTER_ACCESS_TOKEN bearer token from environment variable");
+            token = bearerToken;
+        }
+        else if (Strings.isNullOrEmpty(token)) {       
+            System.out.println("Generating INTEGRATION_TESTER_ACCESS_TOKEN bearer token using SPN client id and secret");
             String sp_id = System.getProperty("INTEGRATION_TESTER", System.getenv("INTEGRATION_TESTER"));
             String sp_secret = System.getProperty("AZURE_TESTER_SERVICEPRINCIPAL_SECRET", System.getenv("AZURE_TESTER_SERVICEPRINCIPAL_SECRET"));
             String app_resource_id = System.getProperty("AZURE_AD_APP_RESOURCE_ID", System.getenv("AZURE_AD_APP_RESOURCE_ID"));
@@ -35,7 +45,13 @@ public class AzureTestUtils extends TestUtils {
 
     @Override
     public synchronized String getNoAccessToken() throws Exception {
-        if (Strings.isNullOrEmpty(noAccessToken)) {
+        String bearerToken = System.getProperty("NO_DATA_ACCESS_TESTER_ACCESS_TOKEN", System.getenv("NO_DATA_ACCESS_TESTER_ACCESS_TOKEN"));
+        if(!Strings.isNullOrEmpty(bearerToken) && Strings.isNullOrEmpty(noAccessToken)) {
+            System.out.println("Using NO_DATA_ACCESS_TESTER_ACCESS_TOKEN bearer token from environment variable");
+            noAccessToken = bearerToken;
+        }
+        else if (Strings.isNullOrEmpty(noAccessToken)) {       
+            System.out.println("Generating NO_DATA_ACCESS_TESTER_ACCESS_TOKEN bearer token using SPN client id and secret");
             String sp_id = System.getProperty("NO_DATA_ACCESS_TESTER", System.getenv("NO_DATA_ACCESS_TESTER"));
             String sp_secret = System.getProperty("NO_DATA_ACCESS_TESTER_SERVICEPRINCIPAL_SECRET", System.getenv("NO_DATA_ACCESS_TESTER_SERVICEPRINCIPAL_SECRET"));
             String app_resource_id = System.getProperty("AZURE_AD_OTHER_APP_RESOURCE_ID", System.getenv("AZURE_AD_OTHER_APP_RESOURCE_ID"));
