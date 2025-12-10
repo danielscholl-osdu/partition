@@ -29,16 +29,16 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- OSDU Versions-->
-    <os-core-common.version>3.6.1</os-core-common.version>
+    <os-core-common.version>4.0.0</os-core-common.version>
 
     <!-- Spring Versions-->
-    <spring-boot.version>3.5.7</spring-boot.version>
-    <spring-security.version>6.5.1</spring-security.version>
-    <spring-framework.version>6.2.12</spring-framework.version>
+    <spring-boot.version>3.5.8</spring-boot.version>
+    <spring-security.version>6.5.7</spring-security.version>
+    <spring-framework.version>6.2.14</spring-framework.version>
 
     <!-- Project Versions-->
-    <lombok.version>1.18.38</lombok.version>
-    <guava.version>33.4.8-jre</guava.version>
+    <lombok.version>1.18.42</lombok.version>
+    <guava.version>33.5.0-jre</guava.version>
     <commons-lang3.version>3.18.0</commons-lang3.version>
 
     <!-- Plugin Versions -->
