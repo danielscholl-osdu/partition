@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -47,6 +48,10 @@ public class SwaggerConfiguration {
                 .addTagsItem(new Tag().name("partition-api").description("Partition API"))
                 .addTagsItem(new Tag().name("info").description("Version info endpoint"))
                 .components(new Components()
+                        .addSchemas("Property",
+                                new ObjectSchema()
+                                        .addProperty("sensitive", new BooleanSchema())
+                                        .addProperty("value", new ObjectSchema()))
                         .addSchemas("Map",
                                 new Schema<Map<String, Property>>().addProperty("< * >",
                                         new ObjectSchema().$ref("#/components/schemas/Property")))

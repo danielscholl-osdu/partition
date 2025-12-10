@@ -30,7 +30,7 @@
   </parent>
 
   <properties>
-    <core-lib-azure.version>2.2.8</core-lib-azure.version>
+    <core-lib-azure.version>2.3.0</core-lib-azure.version>
     <!-- Plugin Versions -->
     <surefire-plugin.version>3.5.4</surefire-plugin.version>
     <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
@@ -73,7 +73,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
-      <version>${spring-boot.version}</version>
       <exclusions>
         <exclusion>
           <groupId>ch.qos.logback</groupId>
