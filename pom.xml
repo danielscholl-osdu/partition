@@ -34,7 +34,7 @@
     <!-- Spring Versions-->
     <spring-boot.version>3.5.8</spring-boot.version>
     <spring-security.version>6.5.7</spring-security.version>
-    <spring-framework.version>6.2.14</spring-framework.version>
+    <spring-framework.version>6.2.15</spring-framework.version>
 
     <!-- Project Versions-->
     <lombok.version>1.18.42</lombok.version>
