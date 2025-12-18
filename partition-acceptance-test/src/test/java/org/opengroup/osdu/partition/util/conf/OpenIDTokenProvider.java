@@ -36,7 +36,6 @@ import net.minidev.json.JSONObject;
 public class OpenIDTokenProvider {
 
     private static final OpenIDProviderConfig openIDProviderConfig = OpenIDProviderConfig.Instance();
-    private static final String ID_TOKEN = "id_token";
     private final AuthorizationGrant clientGrant = new ClientCredentialsGrant();
     private final URI tokenEndpointURI;
     private final Scope scope;
@@ -88,10 +87,14 @@ public class OpenIDTokenProvider {
         }
 
         JSONObject jsonObject = parse.toSuccessResponse().toJSONObject();
-        String idTokenValue = jsonObject.getAsString(ID_TOKEN);
-        if (Objects.isNull(idTokenValue) || idTokenValue.isEmpty()) {
+        // OAuth2 client_credentials returns access_token; some OIDC providers return id_token
+        String tokenValue = jsonObject.getAsString("access_token");
+        if (Objects.isNull(tokenValue) || tokenValue.isEmpty()) {
+            tokenValue = jsonObject.getAsString("id_token");
+        }
+        if (Objects.isNull(tokenValue) || tokenValue.isEmpty()) {
             throw new RuntimeException("Unable get credentials from INTEGRATION_TESTER variables");
         }
-        return idTokenValue;
+        return tokenValue;
     }
 }
