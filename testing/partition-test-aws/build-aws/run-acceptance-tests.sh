@@ -25,14 +25,15 @@ cd "$SCRIPT_SOURCE_DIR"
 export CLIENT_TENANT=common
 export MY_TENANT=opendes
 
-export COGNITO_NAME=$(aws ssm get-parameter --name "/osdu/instances/${OSDU_INSTANCE_NAME}/config/cognito/name" --query Parameter.Value --output text --region $AWS_REGION)
-export CLIENT_CREDENTIALS_CLIENT_ID=$(aws ssm get-parameter --name "/osdu/cognito/${COGNITO_NAME}/client/client-credentials/id" --query Parameter.Value --output text --region $AWS_REGION)
-export CLIENT_CREDENTIALS_CLIENT_SECRET=$(aws secretsmanager get-secret-value --secret-id /osdu/cognito/${COGNITO_NAME}/client-credentials-secret --query SecretString --output json --region $AWS_REGION | sed -e 's/\\\"/\"/g' -e 's/^.//g' -e 's/.$//g' | jq -r '.client_credentials_client_secret')
+export IDP_NAME=$(aws ssm get-parameter --name "/osdu/instances/${OSDU_INSTANCE_NAME}/config/idp/name" --query Parameter.Value --output text --region $AWS_REGION)
+export CLIENT_CREDENTIALS_CLIENT_ID=$(aws ssm get-parameter --name "/osdu/idp/${IDP_NAME}/client/client-credentials/id" --query Parameter.Value --output text --region $AWS_REGION)
+export CLIENT_CREDENTIALS_CLIENT_SECRET=$(aws secretsmanager get-secret-value --secret-id /osdu/idp/${IDP_NAME}/client-credentials-secret --query SecretString --output json --region $AWS_REGION | sed -e 's/\\\"/\"/g' -e 's/^.//g' -e 's/.$//g' | jq -r '.client_credentials_client_secret')
 
-export COGNITO_AUTH_TOKEN_URI=$(aws ssm get-parameter --name "/osdu/cognito/${COGNITO_NAME}/oauth/token-uri" --query Parameter.Value --output text --region $AWS_REGION)
-export COGNITO_ALLOWED_SCOPES=$(aws ssm get-parameter --name "/osdu/cognito/${COGNITO_NAME}/oauth/allowed-scopes" --query Parameter.Value --output text --region $AWS_REGION)
+export IDP_AUTH_TOKEN_URI=$(aws ssm get-parameter --name "/osdu/idp/${IDP_NAME}/oauth/token-uri" --query Parameter.Value --output text --region $AWS_REGION)
+export IDP_ALLOWED_SCOPES=$(aws ssm get-parameter --name "/osdu/idp/${IDP_NAME}/oauth/allowed-scopes" --query Parameter.Value --output text --region $AWS_REGION)
 export SERVICE_PRINCIPAL_AUTHORIZATION=$(echo -n "${CLIENT_CREDENTIALS_CLIENT_ID}:${CLIENT_CREDENTIALS_CLIENT_SECRET}" | base64 | tr -d "\n")
-export ROOT_USER_TOKEN=$(curl --location ${COGNITO_AUTH_TOKEN_URI} --header "Content-Type:application/x-www-form-urlencoded" --header "Authorization:Basic ${SERVICE_PRINCIPAL_AUTHORIZATION}" --data-urlencode "grant_type=client_credentials" --data-urlencode ${COGNITO_ALLOWED_SCOPES}  --http1.1 | jq -r '.access_token')
+export ROOT_USER_TOKEN=$(curl --location ${IDP_AUTH_TOKEN_URI} --header "Content-Type:application/x-www-form-urlencoded" --header "Authorization:Basic ${SERVICE_PRINCIPAL_AUTHORIZATION}" --data-urlencode "grant_type=client_credentials" --data-urlencode ${IDP_ALLOWED_SCOPES}  --http1.1 | jq -r '.access_token')
+
 
 
 # Run the tests
