@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.logging.DefaultLogger;
-import org.opengroup.osdu.core.common.logging.ILogger;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.core.common.model.http.DpsHeaders;
@@ -32,14 +31,10 @@ import org.opengroup.osdu.partition.model.Property;
 import org.opengroup.osdu.partition.provider.aws.model.Partition;
 import org.opengroup.osdu.partition.provider.aws.model.IPartitionRepository;
 import org.opengroup.osdu.partition.provider.aws.util.AwsKmsEncryptionClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -47,8 +42,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -224,7 +217,7 @@ public class PartitionServiceImplTest {
         doThrow(ClassCastException.class).when(awsKmsEncryptionClient).decrypt(any(), any());
 
         try {
-            PartitionInfo partitionInfo = partService.getPartition(id);
+            partService.getPartition(id);
             fail("Expected partService.getPartition to throw an exception, but passed");
         } catch (AppException exception) {
             assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getError().getCode());
@@ -239,7 +232,7 @@ public class PartitionServiceImplTest {
         doThrow(IllegalStateException.class).when(awsKmsEncryptionClient).decrypt(any(), any());
 
         try {
-            PartitionInfo partitionInfo = partService.getPartition(id);
+            partService.getPartition(id);
             fail("Expected partService.getPartition to throw an exception, but passed");
         } catch (AppException exception) {
             assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getError().getCode());
