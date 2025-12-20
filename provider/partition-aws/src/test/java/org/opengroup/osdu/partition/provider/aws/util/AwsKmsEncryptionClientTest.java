@@ -79,7 +79,7 @@ public class AwsKmsEncryptionClientTest {
 	private final Map<String, String> validContext = new HashMap<>();
 
 	@Before
-	public void setup() throws NoSuchFieldException, IllegalAccessException {
+	public void setup() {
 		ReflectionTestUtils.setField(encryptionClient, "keyArn", KEY_ARN);
 		ReflectionTestUtils.setField(encryptionClient, "authDatabase", AUTH_DATABASE);
 		ReflectionTestUtils.setField(encryptionClient, "awsRegion", AWS_REGION);
@@ -133,8 +133,7 @@ public class AwsKmsEncryptionClientTest {
 	}
 
 	@Test
-	public void should_use_region_from_properties_when_initializing_kms_client() 
-			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public void should_use_region_from_properties_when_initializing_kms_client() {
 		// This test verifies that the AWS region from properties is used when initializing the KMS client
 		// We can't easily mock the static KmsClient.builder() method, so we'll use reflection to check
 		// that the awsRegion field is properly set and would be used in the initialize method
