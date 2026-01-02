@@ -112,6 +112,21 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.logLevel** | logging severity level for this service only  | string | - | yes, only if differs from the `global.logLevel`
 **data.projectId** | your Google Cloud project id | string | - | yes
 
+### System Partition variables
+
+| Name | Description | Type | Default |Required |
+| ---- | ----------- | ---- | ------- | ------- |
+**data.tenantServiceAccount** | partition admin service account | string | - | yes
+**data.databaseId** | datastore database id | string | - | yes
+**data.elasticHttps** | force services to communicate with elasticsearch using https | bool | true | yes
+**data.policyServiceEnabled** | indicates that Policy service is available in an OSDU installation | bool | true | yes
+**data.edsEnabled** | indicates that EDS services are available in an OSDU installation | bool | false | yes
+**data.autoCompleteEnabled** | enables autoComplete function | bool | true | yes
+**data.asIngestedCoordinatesEnabled** | enables asIngestedCoordinates function | bool | true | yes
+**data.keyWordLowerEnabled** | enables keyWordLower function | bool | true | yes
+**data.bagOfWordsEnabled** | enables bagOfWords function | bool | true | yes
+**data.xCollaborationEnabled** | enables xCollaboration function | bool | false | yes
+
 ### Deployment variables
 
 | Name | Description | Type | Default |Required |

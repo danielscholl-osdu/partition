@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 apiVersion: v2
-name: gc-partition-quarkus-deploy
+name: gc-partition-deploy
 description: A Helm chart for Kubernetes
 # A chart can be either an 'application' or a 'library' chart.
 #

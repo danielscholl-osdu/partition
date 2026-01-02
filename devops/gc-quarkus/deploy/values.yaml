@@ -39,8 +39,8 @@ data:
   xCollaborationEnabled: false
 
 conf:
-  appName: "partition-quarkus"
-  configmap: "partition-quarkus-config"
+  appName: "partition"
+  configmap: "partition-config"
   configmapPartitions: "quarkus-partitions"
   replicas: 1
 

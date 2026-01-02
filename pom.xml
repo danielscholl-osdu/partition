@@ -236,7 +236,7 @@
     <profile>
       <id>gc</id>
       <modules>
-        <module>provider/partition-gc</module>
+        <module>provider/partition-gc-quarkus</module>
       </modules>
     </profile>
   </profiles>
