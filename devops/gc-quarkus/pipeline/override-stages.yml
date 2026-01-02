@@ -1,10 +1,10 @@
 variables:
-  GC_QUARKUS_SERVICE: partition-quarkus
-  GC_QUARKUS_NAMESPACE: "partition-quarkus-int-test"
-  GC_QUARKUS_HELM_DIR: "devops/gc-quarkus/deploy"
-  GC_QUARKUS_HELM_PACKAGE_NAME: "gc-partition-quarkus-deploy"
+  GC_SERVICE: partition
+  GC_HELM_DEPLOYMENT_DIR: "devops/gc-quarkus/deploy"
+  GC_ENABLE_BOOTSTRAP: "false"
+  BUILD_PATH: provider/partition-gc-quarkus/cloudbuild/Dockerfile.cloudbuild
 
-gc-quarkus-compile-and-unit-test:
+gc-compile-and-unit-test:
   extends:
     - .gc-variables
   stage: csp-build
@@ -24,78 +24,14 @@ gc-quarkus-compile-and-unit-test:
     - if: $GC == "1"
       when: on_success
 
-gc-quarkus-containerize-gitlab:
-  extends: gc-containerize-gitlab
-  stage: containerize
-  needs: ["gc-quarkus-compile-and-unit-test"]
+gc-deploy:
   variables:
-    GC_SERVICE: $GC_QUARKUS_SERVICE
-    GC_VENDOR: gc-quarkus
-    BUILD_PATH: provider/partition-gc-quarkus/cloudbuild/Dockerfile.cloudbuild
-  rules:
-    - if: $GC == "1"
-      when: on_success
+    GC_HELM_SETS: "--set data.tenantServiceAccount=${ADMIN_USER_EMAIL} --set data.databaseId="
 
-gc-quarkus-helm-charts-gitlab:
-  extends: gc-helm-charts-gitlab
-  needs: ["gc-quarkus-containerize-gitlab"]
+gc-dev2-deploy:
   variables:
-    GC_HELM_DEPLOYMENT_DIR: $GC_QUARKUS_HELM_DIR
-    GC_HELM_PACKAGE_NAME: $GC_QUARKUS_HELM_PACKAGE_NAME
-    GC_SERVICE: $GC_QUARKUS_SERVICE
+    GC_HELM_SETS: "--set data.tenantServiceAccount=${GC_ADMIN_USER_EMAIL} --set data.databaseId="
 
-gc-quarkus-deploy:
-  extends: gc-deploy
-  needs: ["gc-quarkus-helm-charts-gitlab"]
+gc-preship-deploy:
   variables:
-    GC_HELM_DIR: $GC_QUARKUS_HELM_DIR
-    GC_SERVICE: $GC_QUARKUS_SERVICE
-    GC_HELM_PACKAGE_NAME: $GC_QUARKUS_HELM_PACKAGE_NAME
-    GC_ENABLE_BOOTSTRAP: "false"
-    GC_HELM_SETS: "--set data.serviceAccountName=partition"
-
-gc-quarkus-test:
-  extends:
-    - .gc-variables
-    - .maven
-  stage: integration
-  needs: ["gc-quarkus-deploy"]
-  variables:
-    CLIENT_TENANT: test
-    PARTITION_BASE_URL: https://community.gcp.gnrg-osdu.projects.epam.com/api/partition-quarkus/v1
-  script:
-    - cd provider/partition-gc
-    - mvn test -Dtest=*IT -DfailIfNoTests=false
-  rules:
-    - if: "$CI_COMMIT_BRANCH =~ /^release/"
-      when: never
-    - if: "$CI_COMMIT_TAG"
-      when: never
-    - if: '$GC == "1" && $GC_INT_TEST_TYPE != "python"'
-      when: on_success
-
-gc-quarkus-helm-charts-release-gitlab:
-  extends: gc-helm-charts-release-gitlab
-  needs: ["gc-quarkus-containerize-gitlab"]
-  variables:
-    GC_HELM_DEPLOYMENT_DIR: $GC_QUARKUS_HELM_DIR
-    GC_HELM_PACKAGE_NAME: $GC_QUARKUS_HELM_PACKAGE_NAME
-    GC_SERVICE: $GC_QUARKUS_SERVICE
-
-gc-quarkus-helm-charts-release-gcr:
-  extends: gc-helm-charts-release-gcr
-  needs: ["gc-quarkus-containerize-gitlab"]
-  variables:
-    GC_HELM_DEPLOYMENT_DIR: $GC_QUARKUS_HELM_DIR
-    GC_HELM_PACKAGE_NAME: $GC_QUARKUS_HELM_PACKAGE_NAME
-    GC_SERVICE: $GC_QUARKUS_SERVICE
-
-gc-quarkus-dev2-deploy:
-  extends: gc-dev2-deploy
-  needs: ["gc-quarkus-helm-charts-release-gitlab"]
-  variables:
-    GC_HELM_DIR: $GC_QUARKUS_HELM_DIR
-    GC_SERVICE: $GC_QUARKUS_SERVICE
-    GC_HELM_PACKAGE_NAME: $GC_QUARKUS_HELM_PACKAGE_NAME
-    GC_ENABLE_BOOTSTRAP: "false"
-    GC_HELM_SETS: "--set data.serviceAccountName=partition"
+    GC_HELM_SETS: "--set data.tenantServiceAccount=${ADMIN_USER_EMAIL} --set data.databaseId="

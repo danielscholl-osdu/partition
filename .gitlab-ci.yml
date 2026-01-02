@@ -70,8 +70,6 @@ include:
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/ibm-one-pipeline.yml"
 
-  - local: "devops/gc/pipeline/override-stages.yml"
-
   - local: "devops/gc-quarkus/pipeline/override-stages.yml"
 
   - local: "devops/core-plus/pipeline/override-stages.yml"

@@ -1,10 +1,8 @@
 FROM azul/zulu-openjdk:17
 WORKDIR /app
-ARG PROVIDER_NAME
-ENV PROVIDER_NAME $PROVIDER_NAME
 
 # Copy the quarkus-app dir to the production image from the builder stage.
-COPY provider/partition-${PROVIDER_NAME}/target/quarkus-app/ /app/
+COPY provider/partition-gc-quarkus/target/quarkus-app/ /app/
 
 # Add a non-root user
 RUN groupadd -g 10001 -r nonroot \
