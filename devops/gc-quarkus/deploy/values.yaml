@@ -9,6 +9,8 @@ global:
 data:
   # configmaps
   logLevel: ""
+  otelJavaagentEnabled: "true"
+  otelExporterEndpoint: "http://opentelemetry-collector.opentelemetry.svc.cluster.local:4318"
   # deployments
   requestsCpu: "50m"
   requestsMemory: "350Mi"

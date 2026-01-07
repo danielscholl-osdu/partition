@@ -105,11 +105,13 @@ Must have:
 
 Defined in default application property file but possible to override:
 
-| name                                | value     | description                                                        | sensitive? | source |
-|-------------------------------------|-----------|--------------------------------------------------------------------|------------|--------|
-| `DIRECTORY_WATCH_DEBOUNCE_DELAY_MS` | ex `300`  | Debounce interval between directory changes and config (re)loading | no         | -      |
-| `MANAGEMENT_ENDPOINTS_WEB_BASE`     | ex `/`    | Web base for Actuator                                              | no         | -      |
-| `MANAGEMENT_SERVER_PORT`            | ex `8081` | Port for Actuator                                                  | no         | -      |
+| name                                | value                      | description                                                        | sensitive? | source |
+|-------------------------------------|----------------------------|--------------------------------------------------------------------|------------|--------|
+| `DIRECTORY_WATCH_DEBOUNCE_DELAY_MS` | ex `300`                   | Debounce interval between directory changes and config (re)loading | no         | -      |
+| `MANAGEMENT_ENDPOINTS_WEB_BASE`     | ex `/`                     | Web base for Actuator                                              | no         | -      |
+| `MANAGEMENT_SERVER_PORT`            | ex `8081`                  | Port for Actuator                                                  | no         | -      |
+| `OTEL_JAVAAGENT_ENABLED`            | ex `true` or `false`       | `true` - OpenTelemetry Java agent enabled, `false` - disabled      | no         |        |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`       | ex `http://127.0.0.1:4318` | OpenTelemetry collector endpoint                                   | no         |        |
 
 ### Running E2E Tests
 
@@ -119,6 +121,29 @@ Use [partition-acceptance-test](../../partition-acceptance-test)
 # build + install acceptance tests
 $ (cd partition-acceptance-test/ && mvn clean install)
 ```
+
+## Monitoring
+### OpenTelemetry Integration
+
+The opentelemetry-javaagent.jar file is the OpenTelemetry Java agent. It is used to
+automatically instrument the Java application at runtime, without requiring manual changes
+to the source code.
+
+This provides critical observability features:
+* Distributed Tracing: To trace the path of requests as they travel across different
+  services.
+* Metrics: To capture performance indicators and application-level metrics.
+* Logs: To correlate logs with traces and other telemetry data.
+
+Enabling this agent makes it significantly easier to monitor, debug, and manage the
+application in development and production environments. The agent is activated by the
+startup.sh script when the OTEL_JAVAAGENT_ENABLED environment variable is set to true.
+
+The agent is available from the official OpenTelemetry GitHub repository. It is
+recommended to use the latest stable version.
+
+Official Download Page:
+https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases
 
 ## License
 
