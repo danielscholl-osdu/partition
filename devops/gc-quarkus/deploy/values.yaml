@@ -31,7 +31,6 @@ data:
   projectId: ""
   tenantServiceAccount: ""
   databaseId: "osdu-system"
-  elasticHttps: true
   policyServiceEnabled: true
   edsEnabled: false
   autoCompleteEnabled: true
@@ -39,6 +38,11 @@ data:
   keyWordLowerEnabled: true
   bagOfWordsEnabled: true
   xCollaborationEnabled: false
+  customSystemPartitionProperties:
+    # example of custom property
+    # - name: foo
+    #   sensitive: false
+    #   value: bar
 
 conf:
   appName: "partition"
