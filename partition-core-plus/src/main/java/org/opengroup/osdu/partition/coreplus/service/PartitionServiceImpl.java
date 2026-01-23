@@ -17,6 +17,8 @@
 
 package org.opengroup.osdu.partition.coreplus.service;
 
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.opengroup.osdu.core.common.cache.ICache;
@@ -53,7 +55,7 @@ public class PartitionServiceImpl implements IPartitionService {
       throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
 
     if (this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
-      this.auditLogger.createPartitionFailure(Collections.singletonList(partitionId));
+      this.auditLogger.createPartitionFailure(Collections.singletonList(partitionId), REQUIRED_GROUPS);
       throw new AppException(HttpStatus.SC_CONFLICT, UNKNOWN_ERROR_REASON,
               "Partition already exists.");
     }
@@ -76,13 +78,13 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
     if (partitionInfo.getProperties().containsKey("id")) {
-      this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId));
+      this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId), REQUIRED_GROUPS);
       throw new AppException(HttpStatus.SC_BAD_REQUEST, "can not update id",
               "the field id can not be updated");
     }
 
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
-      this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId));
+      this.auditLogger.updatePartitionSecretFailure(Collections.singletonList(partitionId), REQUIRED_GROUPS);
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
               "An attempt to update not existing partition.");
     }
@@ -126,7 +128,7 @@ public class PartitionServiceImpl implements IPartitionService {
     Optional<List<PartitionPropertyEntity>> partitionPropertyEntitiesOptional = partitionPropertyEntityRepository
             .findByPartitionId(partitionId);
     if (!partitionPropertyEntitiesOptional.isPresent()) {
-      this.auditLogger.readPartitionFailure(Collections.singletonList(partitionId));
+      this.auditLogger.readPartitionFailure(Collections.singletonList(partitionId), REQUIRED_GROUPS);
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
           "Partition does not exist.");
     }
@@ -145,7 +147,7 @@ public class PartitionServiceImpl implements IPartitionService {
   @Override
   public boolean deletePartition(String partitionId) {
     if (!this.partitionPropertyEntityRepository.findByPartitionId(partitionId).isPresent()) {
-      this.auditLogger.deletePartitionFailure(Collections.singletonList(partitionId));
+      this.auditLogger.deletePartitionFailure(Collections.singletonList(partitionId), REQUIRED_GROUPS);
       throw new AppException(HttpStatus.SC_NOT_FOUND, UNKNOWN_ERROR_REASON,
               "An attempt to delete not existing partition.");
     }

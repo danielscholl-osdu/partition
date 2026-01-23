@@ -17,6 +17,15 @@
 
 package org.opengroup.osdu.partition.logging;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,125 +33,139 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
+import org.opengroup.osdu.core.common.logging.audit.AuditStatus;
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuditLoggerTest {
 
+    private static final String TEST_USER = "partitionAccountUser";
+    private static final String TEST_IP = "192.168.1.100";
+    private static final String TEST_USER_AGENT = "TestAgent/1.0";
+    private static final String TEST_AUTHORIZED_GROUP = "users.datalake.viewers";
+
     @Mock
     private JaxRsDpsLog log;
+
+    @Mock
+    private DpsHeaders headers;
+
+    @Mock
+    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private AuditLogger sut;
 
     private List<String> resources;
+    private AuditEvents auditEvents;
 
     @Before
     public void setup() {
         resources = Collections.singletonList("resources");
+
+        // Create reference AuditEvents with same values mocks will produce
+        auditEvents = new AuditEvents(TEST_USER, TEST_IP, TEST_USER_AGENT, TEST_AUTHORIZED_GROUP);
+
+        when(headers.getUserAuthorizedGroupName()).thenReturn(TEST_AUTHORIZED_GROUP);
+        when(httpServletRequest.getRemoteAddr()).thenReturn(TEST_IP);
+        when(httpServletRequest.getHeader("user-agent")).thenReturn(TEST_USER_AGENT);
     }
 
     @Test
     public void should_writeCreatePartitionSuccessEvent() {
-        this.sut.createPartitionSuccess(this.resources);
+        sut.createPartitionSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeCreatePartitionFailureEvent() {
-        this.sut.createPartitionFailure(this.resources);
+        sut.createPartitionFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadPartitionSuccessEvent() {
-        this.sut.readPartitionSuccess(this.resources);
+        sut.readPartitionSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadPartitionFailureEvent() {
-        this.sut.readPartitionFailure(this.resources);
+        sut.readPartitionFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeDeletePartitionSuccessEvent() {
-        this.sut.deletePartitionSuccess(this.resources);
+        sut.deletePartitionSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeDeletePartitionFailureEvent() {
-        this.sut.deletePartitionFailure(this.resources);
+        sut.deletePartitionFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadServiceLivenessSuccessEvent() {
-        this.sut.readServiceLivenessSuccess(this.resources);
+        sut.readServiceLivenessSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadServiceLivenessFailureEvent() {
-        this.sut.readServiceLivenessFailure(this.resources);
+        sut.readServiceLivenessFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeUpdatePartitionSecretSuccessEvent() {
-        this.sut.updatePartitionSecretSuccess(this.resources);
+        sut.updatePartitionSecretSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeUpdatePartitionSecretFailureEvent() {
-        this.sut.updatePartitionSecretFailure(this.resources);
+        sut.updatePartitionSecretFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadListPartitionSuccessEvent() {
-        this.sut.readListPartitionSuccess(this.resources);
+        sut.readListPartitionSuccess(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_writeReadListPartitionFailureEvent() {
-        this.sut.readListPartitionFailure(this.resources);
+        sut.readListPartitionFailure(resources, REQUIRED_GROUPS);
 
-        verify(this.log, times(1)).audit(any());
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 
     @Test
     public void should_initializeAuditEvents_onlyOnce() {
-        this.sut.readListPartitionFailure(new ArrayList<>());
-        Object events1 = ReflectionTestUtils.getField(this.sut, "events");
-        this.sut.readListPartitionFailure(this.resources);
-        Object events2 = ReflectionTestUtils.getField(this.sut, "events");
+        List<String> emptyResources = new ArrayList<>();
+        sut.readListPartitionFailure(emptyResources, REQUIRED_GROUPS);
+        Object events1 = ReflectionTestUtils.getField(sut, "events");
+        sut.readListPartitionFailure(resources, REQUIRED_GROUPS);
+        Object events2 = ReflectionTestUtils.getField(sut, "events");
 
         assertEquals(events1.hashCode(), events2.hashCode());
-        verify(this.log, times(2)).audit(any());
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, emptyResources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
     }
 }
