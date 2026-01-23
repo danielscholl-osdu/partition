@@ -14,31 +14,40 @@
 
 package org.opengroup.osdu.partition.auth;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.DOMAIN_ADMIN;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorizationFilterTest {
 
     @Mock
     private IAuthorizationService authorizationService;
+
+    @Mock
+    private DpsHeaders headers;
+
     @InjectMocks
     private AuthorizationFilter sut;
-
 
     @Test
     public void should_authenticateRequest_when_resourceIsRolesAllowedAnnotated() {
         when(this.authorizationService.isDomainAdminServiceAccount()).thenReturn(true);
 
         assertTrue(this.sut.hasPermissions());
+
+        verify(headers).put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, DOMAIN_ADMIN);
     }
 
     @Test
@@ -46,5 +55,7 @@ public class AuthorizationFilterTest {
         when(this.authorizationService.isDomainAdminServiceAccount()).thenReturn(false);
 
         assertFalse(this.sut.hasPermissions());
+
+        verifyNoInteractions(headers);
     }
 }

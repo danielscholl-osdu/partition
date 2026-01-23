@@ -14,6 +14,9 @@
 
 package org.opengroup.osdu.partition.auth;
 
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.DOMAIN_ADMIN;
+
+import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.provider.interfaces.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,14 @@ public class AuthorizationFilter {
     @Autowired
     private IAuthorizationService authorizationService;
 
+    @Autowired
+    private DpsHeaders headers;
+
     public boolean hasPermissions() {
-        return authorizationService.isDomainAdminServiceAccount();
+        boolean isDomainAdmin = authorizationService.isDomainAdminServiceAccount();
+        if (isDomainAdmin) {
+            headers.put(DpsHeaders.USER_AUTHORIZED_GROUP_NAME, DOMAIN_ADMIN);
+        }
+        return isDomainAdmin;
     }
 }
