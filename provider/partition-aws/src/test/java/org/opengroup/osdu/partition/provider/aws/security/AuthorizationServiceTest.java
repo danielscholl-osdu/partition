@@ -128,45 +128,6 @@ class AuthorizationServiceTest {
     }
 
     @Test
-    void should_returnTrue_when_userIdExtractedFromJwtEmailClaim() throws Exception {
-        String jwt = createJwt("sub-value", spuEmail);
-        Map<String, String> headersWithJwt = new HashMap<>();
-        headersWithJwt.put(RequestKeys.AUTHORIZATION_HEADER_KEY, jwt);
-        
-        when(headers.getHeaders()).thenReturn(headersWithJwt);
-        when(headers.getUserId()).thenReturn(null);
-
-        assertTrue(authorizationService.isDomainAdminServiceAccount());
-    }
-
-    @Test
-    void should_returnTrue_when_userIdExtractedFromJwtSubClaim() throws Exception {
-        String jwt = createJwt(spuEmail, null);
-        Map<String, String> headersWithJwt = new HashMap<>();
-        headersWithJwt.put(RequestKeys.AUTHORIZATION_HEADER_KEY, jwt);
-        
-        when(headers.getHeaders()).thenReturn(headersWithJwt);
-        when(headers.getUserId()).thenReturn(null);
-
-        assertTrue(authorizationService.isDomainAdminServiceAccount());
-    }
-
-    @Test
-    void should_ThrowAppException_when_jwtUserDoesNotMatchSpu() throws Exception {
-        String jwt = createJwt("different-sub", "different@email.com");
-        Map<String, String> headersWithJwt = new HashMap<>();
-        headersWithJwt.put(RequestKeys.AUTHORIZATION_HEADER_KEY, jwt);
-        
-        when(headers.getHeaders()).thenReturn(headersWithJwt);
-        when(headers.getUserId()).thenReturn(null);
-
-        AppException exception = assertThrows(AppException.class, () -> 
-            authorizationService.isDomainAdminServiceAccount()
-        );
-        assertEquals(401, exception.getError().getCode());
-    }
-
-    @Test
     void should_ThrowAppException_when_isDomainAdminServiceAccountCalledWithInvalidHeaders() {
         when(headers.getHeaders()).thenReturn(validHeaders);
         String nonSpuEmail = "not-the-spu@email.com";

@@ -72,11 +72,6 @@ public class AuthorizationService implements IAuthorizationService {
 
             memberEmail = headers.getUserId();
             if (memberEmail == null) {
-                logger.debug("x-user-id header not found, extracting from JWT");
-                memberEmail = extractUserIdFromJwt(authorizationContents);
-            }
-            
-            if (memberEmail == null) {
                 logger.warning("Authorization failed: Could not extract user ID from JWT token");
                 throw AppException.createUnauthorized("Unauthorized. The JWT token could not be validated");
             } else if (memberEmail.equals(spuEmail)) {
@@ -92,29 +87,6 @@ public class AuthorizationService implements IAuthorizationService {
             logger.error("Authorization failed with unexpected error", e);
             throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Authentication Failure", e.getMessage(),
                     e);
-        }
-    }
-
-    private String extractUserIdFromJwt(String authHeader) {
-        try {
-            String token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-            SignedJWT signedJWT = SignedJWT.parse(token);
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-            
-            String email = claims.getStringClaim("email");
-            if (email != null) {
-                logger.debug("Extracted user ID from JWT email claim: " + email);
-                return email;
-            }
-            
-            String sub = claims.getSubject();
-            if (sub != null) {
-                logger.debug("Extracted user ID from JWT sub claim: " + sub);
-            }
-            return sub;
-        } catch (ParseException e) {
-            logger.warning("Failed to parse JWT token: " + e.getMessage());
-            return null;
         }
     }
 }
