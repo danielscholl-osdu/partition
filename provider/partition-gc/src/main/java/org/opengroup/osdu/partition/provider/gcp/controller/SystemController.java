@@ -18,6 +18,7 @@
 package org.opengroup.osdu.partition.provider.gcp.controller;
 
 import static org.opengroup.osdu.partition.provider.gcp.config.SystemApiConfiguration.PARTITION_SYSTEM_TENANT_API;
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
 
 import java.net.URI;
 import java.util.Collections;
@@ -47,20 +48,20 @@ public class SystemController implements SystemPartitionApi {
   public ResponseEntity<Object> create(PartitionInfo partitionInfo) {
     partitionService.createPartition(properties.getSystemPartitionId(), partitionInfo);
     URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-    this.auditLogger.createPartitionSuccess(Collections.singletonList(properties.getSystemPartitionId()));
+    this.auditLogger.createPartitionSuccess(Collections.singletonList(properties.getSystemPartitionId()), REQUIRED_GROUPS);
     return ResponseEntity.created(partitionLocation).build();
   }
 
   @Override
   public void patch(PartitionInfo partitionInfo) {
     this.partitionService.updatePartition(properties.getSystemPartitionId(), partitionInfo);
-    this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(properties.getSystemPartitionId()));
+    this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(properties.getSystemPartitionId()), REQUIRED_GROUPS);
   }
 
   @Override
   public ResponseEntity<Map<String, Property>> get() {
     PartitionInfo partitionInfo = this.partitionService.getPartition(properties.getSystemPartitionId());
-    this.auditLogger.readPartitionSuccess(Collections.singletonList(properties.getSystemPartitionId()));
+    this.auditLogger.readPartitionSuccess(Collections.singletonList(properties.getSystemPartitionId()), REQUIRED_GROUPS);
     return ResponseEntity.ok(partitionInfo.getProperties());
   }
 }

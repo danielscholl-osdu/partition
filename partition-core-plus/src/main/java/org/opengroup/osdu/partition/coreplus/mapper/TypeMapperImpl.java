@@ -19,7 +19,6 @@ package org.opengroup.osdu.partition.coreplus.mapper;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
 
-import com.google.cloud.datastore.Key;
 import java.util.Collections;
 import java.util.HashMap;
 import org.opengroup.osdu.core.osm.core.persistence.IdentityTranslator;
@@ -41,7 +40,7 @@ public class TypeMapperImpl extends TypeMapper {
                         java.util.Map.of(),
                         new IdentityTranslator<>(
                                 PartitionPropertyEntity::getId,
-                                (p, o) -> p.setId(((Key)o).getName())
+                                (p, o) -> p.setId((String) o)
                         ),
                         Collections.singletonList("id")
                 ))

@@ -1,5 +1,7 @@
 package org.opengroup.osdu.partition.controller;
 
+import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
+
 import org.opengroup.osdu.partition.api.PartitionApi;
 import org.opengroup.osdu.partition.logging.AuditLogger;
 import org.opengroup.osdu.partition.model.PartitionInfo;
@@ -29,27 +31,27 @@ public class PartitionController implements PartitionApi {
     public ResponseEntity create(String partitionId, PartitionInfo partitionInfo) {
         this.partitionService.createPartition(partitionId, partitionInfo);
         URI partitionLocation = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
-        this.auditLogger.createPartitionSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.createPartitionSuccess(Collections.singletonList(partitionId), REQUIRED_GROUPS);
         return ResponseEntity.created(partitionLocation).build();
     }
 
     @Override
     public void patch(String partitionId, PartitionInfo partitionInfo) {
         this.partitionService.updatePartition(partitionId, partitionInfo);
-        this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.updatePartitionSecretSuccess(Collections.singletonList(partitionId), REQUIRED_GROUPS);
     }
 
     @Override
     public ResponseEntity<Map<String, Property>> get(String partitionId) {
         PartitionInfo partitionInfo = this.partitionService.getPartition(partitionId);
-        this.auditLogger.readPartitionSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.readPartitionSuccess(Collections.singletonList(partitionId), REQUIRED_GROUPS);
         return ResponseEntity.ok(partitionInfo.getProperties());
     }
 
     @Override
     public ResponseEntity delete(String partitionId) {
         this.partitionService.deletePartition(partitionId);
-        this.auditLogger.deletePartitionSuccess(Collections.singletonList(partitionId));
+        this.auditLogger.deletePartitionSuccess(Collections.singletonList(partitionId), REQUIRED_GROUPS);
         return ResponseEntity.noContent().build();
     }
 
@@ -57,7 +59,7 @@ public class PartitionController implements PartitionApi {
     public List<String> list() {
         List<String> partitions = this.partitionService.getAllPartitions();
         this.auditLogger.readListPartitionSuccess(
-                Collections.singletonList(String.format("Partition list size = %s", partitions.size())));
+                Collections.singletonList(String.format("Partition list size = %s", partitions.size())), REQUIRED_GROUPS);
         return partitions;
     }
 }
