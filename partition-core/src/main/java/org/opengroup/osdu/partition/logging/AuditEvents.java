@@ -28,6 +28,9 @@ import org.opengroup.osdu.core.common.logging.audit.AuditStatus;
 
 public class AuditEvents {
 
+  private static final String UNKNOWN = "unknown";
+  private static final String UNKNOWN_IP = "0.0.0.0";
+
   private static final String CREATE_PARTITION_ACTION_ID = "PT001";
   private static final String CREATE_PARTITION_MESSAGE = "Create partition";
 
@@ -46,18 +49,20 @@ public class AuditEvents {
   private static final String READ_LIST_PARTITION_ACTION_ID = "PT006";
   private static final String READ_LIST_PARTITION_MESSAGE = "Read partition list";
 
-
   private final String user;
+  private final String userIpAddress;
+  private final String userAgent;
+  private final String userAuthorizedGroupName;
 
-
-  public AuditEvents(String user) {
-    if (Strings.isNullOrEmpty(user)) {
-      throw new IllegalArgumentException("User not provided for audit events.");
-    }
-    this.user = user;
+  public AuditEvents(String user, String userIpAddress, String userAgent, String userAuthorizedGroupName) {
+    this.user = Strings.isNullOrEmpty(user) ? UNKNOWN : user;
+    this.userIpAddress = Strings.isNullOrEmpty(userIpAddress) ? UNKNOWN_IP : userIpAddress;
+    this.userAgent = Strings.isNullOrEmpty(userAgent) ? UNKNOWN : userAgent;
+    this.userAuthorizedGroupName = Strings.isNullOrEmpty(userAuthorizedGroupName) ? UNKNOWN : userAuthorizedGroupName;
   }
 
-  public AuditPayload getCreatePartitionEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getCreatePartitionEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.CREATE)
         .status(status)
@@ -65,10 +70,15 @@ public class AuditEvents {
         .actionId(CREATE_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, CREATE_PARTITION_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getReadPartitionEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getReadPartitionEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.READ)
         .status(status)
@@ -76,10 +86,15 @@ public class AuditEvents {
         .actionId(READ_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, READ_PARTITION_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getDeletePartitionEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getDeletePartitionEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.DELETE)
         .status(status)
@@ -87,10 +102,15 @@ public class AuditEvents {
         .actionId(DELETE_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, DELETE_PARTITION_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getReadServiceLivenessEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getReadServiceLivenessEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.READ)
         .status(status)
@@ -98,10 +118,15 @@ public class AuditEvents {
         .actionId(READ_SERVICE_LIVENESS_ACTION_ID)
         .message(getStatusMessage(status, READ_SERVICE_LIVENESS_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getUpdatePartitionSecretEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getUpdatePartitionSecretEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.UPDATE)
         .status(status)
@@ -109,10 +134,15 @@ public class AuditEvents {
         .actionId(UPDATE_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, UPDATE_PARTITION_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getListPartitionEvent(AuditStatus status, List<String> resources) {
+  public AuditPayload getListPartitionEvent(AuditStatus status, List<String> resources,
+      List<String> requiredGroupsForAction) {
     return AuditPayload.builder()
         .action(AuditAction.READ)
         .status(status)
@@ -120,6 +150,10 @@ public class AuditEvents {
         .actionId(READ_LIST_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, READ_LIST_PARTITION_MESSAGE))
         .resources(resources)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 

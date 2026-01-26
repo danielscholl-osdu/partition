@@ -23,6 +23,14 @@ metadata:
 data:
   system.json: |-
     {
+      {{- if not (empty .Values.data.customSystemPartitionProperties) }}
+      {{- range .Values.data.customSystemPartitionProperties }}
+      {{ printf "%s: {" (toJson .name) }}
+        "sensitive": {{ .sensitive }},
+        "value": {{ toJson .value }}
+      },
+      {{- end }}
+      {{- end }}
       "projectId": {
         "sensitive": false,
         "value": {{ .Values.data.projectId | quote }}
@@ -75,7 +83,7 @@ data:
         "sensitive": false,
         "value": {{ printf "%s-%s-schema" .Values.data.projectId .Values.global.dataPartitionId | quote }}
       },
-      "system.featureFlag.eds.enabled": {
+      "system.eds.enabled": {
         "sensitive": false,
         "value": {{ .Values.data.edsEnabled | quote }}
       },
@@ -103,7 +111,7 @@ data:
         "sensitive": false,
         "value": {{ .Values.data.bagOfWordsEnabled | quote }}
       },
-      "system.featureFlag.xCollaboration.enabled": {
+      "collaborations-enabled": {
         "sensitive": false,
         "value": {{ .Values.data.xCollaborationEnabled | quote }}
       }
