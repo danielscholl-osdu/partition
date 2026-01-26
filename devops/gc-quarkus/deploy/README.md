@@ -118,7 +118,6 @@ First you need to set variables in **values.yaml** file using any code editor. S
 | ---- | ----------- | ---- | ------- | ------- |
 **data.tenantServiceAccount** | partition admin service account | string | - | yes
 **data.databaseId** | datastore database id | string | - | yes
-**data.elasticHttps** | force services to communicate with elasticsearch using https | bool | true | yes
 **data.policyServiceEnabled** | indicates that Policy service is available in an OSDU installation | bool | true | yes
 **data.edsEnabled** | indicates that EDS services are available in an OSDU installation | bool | false | yes
 **data.autoCompleteEnabled** | enables autoComplete function | bool | true | yes
@@ -126,6 +125,7 @@ First you need to set variables in **values.yaml** file using any code editor. S
 **data.keyWordLowerEnabled** | enables keyWordLower function | bool | true | yes
 **data.bagOfWordsEnabled** | enables bagOfWords function | bool | true | yes
 **data.xCollaborationEnabled** | enables xCollaboration function | bool | false | yes
+**data.customSystemPartitionProperties** | user defined properties for configuring partition | list of objects | no
 
 ### Deployment variables
 

@@ -30,7 +30,7 @@
   </parent>
 
   <properties>
-    <core-lib-azure.version>2.3.0</core-lib-azure.version>
+    <core-lib-azure.version>2.4.1</core-lib-azure.version>
     <!-- Plugin Versions -->
     <surefire-plugin.version>3.5.4</surefire-plugin.version>
     <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
@@ -106,20 +106,6 @@
     <dependency>
       <groupId>com.azure.spring</groupId>
       <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
-    </dependency>
-
-    <!-- Explicit dependency override for nimbus-jose-jwt vulnerability fix -->
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>10.0.2</version>
-    </dependency>
-
-    <!-- Other dependencies -->
-    <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
-      <version>3.33.0</version>
     </dependency>
 
     <!-- Test Scoped Dependencies -->
