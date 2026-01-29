@@ -29,7 +29,7 @@ data:
   asIngestedCoordinatesEnabled: "false"
   keywordLowerEnabled: "false"
   bagOfWordsEnabled: "false"
-  xCollaborationEnabled: "false"
+  collaborationsEnabled: "true"
   autocompleteEnabled: "false"
   policyServiceEnabled: "false"
   edsEnabled: "false"
