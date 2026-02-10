@@ -211,9 +211,9 @@ core_partition_data() {
       "sensitive": false,
       "value": true
     },
-    "featureFlag.xCollaboration.enabled": {
-      "sensitive": false,
-      "value": "${X_COLLABORATION_ENABLED}"
+    "collaborations-enabled" : {
+      "sensitive" : false,
+      "value" : "${COLLABORATIONS_ENABLED}"
     },
     "featureFlag.autocomplete.enabled": {
       "sensitive": false,

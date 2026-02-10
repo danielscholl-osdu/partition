@@ -16,182 +16,168 @@
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
-import java.util.*;
+import java.util.List;
 
 import org.apache.http.HttpStatus;
-import org.bson.types.Binary;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBConfig;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
-import org.opengroup.osdu.partition.provider.aws.model.Partition;
-import org.opengroup.osdu.partition.provider.aws.model.IPartitionRepository;
-import org.opengroup.osdu.partition.provider.aws.util.AwsKmsEncryptionClient;
+import org.opengroup.osdu.partition.provider.aws.config.ProviderConfigurationBag;
+import org.opengroup.osdu.partition.provider.aws.model.PartitionDoc;
 import org.opengroup.osdu.partition.provider.interfaces.IPartitionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
-import java.util.List;
-import java.util.Map;
-
-/**
- * AWS implementation doesn't use cache.
- */
 @Service
 public class PartitionServiceImpl implements IPartitionService {
 
-    private final JaxRsDpsLog logger;
-    private final IPartitionRepository repository;
-    private final AwsKmsEncryptionClient awsKmsEncryptionClient;
+    private static final String PARTITION_NOT_FOUND = "Partition not found";
+    private static final String PARTITION_EXISTS = "Partition with same id exists";
+    private static final String CANNOT_UPDATE_ID = "The field id cannot be updated";
 
-    public PartitionServiceImpl(JaxRsDpsLog logger, 
-                               IPartitionRepository repository, 
-                               AwsKmsEncryptionClient awsKmsEncryptionClient) {
+    private final JaxRsDpsLog logger;
+    private final DynamoDBQueryHelper<PartitionDoc> queryHelper;
+
+    @Autowired
+    public PartitionServiceImpl(JaxRsDpsLog logger, ProviderConfigurationBag config) {
         this.logger = logger;
-        this.repository = repository;
-        this.awsKmsEncryptionClient = awsKmsEncryptionClient;
+        DynamoDBConfig dynamoConfig = DynamoDBConfig.builder()
+                .region(config.amazonRegion)
+                .build();
+        DynamoDbEnhancedClient enhancedClient = dynamoConfig.dynamoDbEnhancedClient();
+        DynamoDbTable<PartitionDoc> table = enhancedClient.table(
+                config.dynamodbTableName,
+                TableSchema.fromBean(PartitionDoc.class)
+        );
+        this.queryHelper = DynamoDBQueryHelper.<PartitionDoc>builder()
+                .client(enhancedClient)
+                .itemType(PartitionDoc.class)
+                .table(table)
+                .build();
     }
 
     @Override
     public PartitionInfo createPartition(String partitionId, PartitionInfo partitionInfo) {
+        PartitionDoc partition = PartitionDoc.create(partitionId, partitionInfo);
 
-        // throw error if partition already exists
-        if (repository.findById(partitionId).isPresent()) {
-            throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", "Partition with same id exist");
+        if (queryHelper.getItem(partitionId).isPresent()) {
+            logger.error("Attempted to create duplicate partition: " + partitionId);
+            throw new AppException(HttpStatus.SC_CONFLICT, "partition exist", PARTITION_EXISTS);
         }
 
-        Partition savedPartition = repository.save(new Partition(partitionId, encryptSensitiveProperties(partitionInfo, partitionId)));
-
-        return new PartitionInfo(savedPartition.getProperties());
+        try {
+            queryHelper.putItem(partition);
+            logger.info("Created partition: " + partitionId);
+            return partition.getPartitionInfo();
+        } catch (Exception e) {
+            logger.error("Failed to create partition: " + partitionId, e);
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to create partition", e.getMessage());
+        }
     }
 
     @Override
     public PartitionInfo updatePartition(String partitionId, PartitionInfo partitionInfo) {
+        validateInput(partitionId, partitionInfo);
+        validateNoIdUpdate(partitionInfo);
 
-        Optional<Partition> partition = repository.findById(partitionId);
+        PartitionDoc partition = getPartitionOrThrow(partitionId);
+        PartitionInfo existing = partition.getPartitionInfo();
 
-        // throw error if search did not return a result
-        if (!partition.isPresent()) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition does not exist", "Partition does not exist");
+        boolean hasChanges = false;
+        for (var entry : partitionInfo.getProperties().entrySet()) {
+            Property oldValue = existing.getProperties().putIfAbsent(entry.getKey(), entry.getValue());
+            /*
+             * If the oldValue is null, then the property did not already exist. See:
+             * https://docs.oracle.com/javase/8/docs/api/java/util/Map.html#putIfAbsent-K-V-
+             */
+            hasChanges = (oldValue == null || hasChanges); 
         }
 
-        // throw error if the client tries to update the id
-        if (partitionInfo.getProperties().containsKey("id")) {
-            throw new AppException(HttpStatus.SC_BAD_REQUEST, "Cannot update id", "the field id cannot be updated");
+        if (hasChanges) {
+            try {
+                queryHelper.putItem(PartitionDoc.create(partitionId, existing));
+                logger.info("Updated partition: " + partitionId);
+            } catch (Exception e) {
+                logger.error("Failed to update partition: " + partitionId, e);
+                throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                        "Failed to update partition", e.getMessage());
+            }
+        } else {
+            logger.info("No changes detected for partition: " + partitionId);
         }
 
-        Map<String, Property> updatedProperties = partition.get().getProperties();
-        Map<String, Property> encryptedPropertiesToAdd = encryptSensitiveProperties(partitionInfo, partitionId);
-
-        for (Map.Entry<String, Property> e : encryptedPropertiesToAdd.entrySet()) {
-            updatedProperties.put(e.getKey(), e.getValue());
-        }
-
-        // throw error if save was unsuccessful
-        try {
-            repository.save(new Partition(partitionId, updatedProperties));
-        } catch (Exception e) {
-            logger.error("Failed to update partition", e.getMessage());
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Partition update Failure", e.getMessage(), e);
-        }
-
-        return partitionInfo;
+        return existing;
     }
 
     @Override
     public PartitionInfo getPartition(String partitionId) {
-
-        Optional<Partition> partition = repository.findById(partitionId);
-
-        // throw error if partition doesn't exist
-        if (!partition.isPresent()) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition not found", String.format("%s partition not found", partitionId));
-        }
-
-        PartitionInfo partitionInfo;
-
-        try {
-            partitionInfo = decryptSensitiveProperties(partition.get().getProperties(), partitionId);
-        } catch (ClassCastException e) {
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Corrupt data", String.format("%s contains unreadable data", partitionId));
-        } catch (IllegalStateException e) {
-            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Illegal database modification", String.format("Partition %s has been modified without permission", partitionId));
-        }
-
-        return partitionInfo;
-
+        validatePartitionId(partitionId);
+        return getPartitionOrThrow(partitionId).getPartitionInfo();
     }
 
     @Override
     public boolean deletePartition(String partitionId) {
+        validatePartitionId(partitionId);
+        getPartitionOrThrow(partitionId);
 
-        // throw error if partition doesn't exist
-        if (!repository.findById(partitionId).isPresent()) {
-            throw new AppException(HttpStatus.SC_NOT_FOUND, "Partition not found", String.format("%s partition not found", partitionId));
+        try {
+            queryHelper.deleteItem(partitionId);
+            logger.info("Deleted partition: " + partitionId);
+            return true;
+        } catch (Exception e) {
+            logger.error("Failed to delete partition: " + partitionId, e);
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to delete partition", e.getMessage());
         }
-
-        repository.deleteById(partitionId);
-
-        return true;
     }
 
     @Override
     public List<String> getAllPartitions() {
-
-        List<Partition> partitionList = repository.findAll();
-
-        List<String> partitions = new ArrayList<>();
-
-        // populate list of ids, i.e. partition names
-        for (Partition p: partitionList) {
-            String id = p.getId();
-            partitions.add(id);
+        try {
+            return queryHelper.scanTable().stream()
+                    .map(PartitionDoc::getId)
+                    .toList();
+        } catch (Exception e) {
+            logger.error("Failed to retrieve all partitions", e);
+            throw new AppException(HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                    "Failed to retrieve partitions", e.getMessage());
         }
-
-        return partitions;
     }
 
-    private Map<String, Property> encryptSensitiveProperties(PartitionInfo partitionInfo, String id) {
-
-        Map<String, Property> encryptedProperties = new HashMap<>();
-
-        // encrypt all properties that are flagged as sensitive
-        for (Map.Entry<String, Property> e : partitionInfo.getProperties().entrySet()) {
-
-            Property encryptedProp = new Property();
-            encryptedProp.setSensitive(e.getValue().isSensitive());
-
-            if (encryptedProp.isSensitive()) {
-                encryptedProp.setValue(awsKmsEncryptionClient.encrypt(e.getValue().getValue().toString(), id));
-            } else {
-                encryptedProp.setValue(e.getValue().getValue());
-            }
-
-            encryptedProperties.put(e.getKey(), encryptedProp);
+    private void validateInput(String partitionId, PartitionInfo partitionInfo) {
+        validatePartitionId(partitionId);
+        if (partitionInfo == null) {
+            throw new IllegalArgumentException("PartitionInfo cannot be null");
         }
-
-        return encryptedProperties;
     }
 
-    private PartitionInfo decryptSensitiveProperties(Map<String, Property> properties, String id) throws ClassCastException {
-
-        HashMap<String,Property> decryptedProperties = new HashMap<>();
-
-        // decrypt all properties that are flagged as sensitive
-        for (Map.Entry<String, Property> e : properties.entrySet()) {
-
-            Property decryptedProp = new Property();
-            decryptedProp.setSensitive(e.getValue().isSensitive());
-
-            if (decryptedProp.isSensitive()) {
-                Binary bin = (Binary) e.getValue().getValue();
-                decryptedProp.setValue(awsKmsEncryptionClient.decrypt(bin.getData(), id));
-            } else {
-                decryptedProp.setValue(e.getValue().getValue());
-            }
-
-            decryptedProperties.put(e.getKey(), decryptedProp);
+    private void validatePartitionId(String partitionId) {
+        if (partitionId == null || partitionId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Partition ID cannot be null or empty");
         }
+    }
 
-        return new PartitionInfo(decryptedProperties);
+    private void validateNoIdUpdate(PartitionInfo partitionInfo) {
+        if (partitionInfo.getProperties().containsKey("id")) {
+            throw new AppException(HttpStatus.SC_BAD_REQUEST,
+                    "Cannot update id", CANNOT_UPDATE_ID);
+        }
+    }
+
+    private PartitionDoc getPartitionOrThrow(String partitionId) {
+        PartitionDoc partition = queryHelper.getItem(partitionId).orElse(null);
+        if (partition == null) {
+            logger.error("Partition not found: " + partitionId);
+            throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND,
+                    String.format("%s partition not found", partitionId));
+        }
+        return partition;
     }
 }
