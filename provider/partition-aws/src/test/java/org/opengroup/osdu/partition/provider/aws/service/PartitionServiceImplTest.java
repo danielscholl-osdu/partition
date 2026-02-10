@@ -1,341 +1,278 @@
-// Copyright © 2020 Amazon Web Services
-// Copyright 2017-2020, Schlumberger
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright © Amazon Web Services
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 
 package org.opengroup.osdu.partition.provider.aws.service;
 
-import org.apache.http.HttpStatus;
-import org.bson.types.Binary;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opengroup.osdu.core.common.logging.DefaultLogger;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBConfig;
+import org.opengroup.osdu.core.aws.v2.dynamodb.DynamoDBQueryHelper;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sLocalParameterProvider;
+import org.opengroup.osdu.core.aws.v2.ssm.K8sParameterNotFoundException;
 import org.opengroup.osdu.core.common.logging.JaxRsDpsLog;
 import org.opengroup.osdu.core.common.model.http.AppException;
-import org.opengroup.osdu.core.common.model.http.DpsHeaders;
 import org.opengroup.osdu.partition.model.PartitionInfo;
 import org.opengroup.osdu.partition.model.Property;
-import org.opengroup.osdu.partition.provider.aws.model.Partition;
-import org.opengroup.osdu.partition.provider.aws.model.IPartitionRepository;
-import org.opengroup.osdu.partition.provider.aws.util.AwsKmsEncryptionClient;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.opengroup.osdu.partition.provider.aws.config.ProviderConfigurationBag;
+import org.opengroup.osdu.partition.provider.aws.model.PartitionDoc;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
+class PartitionServiceImplTest {
 
-@RunWith(MockitoJUnitRunner.class)
-public class PartitionServiceImplTest {
-
-    @Mock
-    private IPartitionRepository repository;
-
-    @Mock
-    private AwsKmsEncryptionClient awsKmsEncryptionClient;
+    private static final String PARTITION_ID = "test-partition";
+    private static final String REGION = "us-east-1";
+    private static final String TABLE_NAME = "test-table";
 
     @Mock
-    private JaxRsDpsLog logger = new JaxRsDpsLog(new DefaultLogger(), new DpsHeaders());
+    private JaxRsDpsLog logger;
+
+    @Mock
+    private DynamoDBQueryHelper<PartitionDoc> queryHelper;
 
     @Captor
-    private ArgumentCaptor<Partition> partitionArgumentCaptor;
+    private ArgumentCaptor<PartitionDoc> partitionDocCaptor;
 
-    @InjectMocks
-    private PartitionServiceImpl partService;
+    private PartitionServiceImpl partitionService;
+    private PartitionInfo partitionInfo;
 
-    private String id;
+    @BeforeEach
+    void setUp() throws K8sParameterNotFoundException {
+        try (MockedConstruction<K8sLocalParameterProvider> paramMock = Mockito.mockConstruction(
+                K8sLocalParameterProvider.class,
+                (provider, context) -> {
+                    when(provider.getParameterAsString("DYNAMODB_TABLE_NAME")).thenReturn(TABLE_NAME);
+                });
+             MockedConstruction<DynamoDBQueryHelper> helperMock = Mockito.mockConstruction(
+                DynamoDBQueryHelper.class,
+                (helper, context) -> {
+                    // Redirect all calls to our mock
+                    when(helper.getItem(anyString())).thenAnswer(inv -> queryHelper.getItem(inv.getArgument(0)));
+                    doAnswer(inv -> {
+                        queryHelper.putItem((PartitionDoc) inv.getArgument(0));
+                        return null;
+                    }).when(helper).putItem(any(PartitionDoc.class));
+                    doAnswer(inv -> {
+                        queryHelper.deleteItem((String) inv.getArgument(0));
+                        return null;
+                    }).when(helper).deleteItem(anyString());
+                    when(helper.scanTable()).thenAnswer(inv -> queryHelper.scanTable());
+                })) {
 
-    private final PartitionInfo partitionInfoDummy = new PartitionInfo();
-
-    private final PartitionInfo partitionInfoWithId = new PartitionInfo();
-
-    private final Partition partitionDummy = new Partition();
-    private final Partition encryptedPartitionDummy = new Partition();
-
-    private final List<Partition> allPartitions = new ArrayList<>();
-
-    @Before
-    public void setup() {
-
-        ReflectionTestUtils.setField(partService, "logger", logger);
-
-        id = "id";
-
-        Map<String, Property> partitionSecretMap = new HashMap<>();
-        partitionSecretMap.put("storageAccount", Property.builder()
-                .value("storage-account")
-                .sensitive(true).build());
-        partitionSecretMap.put("complianceRuleSet", Property.builder()
-                .value("compliance-rule-set")
-                .sensitive(false).build());
-
-        partitionInfoDummy.setProperties(partitionSecretMap);
-
-        partitionDummy.setId(id);
-        partitionDummy.setProperties(partitionSecretMap);
-
-        Map<String, Property> encryptedPartitionSecretMap = new HashMap<>();
-        encryptedPartitionSecretMap.put("storageAccount", Property.builder()
-                .value(new Binary("storage-account".getBytes(StandardCharsets.UTF_8)))
-                .sensitive(true).build());
-        encryptedPartitionSecretMap.put("complianceRuleSet", Property.builder()
-                .value("compliance-rule-set")
-                .sensitive(false).build());
-
-        encryptedPartitionDummy.setId(id);
-        encryptedPartitionDummy.setProperties(encryptedPartitionSecretMap);
-
-        Map<String, Property> partitionsInfoWithIdMap = new HashMap<>(partitionSecretMap);
-        partitionsInfoWithIdMap.put("id", Property.builder().value(id).sensitive(false).build());
-        partitionInfoWithId.setProperties(partitionsInfoWithIdMap);
-
-        allPartitions.add(partitionDummy);
-        allPartitions.add(encryptedPartitionDummy);
-   }
-
-    @Test
-    public void should_ThrowConflictError_when_createPartition_whenPartitionExists() {
-        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
-
-        try {
-            partService.createPartition(id, partitionInfoDummy);
-            //we should never hit this code because create partition should end in an error
-            fail("Expected partService.createPartition to throw an exception, but passed");
-        } catch (AppException e) {
-            assertEquals(409, e.getError().getCode());
-            assertTrue(e.getError().getReason().equalsIgnoreCase("partition exist"));
-            assertTrue(e.getError().getMessage().equalsIgnoreCase("Partition with same id exist"));
-        }
-    }
-
-    @Test
-    public void should_ThrowAppException_when_updatePartition_whenPartitionDoesntExist() {
-        when(repository.findById(any())).thenReturn(Optional.empty());
-
-        try {
-            partService.updatePartition(id, partitionInfoDummy);
-            //we should never hit this code because create partition should end in an error
-            fail("Expected partService.createPartition to throw an exception, but passed");
-        } catch (AppException e) {
-            assertEquals(404, e.getError().getCode());
-            assertTrue(e.getError().getReason().equalsIgnoreCase("Partition does not exist"));
-            assertTrue(e.getError().getMessage().equalsIgnoreCase("Partition does not exist"));
-        }
-    }
-
-    @Test
-    public void should_ThrowAppException_when_updatePartition_whenPartitionIdChanges() {
-        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
-
-        try {
-            partService.updatePartition(id, partitionInfoWithId);
-            //we should never hit this code because create partition should end in an error
-            fail("Expected partService.createPartition to throw an exception, but passed");
-        } catch (AppException e) {
-            assertEquals(400, e.getError().getCode());
-            assertTrue(e.getError().getReason().equalsIgnoreCase("Cannot update id"));
-            assertTrue(e.getError().getMessage().equalsIgnoreCase("the field id cannot be updated"));
-        }
-    }
-
-    @Test
-    public void should_savePartition_when_updatePartition_whenPartitionExists() {
-        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
-        when(repository.save(any())).thenReturn(partitionDummy);
-
-        assertDoesNotThrow(() -> partService.updatePartition(id, partitionInfoDummy));
-    }
-
-    @Test
-    public void should_ThrowAppException_when_updatePartition_whenRepositorySaveErrors() {
-        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
-        doThrow(RuntimeException.class).when(repository).save(any());
-
-        try {
-            partService.updatePartition(id, partitionInfoDummy);
-            //we should never hit this code because create partition should end in an error
-            fail("Expected partService.createPartition to throw an exception, but passed");
-        } catch (AppException e) {
-            assertEquals(500, e.getError().getCode());
-            assertTrue(e.getError().getReason().equalsIgnoreCase("Partition update Failure"));
-        }
-    }
-
-    @Test
-    public void should_returnPartitionInfo_when_createPartition_whenPartitionDoesntExist() {
-
-        when(repository.findById(any())).thenReturn(Optional.empty());
-        when(repository.save(any())).thenReturn(partitionDummy);
-        when(awsKmsEncryptionClient.encrypt(any(), any())).thenReturn("ENCRYPTED".getBytes(StandardCharsets.UTF_8));
-
-        PartitionInfo partInfo = partService.createPartition(partitionDummy.getId(), partitionInfoDummy);
-        assertEquals(2, partInfo.getProperties().size());
-
-        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
-            assertTrue(partInfo.getProperties().containsKey(e.getKey()));
-        }
-    }
-
-    @Test
-    public void should_returnPartition_when_partitionExists() {
-
-        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
-        when(awsKmsEncryptionClient.decrypt(any(), any())).thenReturn("DECRYPTED");
-
-        PartitionInfo partitionInfo = partService.getPartition(id);
-
-        assertTrue(partitionInfo.getProperties().containsKey("complianceRuleSet"));
-        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
-    }
-
-    @Test
-    public void should_ThrowAppException_when_decryptionClassCastExceptionThrown() {
-
-        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
-        doThrow(ClassCastException.class).when(awsKmsEncryptionClient).decrypt(any(), any());
-
-        try {
-            partService.getPartition(id);
-            fail("Expected partService.getPartition to throw an exception, but passed");
-        } catch (AppException exception) {
-            assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getError().getCode());
-            assertTrue(exception.getError().getReason().equalsIgnoreCase("Corrupt data"));
-        }
-    }
-
-    @Test
-    public void should_ThrowAppException_when_decryptionIllegalStateExceptionThrown() {
-
-        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
-        doThrow(IllegalStateException.class).when(awsKmsEncryptionClient).decrypt(any(), any());
-
-        try {
-            partService.getPartition(id);
-            fail("Expected partService.getPartition to throw an exception, but passed");
-        } catch (AppException exception) {
-            assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, exception.getError().getCode());
-            assertTrue(exception.getError().getReason().equalsIgnoreCase("Illegal database modification"));
-        }
-    }
-
-    @Test
-    public void should_returnList_when_getAllPartitionsReturns() {
-
-        when(repository.findAll()).thenReturn(allPartitions);
-
-        List<String> allPartitionIds = partService.getAllPartitions();
-        assertEquals(2, allPartitionIds.size());
-
-        for (String resultId : allPartitionIds) {
-            assertEquals(id, resultId);
-        }
-    }
-
-    @Test
-    public void should_call_awsEncryptionClient_encrypt_when_isSensitive() {
-
-        when(repository.findById(any())).thenReturn(Optional.empty());
-        when(repository.save(any())).thenReturn(partitionDummy);
-        when(awsKmsEncryptionClient.encrypt(any(), any())).thenReturn("ENCRYPTED".getBytes(StandardCharsets.UTF_8));
-
-        partService.createPartition(partitionDummy.getId(), partitionInfoDummy);
-
-        verify(repository).save(partitionArgumentCaptor.capture());
-        Map<String, Property> encryptedProps = partitionArgumentCaptor.getValue().getProperties();
-
-        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
-            if (e.getValue().isSensitive()) {
-                // just check to see if the sensitive value has been modified
-                assertNotEquals(e.getValue().getValue(), encryptedProps.get(e.getKey()).getValue());
-            } else {
-                assertEquals(e.getValue().getValue(), encryptedProps.get(e.getKey()).getValue());
-            }
-        }
-    }
-
-    @Test
-    public void should_call_awsEncryptionClient_decrypt_when_isSensitive() {
-        final String decrypted = "DECRYPTED";
-
-        when(repository.findById(any())).thenReturn(Optional.of(encryptedPartitionDummy));
-        when(awsKmsEncryptionClient.decrypt(any(), any())).thenReturn(decrypted);
-
-        PartitionInfo partitionInfo = partService.getPartition(id);
-        Map<String, Property> encryptedProps = partitionInfo.getProperties();
-
-        for (Map.Entry<String, Property> e : partitionInfoDummy.getProperties().entrySet()) {
-            if (e.getValue().isSensitive()) {
-                assertEquals(decrypted, encryptedProps.get(e.getKey()).getValue());
-            } else {
-                assertEquals(e.getValue().getValue(), encryptedProps.get(e.getKey()).getValue());
-            }
+            ProviderConfigurationBag config = new ProviderConfigurationBag(REGION);
+            partitionService = new PartitionServiceImpl(logger, config);
         }
 
-        assertTrue(partitionInfo.getProperties().containsKey("storageAccount"));
+        // Setup test partition info
+        Map<String, Property> properties = new HashMap<>();
+        properties.put("storageAccount", Property.builder()
+                .value("test-storage")
+                .sensitive(false)
+                .build());
+        partitionInfo = PartitionInfo.builder()
+                .properties(properties)
+                .build();
     }
 
     @Test
-    public void should_throwNotFoundException_when_partitionDoesntExist() {
-        when(repository.findById(any())).thenReturn(Optional.empty());
+    void createPartition_Success() {
+        // Arrange
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.empty());
 
-        try {
-            partService.getPartition("my-tenant");
-            //we should never hit this code because get partition should end in an error
-            fail("Expected partService.getPartition to throw an exception, but passed");
-        } catch (AppException e) {
-            assertEquals(404, e.getError().getCode());
-            assertTrue(e.getError().getReason().equalsIgnoreCase("partition not found"));
-            assertTrue(e.getError().getMessage().equalsIgnoreCase("my-tenant partition not found"));
-        }
+        // Act
+        PartitionInfo result = partitionService.createPartition(PARTITION_ID, partitionInfo);
+
+        // Assert
+        assertNotNull(result);
+        verify(queryHelper).putItem(partitionDocCaptor.capture());
+        assertEquals(PARTITION_ID, partitionDocCaptor.getValue().getId());
+        assertEquals(partitionInfo, partitionDocCaptor.getValue().getPartitionInfo());
     }
 
     @Test
-    public void should_returnTrue_when_successfullyDeletingSecretes() {
+    void createPartition_ThrowsException_WhenPartitionExists() {
+        // Arrange
+        PartitionDoc existingDoc = PartitionDoc.create(PARTITION_ID, partitionInfo);
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.of(existingDoc));
 
-        when(repository.findById(any())).thenReturn(Optional.of(partitionDummy));
-
-        assertTrue(partService.deletePartition("test-partition"));
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.createPartition(PARTITION_ID, partitionInfo));
+        assertEquals(409, exception.getError().getCode());
+        assertEquals("partition exist", exception.getError().getReason());
     }
 
     @Test
-    public void should_throwException_when_deletingNonExistentPartition() {
+    void updatePartition_Success_WithNewProperties() {
+        // Arrange
+        PartitionDoc existingDoc = PartitionDoc.create(PARTITION_ID, partitionInfo);
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.of(existingDoc));
 
-        try {
-            this.partService.deletePartition("some-invalid-partition");
-            //we should never hit this code because delete partition should end in an error
-            fail("Expected partService.deletePartition to throw an exception, but passed");
-        } catch (AppException ae) {
-            assertEquals(404, ae.getError().getCode());
-            assertEquals("some-invalid-partition partition not found", ae.getError().getMessage());
-        }
+        Map<String, Property> newProperties = new HashMap<>();
+        newProperties.put("newKey", Property.builder().value("newValue").sensitive(false).build());
+        PartitionInfo updateInfo = PartitionInfo.builder().properties(newProperties).build();
+
+        // Act
+        PartitionInfo result = partitionService.updatePartition(PARTITION_ID, updateInfo);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getProperties().containsKey("newKey"));
+        verify(queryHelper).putItem(any(PartitionDoc.class));
     }
 
-    @Test(expected = AppException.class)
-    public void should_throwException_when_deletingInvalidPartition() {
+    @Test
+    void updatePartition_SkipsWrite_WhenNoNewProperties() {
+        // Arrange
+        PartitionDoc existingDoc = PartitionDoc.create(PARTITION_ID, partitionInfo);
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.of(existingDoc));
 
-        this.partService.deletePartition(null);
+        // Act - try to update with same properties
+        PartitionInfo result = partitionService.updatePartition(PARTITION_ID, partitionInfo);
+
+        // Assert
+        assertNotNull(result);
+        verify(queryHelper, never()).putItem(any(PartitionDoc.class));
     }
 
+    @Test
+    void updatePartition_ThrowsException_WhenPartitionNotFound() {
+        // Arrange
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.updatePartition(PARTITION_ID, partitionInfo));
+        assertEquals(404, exception.getError().getCode());
+    }
+
+    @Test
+    void updatePartition_ThrowsException_WhenIdUpdateAttempted() {
+        // Arrange
+        Map<String, Property> properties = new HashMap<>();
+        properties.put("id", Property.builder().value("new-id").build());
+        PartitionInfo invalidInfo = PartitionInfo.builder().properties(properties).build();
+
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.updatePartition(PARTITION_ID, invalidInfo));
+        assertEquals(400, exception.getError().getCode());
+    }
+
+    @Test
+    void getPartition_Success() {
+        // Arrange
+        PartitionDoc existingDoc = PartitionDoc.create(PARTITION_ID, partitionInfo);
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.of(existingDoc));
+
+        // Act
+        PartitionInfo result = partitionService.getPartition(PARTITION_ID);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(partitionInfo, result);
+    }
+
+    @Test
+    void getPartition_ThrowsException_WhenNotFound() {
+        // Arrange
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.getPartition(PARTITION_ID));
+        assertEquals(404, exception.getError().getCode());
+    }
+
+    @Test
+    void deletePartition_Success() {
+        // Arrange
+        PartitionDoc existingDoc = PartitionDoc.create(PARTITION_ID, partitionInfo);
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.of(existingDoc));
+
+        // Act
+        boolean result = partitionService.deletePartition(PARTITION_ID);
+
+        // Assert
+        assertTrue(result);
+        verify(queryHelper).deleteItem(PARTITION_ID);
+    }
+
+    @Test
+    void deletePartition_ThrowsException_WhenNotFound() {
+        // Arrange
+        when(queryHelper.getItem(PARTITION_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.deletePartition(PARTITION_ID));
+        assertEquals(404, exception.getError().getCode());
+    }
+
+    @Test
+    void getAllPartitions_Success() {
+        // Arrange
+        ArrayList<PartitionDoc> partitions = new ArrayList<>();
+        partitions.add(PartitionDoc.create("partition1", partitionInfo));
+        partitions.add(PartitionDoc.create("partition2", partitionInfo));
+
+        when(queryHelper.scanTable()).thenReturn(partitions);
+
+        // Act
+        List<String> result = partitionService.getAllPartitions();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains("partition1"));
+        assertTrue(result.contains("partition2"));
+    }
+
+    @Test
+    void getAllPartitions_ThrowsException_WhenQueryHelperFails() {
+        // Arrange
+        String errorMessage = "DynamoDB scan operation failed";
+        when(queryHelper.scanTable())
+                .thenThrow(new RuntimeException(errorMessage));
+
+        // Act & Assert
+        AppException exception = assertThrows(AppException.class,
+                () -> partitionService.getAllPartitions());
+
+        // Verify exception details
+        assertEquals(500, exception.getError().getCode());
+        assertEquals("Failed to retrieve partitions", exception.getError().getReason());
+        assertEquals(errorMessage, exception.getError().getMessage());
+
+        // Verify logging
+        verify(logger).error(eq("Failed to retrieve all partitions"), any(RuntimeException.class));
+    }
 }

@@ -25,7 +25,7 @@ data:
   AS_INGESTED_COORDINATES_ENABLED: {{ .Values.data.asIngestedCoordinatesEnabled | quote }}
   KEYWORD_LOWER_ENABLED: {{ .Values.data.keywordLowerEnabled | quote }}
   BAG_OF_WORDS_ENABLED: {{ .Values.data.bagOfWordsEnabled | quote }}
-  X_COLLABORATION_ENABLED: {{ .Values.data.xCollaborationEnabled | quote }}
+  COLLABORATIONS_ENABLED: {{ .Values.data.collaborationsEnabled | quote }}
   AUTOCOMPLETE_ENABLED: {{ .Values.data.autocompleteEnabled | quote }}
   INDEXER_AUGMENTER_ENABLED: {{ .Values.data.indexerAugmenterEnabled | quote }}
   EDS_ENABLED: {{ .Values.data.edsEnabled | quote }}
