@@ -11,39 +11,27 @@ The following instructions are the minimum requirements for running the AWS part
 * IDE ([IntelliJ](https://www.jetbrains.com/idea/download/) is preferred)
 * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 * [Postman](https://www.postman.com/)
-* [MongoDB](https://docs.mongodb.com/v4.0/installation/) on local machine or a MongoDB connection string for test database.
-* [Mongo Compass](https://www.mongodb.com/products/compass) <Optional>
-* OSDU Instance deployed on AWS
+* EDI Instance
 
 ### Service Configuration
 The following environment variables need to be defined to run the service locally.
 
-| Name | Example Value | Description | Sensitive? | Source |
-| ---  | ---   | ---         | ---        | ---    |
-| `LOCAL_MODE` | `true` | A required flag to indicate to the authorization service that partition service is running locally versus in the cluster | no | - |
-| `AWS_REGION` | ex `us-east-1` | The region where resources needed by the service are deployed | no | - |
-| `AWS_ACCESS_KEY_ID` | - | The AWS Access Key for a user with access to Backend Resources required by the service | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
-| `AWS_SECRET_ACCESS_KEY` | - | The AWS Secret Key for a user with access to Backend Resources required by the service | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
-| `AWS_SESSION_TOKEN` | - | AWS Session token needed if using an SSO user session to authenticate | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
-| `ENVIRONMENT` | ex `osdu-dev` | The name of the environment stack name | no | Output by infrastructure deployment |
-| `ENTITLEMENTS_BASE_URL` | ex `https://alias.dev.osdu.aws` | The base URL of OSDU | no | Output by infrastructure deployment |
-| `MONGODB_ENDPOINT` | ex `mongodbname.robot.mongodb.net` or `localhost` | MongoDB database endpoint used for local development | yes | https://www.mongodb.com/ |
-| `MONGODB_AUTH_DATABASE` | ex `partitions` | The database name within the MongoDB instance - defaults to `partitions` | no | - |
-| `MONGODB_USERNAME` | ex `admin` | MongoDB username used as part of the connection string | yes | - |
-| `MONGODB_PASSWORD` | - | MongoDB password used as part of the connection string | yes | - |
-| `MONGODB_USE_SRV_ENDPOINT` | `false` or `true` | To run the service locally, set this to false | no | - |
-| `KEY_ARN` | ex `arn:aws:kms:{AWS_REGION}:{AWS_ACCOUNT_ID}:key/1234abcd-12ab-34cd-56ef-1234567890ab` | A symmetric AWS KMS encryption key ARN with the appropriate key user policy that allows encrypt/decrypt access to the IAM role configured in the following step | yes | https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html |
+| Name | Example Value                                                               | Description                                                                                                              | Sensitive? | Source |
+| ---  |-----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------| ---        | ---    |
+| `LOCAL_MODE` | `true`                                                                      | A required flag to indicate to the authorization service that partition service is running locally versus in the cluster | no | - |
+| `AWS_REGION` | ex `us-east-1`                                                              | The region where resources needed by the service are deployed                                                            | no | - |
+| `AWS_ACCESS_KEY_ID` | -                                                                           | The AWS Access Key for a user with access to Backend Resources required by the service                                   | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
+| `AWS_SECRET_ACCESS_KEY` | -                                                                           | The AWS Secret Key for a user with access to Backend Resources required by the service                                   | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
+| `AWS_SESSION_TOKEN` | -                                                                           | AWS Session token needed if using an SSO user session to authenticate                                                    | yes | [temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) |
+| `ENTITLEMENTS_BASE_URL` | ex `https://alias.dev.osdu.aws`                                             | The base URL of OSDU                                                                                                     | no | Output by infrastructure deployment |
+| `PARAMETER_MOUNT_PATH` | ex `/Users/user/workspace/devops/dev-utils/create-local-params-envs/params` | The location of locally mounted parameters                                                                               | no | Output by infrastructure deployment |
 
-### MongoDB Setup Locally
-* Navigate to where the mongo sever is installed and start the server using:
-  ``C:\Program Files\MongoDB\Server\5.0\bin>mongod``
+In addition, the local parameters that must be set are defined below:
 
-The server will start on the default port 27017
-* Launch MongoDB Compass and create a new connection to localhost: 27017
-![New Connection](docs/img/newconn.png)
-
-* Next add a db user using mongo shell using the following commands:
-![Add new db user](docs/img/mongo_createuser.png)
+| Name                     | Example Value                 | Description                              | Sensitive? | Source |
+|--------------------------|-------------------------------|------------------------------------------|------------| ---    |
+| `service_principal_user` | serviceprincipal-${OSDU_INSTANCE_NAME}@testing.com | The name of the service principal user   | no         | Output by infrastructure deployment |
+| `DYNAMODB_TABLE_NAME`    | ex `osdu-PartitionRepository` | The name of the Partition DynamoDB table | no         | Output by infrastructure deployment |
 
 ### Run Locally
 Check that maven is installed:
@@ -57,7 +45,7 @@ Java version: 17.0.7
 
 You may need to configure access to the remote maven repository that holds the OSDU dependencies. Copy one of the below files' content to your .m2 folder
 * For development against the OSDU GitLab environment, leverage: `<REPO_ROOT>~/.mvn/community-maven.settings.xml`
-* For development in an AWS Environment, leverage: `<REPO_ROOT>/provider/legal-aws/maven/settings.xml`
+* For development in an AWS Environment, leverage: `<REPO_ROOT>/provider/partition-aws/maven/settings.xml`
 
 
 * Navigate to the AWS partition service's root folder and run:
@@ -99,20 +87,34 @@ A bearer access token is required to authorize all partitions API requests, exce
 
 All partitions API requests should use Bearer Token auth using the access token returned from hitting the above endpoint.
 
-## Testing
-### Running Unit Tests
-Navigate to the partition service's root folder:
-```bash
-cd provider/partition-aws
-```
-Install the project dependencies and run unit tests:
-```bash
-mvn clean install
-```
+In addition, all Postman requests should contain the `x-user-id` header with the Service Principal user (i.e. serviceprincipal-${OSDU_INSTANCE_NAME}@testing.com) as the value. This header normally gets inserted during JWT authentication by the Istio Gateway but this is bypassed when running locally.
 
 ### Running Integration Tests
-Execute following command to build code and run all the integration tests from the root folder:
+This section describes how to run Integration tests (testing/partition-test-aws).
 
+You will need to have the following environment variables defined.
+
+| name | example value | description                                                                            | sensitive?
+ | ---  | ---   |----------------------------------------------------------------------------------------| ---        |
+| `AWS_ACCESS_KEY_ID` | `ASIAXXXXXXXXXXXXXX` | The AWS Access Key for a user with access to Backend Resources required by the service | yes |
+| `AWS_SECRET_ACCESS_KEY` | `super-secret-key==` | The AWS Secret Key for a user with access to Backend Resources required by the service | yes |
+| `AWS_SESSION_TOKEN` | `session-token-xxxxxxxxx` | AWS Session token needed if using an SSO user session to authenticate                  | yes |
+| `COGNITO_NAME` | `us-east-1_xxxxxxxx` | Name of the Cognito instance of the deployed EDI environment                           | no |
+| `AWS_REGION` | `us-east-1` | Region the EDI instance is deployed in                                                 | no |
+| `PARTITION_BASE_URL` | `http://localhost:8080/` | The url where the partition API is hosted                                              | no |
+
+Execute following command to build code and run all the integration tests:
+
+### Run Tests simulating Pipeline
+
+* Prior to running tests, scripts must be executed locally to generate pipeline env vars
+
+```bash
+testing/partition-test-aws/build-aws/prepare-dist.sh
+dist/testing/integration/build-aws/run-tests.sh 
+```
+
+Alternatively, the tests can be run from Maven:
 ```bash
 mvn clean package -f testing/pom.xml -pl partition-test-core,partition-test-aws -DskipTests
 mvn test -f testing/partition-test-aws/pom.xml

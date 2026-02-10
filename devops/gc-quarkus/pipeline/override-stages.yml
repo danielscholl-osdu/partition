@@ -34,4 +34,4 @@ gc-dev2-deploy:
 
 gc-preship-deploy:
   variables:
-    GC_HELM_SETS: "--set data.tenantServiceAccount=${ADMIN_USER_EMAIL} --set data.databaseId="
+    GC_HELM_SETS: "--set data.projectId=${GC_DATA_PROJECT} --set data.tenantServiceAccount=${ADMIN_USER_EMAIL} --set data.databaseId="
