@@ -17,16 +17,12 @@
 
 package org.opengroup.osdu.partition.service;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Constants for partition service authorization roles.
  */
 public final class PartitionServiceRole {
 
   public static final String DOMAIN_ADMIN = "domain.admin";
-  public static final List<String> REQUIRED_GROUPS = Collections.singletonList(DOMAIN_ADMIN);
 
   private PartitionServiceRole() {
     // Utility class
