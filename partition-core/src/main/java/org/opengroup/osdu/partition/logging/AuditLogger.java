@@ -50,52 +50,52 @@ public class AuditLogger {
     return this.events;
   }
 
-  public void createPartitionSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getCreatePartitionEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void createPartitionSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getCreatePartitionEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void createPartitionFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getCreatePartitionEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void createPartitionFailure(List<String> resources) {
+    writeLog(getAuditEvents().getCreatePartitionEvent(AuditStatus.FAILURE, resources));
   }
 
-  public void readPartitionSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getReadPartitionEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void readPartitionSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getReadPartitionEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void readPartitionFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getReadPartitionEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void readPartitionFailure(List<String> resources) {
+    writeLog(getAuditEvents().getReadPartitionEvent(AuditStatus.FAILURE, resources));
   }
 
-  public void deletePartitionSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getDeletePartitionEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void deletePartitionSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getDeletePartitionEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void deletePartitionFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getDeletePartitionEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void deletePartitionFailure(List<String> resources) {
+    writeLog(getAuditEvents().getDeletePartitionEvent(AuditStatus.FAILURE, resources));
   }
 
-  public void readServiceLivenessSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getReadServiceLivenessEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void readServiceLivenessSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getReadServiceLivenessEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void readServiceLivenessFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getReadServiceLivenessEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void readServiceLivenessFailure(List<String> resources) {
+    writeLog(getAuditEvents().getReadServiceLivenessEvent(AuditStatus.FAILURE, resources));
   }
 
-  public void updatePartitionSecretSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getUpdatePartitionSecretEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void updatePartitionSecretSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getUpdatePartitionSecretEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void updatePartitionSecretFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getUpdatePartitionSecretEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void updatePartitionSecretFailure(List<String> resources) {
+    writeLog(getAuditEvents().getUpdatePartitionSecretEvent(AuditStatus.FAILURE, resources));
   }
 
-  public void readListPartitionSuccess(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getListPartitionEvent(AuditStatus.SUCCESS, resources, requiredGroupsForAction));
+  public void readListPartitionSuccess(List<String> resources) {
+    writeLog(getAuditEvents().getListPartitionEvent(AuditStatus.SUCCESS, resources));
   }
 
-  public void readListPartitionFailure(List<String> resources, List<String> requiredGroupsForAction) {
-    writeLog(getAuditEvents().getListPartitionEvent(AuditStatus.FAILURE, resources, requiredGroupsForAction));
+  public void readListPartitionFailure(List<String> resources) {
+    writeLog(getAuditEvents().getListPartitionEvent(AuditStatus.FAILURE, resources));
   }
 
   private void writeLog(AuditPayload log) {
