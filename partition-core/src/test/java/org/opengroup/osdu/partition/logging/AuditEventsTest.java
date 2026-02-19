@@ -1,7 +1,6 @@
 package org.opengroup.osdu.partition.logging;
 
 import static org.junit.Assert.assertNotNull;
-import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +28,7 @@ public class AuditEventsTest {
         List<String> resources = Collections.singletonList("test-resource");
 
         // Verify we can create audit events without exception
-        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS);
+        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources);
         assertNotNull(payload);
     }
 
@@ -40,7 +39,7 @@ public class AuditEventsTest {
         List<String> resources = Collections.singletonList("test-resource");
 
         // Verify we can create audit events without exception
-        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS);
+        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources);
         assertNotNull(payload);
     }
 
@@ -51,7 +50,7 @@ public class AuditEventsTest {
         List<String> resources = Collections.singletonList("test-resource");
 
         // Verify we can create audit events without exception
-        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS);
+        var payload = auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources);
         assertNotNull(payload);
     }
 }

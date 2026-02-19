@@ -20,7 +20,6 @@ package org.opengroup.osdu.partition.logging;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.opengroup.osdu.partition.service.PartitionServiceRole.REQUIRED_GROUPS;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -74,98 +73,98 @@ public class AuditLoggerTest {
 
     @Test
     public void should_writeCreatePartitionSuccessEvent() {
-        sut.createPartitionSuccess(resources, REQUIRED_GROUPS);
+        sut.createPartitionSuccess(resources);
 
-        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeCreatePartitionFailureEvent() {
-        sut.createPartitionFailure(resources, REQUIRED_GROUPS);
+        sut.createPartitionFailure(resources);
 
-        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getCreatePartitionEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_writeReadPartitionSuccessEvent() {
-        sut.readPartitionSuccess(resources, REQUIRED_GROUPS);
+        sut.readPartitionSuccess(resources);
 
-        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeReadPartitionFailureEvent() {
-        sut.readPartitionFailure(resources, REQUIRED_GROUPS);
+        sut.readPartitionFailure(resources);
 
-        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getReadPartitionEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_writeDeletePartitionSuccessEvent() {
-        sut.deletePartitionSuccess(resources, REQUIRED_GROUPS);
+        sut.deletePartitionSuccess(resources);
 
-        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeDeletePartitionFailureEvent() {
-        sut.deletePartitionFailure(resources, REQUIRED_GROUPS);
+        sut.deletePartitionFailure(resources);
 
-        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getDeletePartitionEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_writeReadServiceLivenessSuccessEvent() {
-        sut.readServiceLivenessSuccess(resources, REQUIRED_GROUPS);
+        sut.readServiceLivenessSuccess(resources);
 
-        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeReadServiceLivenessFailureEvent() {
-        sut.readServiceLivenessFailure(resources, REQUIRED_GROUPS);
+        sut.readServiceLivenessFailure(resources);
 
-        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getReadServiceLivenessEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_writeUpdatePartitionSecretSuccessEvent() {
-        sut.updatePartitionSecretSuccess(resources, REQUIRED_GROUPS);
+        sut.updatePartitionSecretSuccess(resources);
 
-        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeUpdatePartitionSecretFailureEvent() {
-        sut.updatePartitionSecretFailure(resources, REQUIRED_GROUPS);
+        sut.updatePartitionSecretFailure(resources);
 
-        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getUpdatePartitionSecretEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_writeReadListPartitionSuccessEvent() {
-        sut.readListPartitionSuccess(resources, REQUIRED_GROUPS);
+        sut.readListPartitionSuccess(resources);
 
-        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.SUCCESS, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.SUCCESS, resources));
     }
 
     @Test
     public void should_writeReadListPartitionFailureEvent() {
-        sut.readListPartitionFailure(resources, REQUIRED_GROUPS);
+        sut.readListPartitionFailure(resources);
 
-        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources));
     }
 
     @Test
     public void should_initializeAuditEvents_onlyOnce() {
         List<String> emptyResources = new ArrayList<>();
-        sut.readListPartitionFailure(emptyResources, REQUIRED_GROUPS);
+        sut.readListPartitionFailure(emptyResources);
         Object events1 = ReflectionTestUtils.getField(sut, "events");
-        sut.readListPartitionFailure(resources, REQUIRED_GROUPS);
+        sut.readListPartitionFailure(resources);
         Object events2 = ReflectionTestUtils.getField(sut, "events");
 
         assertEquals(events1.hashCode(), events2.hashCode());
-        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, emptyResources, REQUIRED_GROUPS));
-        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources, REQUIRED_GROUPS));
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, emptyResources));
+        verify(log).audit(auditEvents.getListPartitionEvent(AuditStatus.FAILURE, resources));
     }
 }

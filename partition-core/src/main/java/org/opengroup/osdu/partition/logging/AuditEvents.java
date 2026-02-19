@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import java.util.List;
 import org.opengroup.osdu.core.common.logging.audit.AuditAction;
 import org.opengroup.osdu.core.common.logging.audit.AuditPayload;
+import org.opengroup.osdu.core.common.logging.audit.AuditPayload.AuditPayloadBuilder;
 import org.opengroup.osdu.core.common.logging.audit.AuditStatus;
 
 
@@ -61,99 +62,66 @@ public class AuditEvents {
     this.userAuthorizedGroupName = Strings.isNullOrEmpty(userAuthorizedGroupName) ? UNKNOWN : userAuthorizedGroupName;
   }
 
-  public AuditPayload getCreatePartitionEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
+  /**
+   * Creates an AuditPayload builder pre-populated with common audit fields.
+   */
+  private AuditPayloadBuilder createAuditPayloadBuilder(
+      List<String> requiredGroupsForAction, AuditStatus status, String actionId) {
     return AuditPayload.builder()
-        .action(AuditAction.CREATE)
         .status(status)
         .user(this.user)
-        .actionId(CREATE_PARTITION_ACTION_ID)
+        .actionId(actionId)
+        .requiredGroupsForAction(requiredGroupsForAction)
+        .userIpAddress(this.userIpAddress)
+        .userAgent(this.userAgent)
+        .userAuthorizedGroupName(this.userAuthorizedGroupName);
+  }
+
+  public AuditPayload getCreatePartitionEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.CREATE_PARTITION.getRequiredGroups(), status, CREATE_PARTITION_ACTION_ID)
+        .action(AuditAction.CREATE)
         .message(getStatusMessage(status, CREATE_PARTITION_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getReadPartitionEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
-    return AuditPayload.builder()
+  public AuditPayload getReadPartitionEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.READ_PARTITION.getRequiredGroups(), status, READ_PARTITION_ACTION_ID)
         .action(AuditAction.READ)
-        .status(status)
-        .user(this.user)
-        .actionId(READ_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, READ_PARTITION_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getDeletePartitionEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
-    return AuditPayload.builder()
+  public AuditPayload getDeletePartitionEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.DELETE_PARTITION.getRequiredGroups(), status, DELETE_PARTITION_ACTION_ID)
         .action(AuditAction.DELETE)
-        .status(status)
-        .user(this.user)
-        .actionId(DELETE_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, DELETE_PARTITION_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getReadServiceLivenessEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
-    return AuditPayload.builder()
+  public AuditPayload getReadServiceLivenessEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.READ_SERVICE_LIVENESS.getRequiredGroups(), status, READ_SERVICE_LIVENESS_ACTION_ID)
         .action(AuditAction.READ)
-        .status(status)
-        .user(this.user)
-        .actionId(READ_SERVICE_LIVENESS_ACTION_ID)
         .message(getStatusMessage(status, READ_SERVICE_LIVENESS_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getUpdatePartitionSecretEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
-    return AuditPayload.builder()
+  public AuditPayload getUpdatePartitionSecretEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.UPDATE_PARTITION.getRequiredGroups(), status, UPDATE_PARTITION_ACTION_ID)
         .action(AuditAction.UPDATE)
-        .status(status)
-        .user(this.user)
-        .actionId(UPDATE_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, UPDATE_PARTITION_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
-  public AuditPayload getListPartitionEvent(AuditStatus status, List<String> resources,
-      List<String> requiredGroupsForAction) {
-    return AuditPayload.builder()
+  public AuditPayload getListPartitionEvent(AuditStatus status, List<String> resources) {
+    return createAuditPayloadBuilder(AuditOperation.READ_LIST_PARTITION.getRequiredGroups(), status, READ_LIST_PARTITION_ACTION_ID)
         .action(AuditAction.READ)
-        .status(status)
-        .user(this.user)
-        .actionId(READ_LIST_PARTITION_ACTION_ID)
         .message(getStatusMessage(status, READ_LIST_PARTITION_MESSAGE))
         .resources(resources)
-        .requiredGroupsForAction(requiredGroupsForAction)
-        .userIpAddress(this.userIpAddress)
-        .userAgent(this.userAgent)
-        .userAuthorizedGroupName(this.userAuthorizedGroupName)
         .build();
   }
 
