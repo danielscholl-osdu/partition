@@ -28,15 +28,18 @@ public class RedisConfig {
     @Value("${redis.command.timeout}")
     private int commandTimeout;
 
+    @Value("${redis.principal.id:}")
+    private String redisPrincipalId;
+
     @Bean
     public RedisAzureCache<String, PartitionInfo> partitionServiceCache() {
-        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout);
+        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout, redisPrincipalId);
         return new RedisAzureCache<>(String.class, PartitionInfo.class, redisAzureConfiguration);
     }
 
     @Bean
     public RedisAzureCache<String, List<String>> partitionListCache() {
-        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout);
+        RedisAzureConfiguration redisAzureConfiguration = new RedisAzureConfiguration(database, expiration, port, connectionTimeout, commandTimeout, redisPrincipalId);
         return new RedisAzureCache(String.class, List.class, redisAzureConfiguration);
     }
 }
