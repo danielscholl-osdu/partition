@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.1](https://github.com/danielscholl-osdu/partition/compare/v1.1.0...v1.1.1) (2026-03-11)
+
+
+### 🔧 Miscellaneous
+
+* Add missing Apache 2.0 copyright headers to Java files ([fee2536](https://github.com/danielscholl-osdu/partition/commit/fee25364f309ca7a32c86e0339be982cfd5011b0))
+* Add missing Apache 2.0 copyright headers to Java files ([ec20ea6](https://github.com/danielscholl-osdu/partition/commit/ec20ea68078be713a6144579ebc79e37d59c6e5e))
+* Sync template updates ([a33e1e7](https://github.com/danielscholl-osdu/partition/commit/a33e1e795231cfcaa1024e5f35abff4f7e87c265))
+* Sync template updates ([2537ac5](https://github.com/danielscholl-osdu/partition/commit/2537ac5682b052a4a60a0076a217be090e02a3df))
+* Sync template updates ([40ec422](https://github.com/danielscholl-osdu/partition/commit/40ec422ed84c838aae6ce4f9a0234527c6fd0bdb))
+* Sync template updates ([747e8a0](https://github.com/danielscholl-osdu/partition/commit/747e8a0f55b6398db16a16d535b48f62c50946fa))
+* Update licenses and dependencies with build config changes ([38f6dde](https://github.com/danielscholl-osdu/partition/commit/38f6dded9ae1a94a6bb16482e0dca1c02e5edbc2))
+
 ## [1.1.0](https://github.com/danielscholl-osdu/partition/compare/v1.0.0...v1.1.0) (2026-02-20)
 
 
