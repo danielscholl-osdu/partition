@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.2.0](https://github.com/danielscholl-osdu/partition/compare/v1.1.0...v1.2.0) (2026-03-31)
+
+
+### ✨ Features
+
+* **api:** Update community v1 OpenAPI spec with tenant header and feature flags ([76282ca](https://github.com/danielscholl-osdu/partition/commit/76282ca7df71a9bbfe2f49aa6b982ed0bbd6edb8))
+* **azure:** Add Redis backup configuration support in partition service ([03f03ca](https://github.com/danielscholl-osdu/partition/commit/03f03cad302232febb74761fbdc1b62675833670))
+
+
+### 🔧 Miscellaneous
+
+* Add missing Apache 2.0 copyright headers to Java files ([fee2536](https://github.com/danielscholl-osdu/partition/commit/fee25364f309ca7a32c86e0339be982cfd5011b0))
+* Add missing Apache 2.0 copyright headers to Java files ([ec20ea6](https://github.com/danielscholl-osdu/partition/commit/ec20ea68078be713a6144579ebc79e37d59c6e5e))
+* Sync template updates ([93abf1a](https://github.com/danielscholl-osdu/partition/commit/93abf1a62ecb8053c8b0d13666fc0acf47c91a22))
+* Sync template updates ([f2e0bbc](https://github.com/danielscholl-osdu/partition/commit/f2e0bbc9b415be2a648d0ff71eb95033e873c06b))
+* Sync template updates ([a33e1e7](https://github.com/danielscholl-osdu/partition/commit/a33e1e795231cfcaa1024e5f35abff4f7e87c265))
+* Sync template updates ([2537ac5](https://github.com/danielscholl-osdu/partition/commit/2537ac5682b052a4a60a0076a217be090e02a3df))
+* Sync template updates ([40ec422](https://github.com/danielscholl-osdu/partition/commit/40ec422ed84c838aae6ce4f9a0234527c6fd0bdb))
+* Sync template updates ([747e8a0](https://github.com/danielscholl-osdu/partition/commit/747e8a0f55b6398db16a16d535b48f62c50946fa))
+* Update licenses and dependencies with build config changes ([38f6dde](https://github.com/danielscholl-osdu/partition/commit/38f6dded9ae1a94a6bb16482e0dca1c02e5edbc2))
+
+
+### 🔨 Build System
+
+* **deps:** Override jackson to 2.21.1 for security patch GHSA-72hv-8253-57qq ([5f234e1](https://github.com/danielscholl-osdu/partition/commit/5f234e183ab7a754f5fd882d3f0debfd1c4788a8))
+
 ## [1.1.0](https://github.com/danielscholl-osdu/partition/compare/v1.0.0...v1.1.0) (2026-02-20)
 
 
