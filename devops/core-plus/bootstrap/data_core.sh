@@ -47,6 +47,22 @@ core_partition_data() {
       "sensitive": true,
       "value": "POSTGRES_DB_PASSWORD${PARTITION_SUFFIX}"
     },
+    "obm.s3.endpoint": {
+      "sensitive": false,
+      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_ENDPOINT"
+    },
+    "obm.s3.accessKey": {
+      "sensitive": true,
+      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_ACCESS_KEY"
+    },
+    "obm.s3.secretKey": {
+      "sensitive": true,
+      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_SECRET_KEY"
+    },
+      "obm.s3.region": {
+    "sensitive": false,
+    "value": "us-east-1"
+    },
     "obm.minio.endpoint": {
       "sensitive": false,
       "value": "${MINIO_ENDPOINT}"
