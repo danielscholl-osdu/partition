@@ -48,11 +48,11 @@ core_partition_data() {
       "value": "POSTGRES_DB_PASSWORD${PARTITION_SUFFIX}"
     },
     "obm.s3.endpoint": {
-      "sensitive": false,
+      "sensitive": true,
       "value": "SEAWEEDFS_ENDPOINT_${DATA_PARTITION_ID_UPPER}"
     },
     "obm.s3.external.endpoint": {
-      "sensitive": false,
+      "sensitive": true,
       "value": "SEAWEEDFS_EXTERNAL_ENDPOINT_${DATA_PARTITION_ID_UPPER}"
     },
     "obm.s3.accessKey": {
