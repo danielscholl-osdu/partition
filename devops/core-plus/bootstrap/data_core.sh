@@ -49,15 +49,19 @@ core_partition_data() {
     },
     "obm.s3.endpoint": {
       "sensitive": false,
-      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_ENDPOINT"
+      "value": "SEAWEEDFS_ENDPOINT_${DATA_PARTITION_ID_UPPER}"
+    },
+    "obm.s3.external.endpoint": {
+      "sensitive": false,
+      "value": "SEAWEEDFS_EXTERNAL_ENDPOINT_${DATA_PARTITION_ID_UPPER}"
     },
     "obm.s3.accessKey": {
       "sensitive": true,
-      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_ACCESS_KEY"
+      "value": "SEAWEEDFS_ACCESS_KEY_${DATA_PARTITION_ID_UPPER}"
     },
     "obm.s3.secretKey": {
       "sensitive": true,
-      "value": "${DATA_PARTITION_ID_VALUE}-SEAWEEDFS_SECRET_KEY"
+      "value": "SEAWEEDFS_SECRET_KEY_${DATA_PARTITION_ID_UPPER}"
     },
       "obm.s3.region": {
     "sensitive": false,
