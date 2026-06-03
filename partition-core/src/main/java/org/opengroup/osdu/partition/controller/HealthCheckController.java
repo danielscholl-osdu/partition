@@ -28,4 +28,8 @@ public class HealthCheckController implements HealthCheckApi {
   public ResponseEntity<String> livenessCheck() {
     return new ResponseEntity<>("Partition service is alive.", HttpStatus.OK);
   }
+
+  // W10 CI-gate proof: intentional compile error to verify the required "🐳 Docker Build"
+  // check fails and blocks the merge. THIS PR MUST NOT BE MERGED.
+  this is an intentional syntax error to break the build;
 }
