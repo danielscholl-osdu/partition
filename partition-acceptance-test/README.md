@@ -4,8 +4,8 @@ You will need to have the following environment variables defined.
 
 | name                 | value                      | description                | sensitive? | source | required |
 |----------------------|----------------------------|----------------------------|------------|--------|----------|
-| `MY_TENANT`          | ex `osdu`                  | Self Tenant name           | no         | -      | yes      |
-| `PARTITION_BASE_URL` | ex `http://localhost:8080` | Partition service Base URL | no         | -      | yes      |
+| `HOST`               | ex `http://localhost:8080`  | Partition service base URL | no         | -      | yes      |
+| `DATA_PARTITION_ID`  | ex `osdu`                  | Data partition identifier  | no         | -      | yes      |
 
 Authentication can be provided as OIDC config:
 
@@ -16,20 +16,24 @@ Authentication can be provided as OIDC config:
 | `TEST_OPENID_PROVIDER_URL`                      | ex `https://keycloak.com/auth/realms/osdu` | OpenID provider url                        | yes        | -      |
 | `PRIVILEGED_USER_OPENID_PROVIDER_SCOPE`         | ex `api://my-app/.default`                 | OAuth2 scope (optional, defaults to openid)| no         | -      |
 
-Or tokens can be used directly from env variables:
+Or a static bearer token can be supplied directly:
 
-| name                    | value      | description           | sensitive? | source |
-|-------------------------|------------|-----------------------|------------|--------|
-| `PRIVILEGED_USER_TOKEN` | `********` | Privileged User Token | yes        | -      |
+| name                        | value      | description                | sensitive? | source |
+|-----------------------------|------------|----------------------------|------------|--------|
+| `PRIVILEGED_USER_TOKEN`     | `********` | Privileged User Token      | yes        | -      |
 
-Authentication configuration is optional and could be omitted if not needed.
+Authentication configuration is optional and can be omitted when the service allows unauthenticated access locally.
 
-Execute following command to build code and run all the integration tests:
+No specific Entitlements roles are required for the test user. The acceptance tests only exercise read endpoints (`GET /partitions`, `GET /partitions/{id}`, liveness check, swagger) which require authentication but no entitlement group membership.
+
+Environment variables can also be placed in a `.env` file in the working directory or in
+`src/test/resources/.env` (working directory takes precedence).
+
+Execute the following command to build code and run all the integration tests:
 
  ```bash
  # Note: this assumes that the environment variables for integration tests as outlined
  #       above are already exported in your environment.
- # build + install integration test core
  $ (cd partition-acceptance-test && mvn clean test)
  ```
 
