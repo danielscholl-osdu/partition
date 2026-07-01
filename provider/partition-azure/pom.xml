@@ -39,7 +39,14 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Jackson override: Spring Boot 3.5.13 and other artifacts provide an older Jackson; we need 2.21.2 for GHSA-72hv-8253-57qq -->
+            <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>${netty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+<!-- Jackson override: Spring Boot 3.5.13 and other artifacts provide an older Jackson; we need 2.21.2 for GHSA-72hv-8253-57qq -->
       <!-- Maybe remove this override when Spring Boot BOM updates to Jackson >= 2.21.2 -->
       <dependency>
         <groupId>com.fasterxml.jackson</groupId>
