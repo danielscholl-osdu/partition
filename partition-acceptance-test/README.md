@@ -4,23 +4,23 @@ You will need to have the following environment variables defined.
 
 | name                 | value                      | description                | sensitive? | source | required |
 |----------------------|----------------------------|----------------------------|------------|--------|----------|
-| `HOST`               | ex `http://localhost:8080`  | Partition service base URL | no         | -      | yes      |
-| `DATA_PARTITION_ID`  | ex `osdu`                  | Data partition identifier  | no         | -      | yes      |
+| `HOST`               | ex `http://localhost:8080`  | Partition service base URL | no         | the deployment's external URL (gateway/ingress route) for the Partition service | yes      |
+| `DATA_PARTITION_ID`  | ex `osdu`                  | Data partition identifier  | no         | deployment configuration: the partition the environment was bootstrapped with | yes      |
 
 Authentication can be provided as OIDC config:
 
 | name                                            | value                                      | description                                | sensitive? | source |
 |-------------------------------------------------|--------------------------------------------|--------------------------------------------|------------|--------|
-| `PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID`     | `********`                                 | Privileged User Client Id                  | yes        | -      |
-| `PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET` | `********`                                 | Privileged User Client secret              | yes        | -      |
-| `TEST_OPENID_PROVIDER_URL`                      | ex `https://keycloak.com/auth/realms/osdu` | OpenID provider url                        | yes        | -      |
-| `PRIVILEGED_USER_OPENID_PROVIDER_SCOPE`         | ex `api://my-app/.default`                 | OAuth2 scope (optional, defaults to openid)| no         | -      |
+| `PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_ID`     | `********`                                 | Privileged User Client Id                  | yes        | an OIDC client-credentials client provisioned by the deployment for testing |
+| `PRIVILEGED_USER_OPENID_PROVIDER_CLIENT_SECRET` | `********`                                 | Privileged User Client secret              | yes        | the same client's secret, from the deployment's secret store |
+| `TEST_OPENID_PROVIDER_URL`                      | ex `https://keycloak.com/auth/realms/osdu` | OpenID provider url                        | yes        | the deployment's OIDC issuer URL, the same issuer the services validate tokens against |
+| `PRIVILEGED_USER_OPENID_PROVIDER_SCOPE`         | ex `api://my-app/.default`                 | OAuth2 scope (optional, defaults to openid)| no         | identity-provider dependent; omit for the `openid` default (Keycloak), set for e.g. Entra ID |
 
 Or a static bearer token can be supplied directly:
 
 | name                        | value      | description                | sensitive? | source |
 |-----------------------------|------------|----------------------------|------------|--------|
-| `PRIVILEGED_USER_TOKEN`     | `********` | Privileged User Token      | yes        | -      |
+| `PRIVILEGED_USER_TOKEN`     | `********` | Privileged User Token      | yes        | a token minted for the same identity, when OIDC client configuration is not available |
 
 Authentication configuration is optional and can be omitted when the service allows unauthenticated access locally.
 
