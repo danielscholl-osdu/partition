@@ -343,12 +343,6 @@
       </modules>
     </profile>
     <profile>
-      <id>aws</id>
-      <modules>
-        <module>provider/partition-aws</module>
-      </modules>
-    </profile>
-    <profile>
       <id>azure</id>
       <modules>
         <module>provider/partition-azure</module>
