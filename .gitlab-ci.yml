@@ -1,15 +1,6 @@
 variables:
   CORE_BUILD_SUBDIR: partition-core
 
-  AWS_BUILD_SUBDIR: provider/partition-aws/build-aws
-  AWS_TEST_SUBDIR: testing/partition-test-aws
-  AWS_CHART_SUBDIR: devops/aws/chart
-  AWS_SERVICE: partition
-  AWS_SERVICE_GATEWAY: osdu-gateway
-  AWS_ENVIRONMENT: dev
-  AWS_DEPLOY_TARGET: TF
-  AWS_EKS_DEPLOYMENT_NAME: os-partition
-
   AZURE_SERVICE: partition
   AZURE_BUILD_SUBDIR: provider/partition-azure
   AZURE_TEST_SUBDIR: testing/partition-test-azure
@@ -39,12 +30,6 @@ include:
     file: "scanners/fossa-maven.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-global.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-maven.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
@@ -52,9 +37,6 @@ include:
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/cimpl-global.yml"
-
-  - project: "osdu/platform/ci-cd-pipelines"
-    file: "cloud-providers/aws-one-pipeline.yml"
 
   - project: "osdu/platform/ci-cd-pipelines"
     file: "cloud-providers/azure-one-pipeline.yml"
