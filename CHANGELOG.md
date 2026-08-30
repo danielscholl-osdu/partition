@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/danielscholl-osdu/partition/compare/v1.2.0...v1.2.1) (2026-08-30)
+
+
+### 🔧 Miscellaneous
+
+* **deps:** Bump io.netty:netty-bom from 4.2.16.Final to 4.2.17.Final in /provider/partition-azure ([4f85a32](https://github.com/danielscholl-osdu/partition/commit/4f85a32facf7afc07ab132b78e61b725634796bd))
+
 ## [1.2.0](https://github.com/danielscholl-osdu/partition/compare/v1.1.0...v1.2.0) (2026-08-30)
 
 
