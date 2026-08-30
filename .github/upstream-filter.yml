@@ -1,0 +1,83 @@
+# Per-service upstream filter config (ADR-038), planted at fork initialization
+# with partition substituted from the upstream repository name.
+# Every upstream top-level entry, testing/ entry, root pom profile, and
+# .fossa.yml module must appear here: the engine halts rather than guess.
+# Entries absent from a given upstream tree are inert, so this file carries the
+# superset of the conventional OSDU service shape. A service that deviates
+# maintains its own copy of this file on the fork's main branch.
+service: partition
+
+top_level:
+  .dockerignore: keep
+  .editorconfig: keep
+  .fossa.yml: keep
+  .gitattributes: keep
+  .gitignore: keep
+  .gitlab-ci.yml: strip
+  .mvn: keep
+  LICENSE: keep
+  NOTICE: keep
+  README.md: keep
+  docs: keep
+  pom.xml: keep
+  partition-acceptance-test: keep
+  partition-core: keep
+  partition-core-plus: strip
+
+testing:
+  INTEGRATION-TESTS.md: keep
+  README.md: keep
+  maven: keep
+  pom.xml: keep
+  partition-test-core: keep
+  partition-test-azure: fork
+  partition-test-aws: strip
+  partition-test-baremetal: strip
+  partition-test-core-plus: strip
+  partition-test-gc: strip
+  partition-test-gcp: strip
+  partition-test-ibm: strip
+
+profiles:
+  Default: keep
+  core: keep
+  azure: inject
+  aws: strip
+  gc: strip
+  gcp: strip
+  ibm: strip
+
+fossa_modules:
+  partition: keep
+  partition-core: keep
+  partition-core-plus: strip
+  partition-azure: strip
+  partition-aws: strip
+  partition-gc: strip
+  partition-gcp: strip
+  partition-ibm: strip
+
+expected_kept:
+  - pom.xml
+  - partition-core
+  - testing/partition-test-core
+
+expected_absent:
+  - provider
+  - devops
+  - partition-core-plus
+  - .gitlab-ci.yml
+  - testing/partition-test-azure
+  - testing/partition-test-aws
+  - testing/partition-test-core-plus
+
+inject_root_pom_azure_profile: |
+      <profile>
+        <id>azure</id>
+        <modules>
+          <module>provider/partition-azure</module>
+        </modules>
+      </profile>
+
+inject_testing_pom_azure_module: |
+      <module>partition-test-azure</module>
