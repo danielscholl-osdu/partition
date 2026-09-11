@@ -8,7 +8,8 @@ variables:
 
   ACCEPTANCE_TEST_DIR: "partition-acceptance-test"
 
-  CIMPL_OPENAPI_YAML_ROUTE: /api/partition/v1/api-docs.yaml
+  CIMPL_OPENAPI_CONFIG_ROUTE: /api/partition/v1/api-docs/swagger-config
+  SCHEMATHESIS_OPENAPI_YAML_ROUTE: /api/partition/v1/api-docs.yaml
 
 include:
   - project: "osdu/platform/ci-cd-pipelines"
