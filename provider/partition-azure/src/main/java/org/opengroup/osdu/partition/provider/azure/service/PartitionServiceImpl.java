@@ -99,14 +99,14 @@ public class PartitionServiceImpl implements IPartitionService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         PartitionInfo pi = safeGet(partitionServiceCache, partitionId);
         stopwatch.stop();
-        log.info(String.format("Total time taken to fetch from PartitionCache: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+        log.info(String.format("Total time taken to fetch from PartitionCache: %d ms", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
 
         if (pi == null) {
             stopwatch.reset();
             stopwatch.start();
             Map<String, Property> out = new HashMap<>(tableStore.getPartition(partitionId));
             stopwatch.stop();
-            log.info(String.format("Total time taken to Fetch Data From Storage Table: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+            log.info(String.format("Total time taken to Fetch Data From Storage Table: %d ms", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
 
             if (out.isEmpty()) {
                 throw new AppException(HttpStatus.SC_NOT_FOUND, PARTITION_NOT_FOUND, String.format("%s partition not found", partitionId));
@@ -146,7 +146,7 @@ public class PartitionServiceImpl implements IPartitionService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             partitions = tableStore.getAllPartitions();
             stopwatch.stop();
-            log.info(String.format("Total time taken to fetch all partition: %d", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
+            log.info(String.format("Total time taken to fetch all partition: %d ms", stopwatch.elapsed(TimeUnit.MILLISECONDS)));
             if (partitions != null) {
                 safePut(partitionListCache, PARTITION_LIST_KEY, partitions);
             }
