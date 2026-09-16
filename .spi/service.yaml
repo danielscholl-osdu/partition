@@ -21,4 +21,5 @@ tests:
       ENVIRONMENT: { source: static, value: dev }
       PARTITION_BASE_URL: { source: gateway, suffix: / }
       MY_TENANT: { source: partition }
+      CLIENT_TENANT: { source: partition }
       INTEGRATION_TESTER_ACCESS_TOKEN: { source: token }
