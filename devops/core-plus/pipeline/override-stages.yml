@@ -1,5 +1,0 @@
-variables:
-  CIMPL_SERVICE: partition
-  CIMPL_ENABLE_BOOTSTRAP: "true"
-  CIMPL_BUILD_BOOTSTRAP_PATH: "devops/core-plus/bootstrap/Dockerfile"
-  DISABLE_INTEGRATION_TEST: true
