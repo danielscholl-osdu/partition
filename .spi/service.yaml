@@ -23,3 +23,4 @@ tests:
       MY_TENANT: { source: partition }
       CLIENT_TENANT: { source: partition }
       INTEGRATION_TESTER_ACCESS_TOKEN: { source: token }
+      NO_DATA_ACCESS_TESTER_ACCESS_TOKEN: { source: noAccessToken }
