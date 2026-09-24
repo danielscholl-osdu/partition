@@ -375,12 +375,6 @@
         <module>provider/partition-ibm</module>
       </modules>
     </profile>
-    <profile>
-      <id>gc</id>
-      <modules>
-        <module>provider/partition-gc-quarkus</module>
-      </modules>
-    </profile>
   </profiles>
 
   <repositories>
