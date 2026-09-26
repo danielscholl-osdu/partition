@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1](https://github.com/danielscholl-osdu/partition/compare/v1.2.0...v1.2.1) (2026-09-26)
+
+
+### 📚 Documentation
+
+* Add CONTRIBUTING.md and assign it a code owner ([ea2e348](https://github.com/danielscholl-osdu/partition/commit/ea2e3482f9aa641dd9ecc9f8849b006c0b07d972))
+* Add CONTRIBUTING.md and assign it a code owner ([241a8a9](https://github.com/danielscholl-osdu/partition/commit/241a8a982648d7441846c8f3d39fc35cbc18d87a))
+
+
+### 🔧 Miscellaneous
+
+* Sync template updates ([8646221](https://github.com/danielscholl-osdu/partition/commit/86462218bbd059c7b8b1da9aa1a3d89672e94811))
+* **template-sync:** Sync template updates (updated 2026-09-26) ([8e056d4](https://github.com/danielscholl-osdu/partition/commit/8e056d4a61429bdd4d4de963ef313e5bf7ca53e6))
+
 ## [1.2.0](https://github.com/danielscholl-osdu/partition/compare/v1.1.0...v1.2.0) (2026-09-23)
 
 
